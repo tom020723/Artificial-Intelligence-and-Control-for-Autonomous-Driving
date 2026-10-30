@@ -20,6 +20,10 @@ try:
     from env.road_config import SCENERY
 except ImportError:      # 구버전 설정 하위호환
     SCENERY = {"trees": False}
+try:
+    from env.road_config import NOHYEONG     # 노형오거리 형상 설정
+except ImportError:
+    NOHYEONG = None
 
 
 def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
@@ -32,6 +36,12 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         out_dir: 생성 위치 (보통 프로젝트의 sumo/ 폴더)
     """
     os.makedirs(out_dir, exist_ok=True)
+
+    # ── 도로 종류 분기 ──
+    # ROAD["type"] == "nohyeong" 이면 노형오거리 생성 (파일 맨 아래 _build_nohyeong).
+    # 그 외("straight" 또는 키 없음)는 기존 직선 도로 그대로 생성한다.
+    if road.get("type", "straight") == "nohyeong":
+        return _build_nohyeong(road, ego, traffic, out_dir)
 
     # ──────────────────────────────────────────────────────
     # 1) 노드 파일: 직선 도로의 양 끝점 2개
@@ -70,58 +80,7 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     #               ego는 여기에 없고, 환경(sumo_env.py)이 reset마다
     #               traci.vehicle.add()로 직접 투입한다.
     # ──────────────────────────────────────────────────────
-    controllers = traffic.get("controllers")
-    if controllers:
-        # probability 합이 1이 아니어도 되도록 자동 정규화
-        total_p = sum(float(c.get("probability", 1.0))
-                      for c in controllers.values())
-        vtype_lines = []
-        for name, c in controllers.items():
-            prob = float(c.get("probability", 1.0)) / total_p
-            attrs = [
-                f'id="car_{name}"',
-                f'probability="{prob:.4f}"',
-                f'carFollowModel="{c["carFollowModel"]}"',
-                f'accel="{c.get("accel", 2.5)}"',
-                f'decel="{c.get("decel", 4.5)}"',
-                f'tau="{c.get("tau", 1.0)}"',
-                f'minGap="{c.get("min_gap", 2.5)}"',
-                # 컨트롤러별 희망속도 오버라이드 (없으면 공통 max_speed).
-                # 컨트롤러마다 속도를 다르게 주면 차선 간 속도차가 생겨
-                # "추월할 이유"가 자연스럽게 만들어진다.
-                f'maxSpeed="{c.get("max_speed", traffic["max_speed"])}"',
-                # speedDev: 같은 타입 안에서도 개체별 희망속도 편차 (0~)
-                f'speedDev="{c.get("speed_dev", 0.1)}"',
-                f'color="{c.get("color", "1,1,0")}"',
-                'vClass="passenger"', 'guiShape="passenger/sedan"',
-            ]
-            # sigma는 Krauss 계열에만 의미가 있으므로 지정된 경우에만 넣는다
-            if "sigma" in c:
-                attrs.append(f'sigma="{c["sigma"]}"')
-            # ── 배경차 차선 유지 (keep_lane, 기본 True) ──
-            # 배경차의 자율 차선변경(전략/협조/속도이득/우측유지)을 전부 꺼서
-            # 각자 자기 차선을 지키게 한다. 이유:
-            #   배경차가 자유롭게 돌아다니면 (측정: 150스텝에 477회 변경)
-            #   차선 간 틈이 수시로 닫혀서, ego가 틈을 노려 파고드는
-            #   "칼치기 추월"을 학습할 안정적인 기회 자체가 사라진다.
-            #   배경차가 차선을 유지하면 "느린 차 뒤 → 옆 틈으로 변경 →
-            #   가속"이라는 추월 패턴이 재현 가능한 형태로 나타난다.
-            # 특정 컨트롤러만 돌아다니게 하려면 그 항목에 "keep_lane": False.
-            if c.get("keep_lane", True):
-                attrs += ['lcStrategic="0"', 'lcCooperative="0"',
-                          'lcSpeedGain="0"', 'lcKeepRight="0"']
-            vtype_lines.append("        <vType " + " ".join(attrs) + "/>")
-        vtypes_block = ('    <vTypeDistribution id="carDist">\n'
-                        + "\n".join(vtype_lines)
-                        + "\n    </vTypeDistribution>")
-        flow_type = "carDist"
-    else:
-        # controllers 설정이 없으면 예전 방식(단일 Krauss)으로 동작 (하위호환)
-        vtypes_block = (f'    <vType id="car" accel="2.5" decel="4.5" '
-                        f'maxSpeed="{traffic["max_speed"]}" '
-                        f'sigma="{traffic.get("sigma", 0.5)}" '
-                        f'vClass="passenger" guiShape="passenger/sedan"/>')
-        flow_type = "car"
+    vtypes_block, flow_type = _vtypes_block(traffic)
 
     with open(os.path.join(out_dir, "highway.rou.xml"), "w") as f:
         f.write(f"""<routes>
@@ -204,6 +163,69 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         capture_output=True,  # 출력은 조용히 삼킴
     )
     return cfg_path
+
+
+def _vtypes_block(traffic: dict):
+    """TRAFFIC["controllers"] → <vTypeDistribution> XML 문자열과 flow가 쓸 type 이름.
+
+    직선 도로/회전교차로 공용. (배경차 종류·비율 정의는 도로 형상과 무관하므로 분리)
+    """
+    controllers = traffic.get("controllers")
+    if controllers:
+        # probability 합이 1이 아니어도 되도록 자동 정규화
+        total_p = sum(float(c.get("probability", 1.0))
+                      for c in controllers.values())
+        vtype_lines = []
+        for name, c in controllers.items():
+            prob = float(c.get("probability", 1.0)) / total_p
+            attrs = [
+                f'id="car_{name}"',
+                f'probability="{prob:.4f}"',
+                f'carFollowModel="{c["carFollowModel"]}"',
+                f'accel="{c.get("accel", 2.5)}"',
+                f'decel="{c.get("decel", 4.5)}"',
+                f'tau="{c.get("tau", 1.0)}"',
+                f'minGap="{c.get("min_gap", 2.5)}"',
+                # 컨트롤러별 희망속도 오버라이드 (없으면 공통 max_speed).
+                # 컨트롤러마다 속도를 다르게 주면 차선 간 속도차가 생겨
+                # "추월할 이유"가 자연스럽게 만들어진다.
+                f'maxSpeed="{c.get("max_speed", traffic["max_speed"])}"',
+                # speedDev: 같은 타입 안에서도 개체별 희망속도 편차 (0~)
+                f'speedDev="{c.get("speed_dev", 0.1)}"',
+                f'color="{c.get("color", "1,1,0")}"',
+                'vClass="passenger"', 'guiShape="passenger/sedan"',
+            ]
+            # sigma는 Krauss 계열에만 의미가 있으므로 지정된 경우에만 넣는다
+            if "sigma" in c:
+                attrs.append(f'sigma="{c["sigma"]}"')
+            # ── 배경차 차선 유지 (keep_lane, 기본 True) ──
+            # 배경차의 자율 차선변경(전략/협조/속도이득/우측유지)을 전부 꺼서
+            # 각자 자기 차선을 지키게 한다. 이유:
+            #   배경차가 자유롭게 돌아다니면 (측정: 150스텝에 477회 변경)
+            #   차선 간 틈이 수시로 닫혀서, ego가 틈을 노려 파고드는
+            #   "칼치기 추월"을 학습할 안정적인 기회 자체가 사라진다.
+            #   배경차가 차선을 유지하면 "느린 차 뒤 → 옆 틈으로 변경 →
+            #   가속"이라는 추월 패턴이 재현 가능한 형태로 나타난다.
+            # 특정 컨트롤러만 돌아다니게 하려면 그 항목에 "keep_lane": False.
+            # 전체 기본값은 TRAFFIC["keep_lane"] (없으면 True). 교차로 도로(nohyeong)에서는
+            # 배경차가 좌/우회전 차선으로 옮겨가야 하므로 False 로 둔다.
+            if c.get("keep_lane", traffic.get("keep_lane", True)):
+                attrs += ['lcStrategic="0"', 'lcCooperative="0"',
+                          'lcSpeedGain="0"', 'lcKeepRight="0"']
+            vtype_lines.append("        <vType " + " ".join(attrs) + "/>")
+        vtypes_block = ('    <vTypeDistribution id="carDist">\n'
+                        + "\n".join(vtype_lines)
+                        + "\n    </vTypeDistribution>")
+        flow_type = "carDist"
+    else:
+        # controllers 설정이 없으면 예전 방식(단일 Krauss)으로 동작 (하위호환)
+        vtypes_block = (f'    <vType id="car" accel="2.5" decel="4.5" '
+                        f'maxSpeed="{traffic["max_speed"]}" '
+                        f'sigma="{traffic.get("sigma", 0.5)}" '
+                        f'vClass="passenger" guiShape="passenger/sedan"/>')
+        flow_type = "car"
+
+    return vtypes_block, flow_type
 
 
 def _blob(cx: float, cy: float, r: float, rng, n: int = 14,
@@ -314,4 +336,261 @@ def _write_scenery(out_dir: str, road: dict):
             x += spacing * rng.uniform(1.0 - jitter, 1.0 + jitter)
     lines.append("</additional>")
     with open(path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+# ══════════════════════════════════════════════════════════════
+#  제주 노형오거리 (ROAD["type"] == "nohyeong")
+#
+#  생성되는 구조 (NOHYEONG 설정 기준):
+#    노드
+#      nC            : 교차로 중심 (신호등). 다섯 팔이 모두 여기서 만난다.
+#      nE_<arm>      : 각 팔의 바깥 끝 (차량이 생성/소멸되는 곳)
+#      nM_<arm>_<k>  : 팔 위의 중간 노드 (슬립로드가 갈라지거나 합류하는 지점). 안쪽부터 k=0,1,…
+#    엣지 (팔 하나당, 중간 노드가 K개일 때)
+#      <arm>_in,  <arm>_in1,  …, <arm>_inK   : 바깥 → 교차로 방향. <arm>_in 이 교차로(nC)에 닿는 구간.
+#      <arm>_out, <arm>_out1, …, <arm>_outK  : 교차로 → 바깥 방향. <arm>_out 이 nC 에서 나가는 구간.
+#      (중간 노드가 없으면 <arm>_in / <arm>_out 둘뿐 — 기존 코드와 이름 호환)
+#      RING_<a>_<b>  : 팔 a 에서 갈라져 팔 b 에 합류하는 우회전 슬립로드 (일방통행)
+#    연결(.con.xml)
+#      <delete>      : 팔 끝/중간 노드에서 자동 생성되는 엉뚱한 U턴 제거 (교차로 nC 의 U턴만 남김)
+#    경로/교통
+#      r0            : ego 기본 경로 (ego_route) — sumo_env.py 가 그대로 사용
+#      f_<a>_<b>     : 팔 a → 팔 b 배경차 flow (SUMO가 최단경로로 알아서 라우팅)
+#    장식
+#      녹지 <poly> + 횡단보도 줄무늬 <poly> (highway.scenery.xml)
+# ══════════════════════════════════════════════════════════════
+import math
+
+
+def _polar(r: float, angle_deg: float):
+    """극좌표 (반지름, 각도°) → 직교좌표 (x, y). 각도는 동쪽 0°, 반시계 +."""
+    a = math.radians(angle_deg)
+    return r * math.cos(a), r * math.sin(a)
+
+
+def _fmt_shape(points) -> str:
+    """[(x,y), ...] → SUMO shape 속성 문자열 'x1,y1 x2,y2 ...'."""
+    return " ".join(f"{x:.2f},{y:.2f}" for x, y in points)
+
+
+
+
+def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
+    cfg = NOHYEONG
+    if cfg is None:
+        raise RuntimeError("ROAD['type']='nohyeong' 인데 road_config.py 에 NOHYEONG 설정이 없습니다.")
+
+    arm_speed = float(road["speed_limit"])
+    arms = list(cfg["arms"])
+    by_id = {a["id"]: a for a in arms}
+    segs = list(cfg.get("ring_segments", []))
+
+    # ── 0) 팔마다 중간 노드 위치(중심에서의 거리) 모으기 ──
+    #   슬립로드가 갈라지는 곳(from_r)과 합류하는 곳(to_r). 같은 거리는 하나의 노드로 합친다.
+    radii = {a["id"]: set() for a in arms}
+    for sg in segs:
+        radii[sg["from"]].add(float(sg["from_r"]))
+        radii[sg["to"]].add(float(sg["to_r"]))
+    for a in arms:
+        if a.get("split_at"):
+            radii[a["id"]].add(float(a["split_at"]))
+    splits = {aid: sorted(rs) for aid, rs in radii.items()}       # 안쪽(작은 r) → 바깥쪽
+
+    def node_at(aid, r):
+        """팔 aid 위, 중심에서 r 떨어진 중간 노드 이름."""
+        return f"nM_{aid}_{splits[aid].index(float(r))}"
+
+    # 팔의 엣지 이름: k=0 이 교차로에 붙는 구간
+    def in_edge(aid, k):  return f"{aid}_in" if k == 0 else f"{aid}_in{k}"
+    def out_edge(aid, k): return f"{aid}_out" if k == 0 else f"{aid}_out{k}"
+
+    # ── 1) 노드 ──
+    nodes = [f'    <node id="nC" x="0" y="0" type="{cfg.get("center_node_type", "traffic_light")}"/>']
+    for a in arms:
+        x, y = _polar(float(a["length"]), a["angle"])
+        nodes.append(f'    <node id="nE_{a["id"]}" x="{x:.2f}" y="{y:.2f}"/>')
+        for k, r in enumerate(splits[a["id"]]):
+            x, y = _polar(r, a["angle"])
+            nodes.append(f'    <node id="nM_{a["id"]}_{k}" x="{x:.2f}" y="{y:.2f}" type="priority"/>')
+    with open(os.path.join(out_dir, "highway.nod.xml"), "w") as f:
+        f.write("<nodes>\n" + "\n".join(nodes) + "\n</nodes>\n")
+
+    # ── 2) 엣지 ──
+    edges = []
+    entry_edge, exit_edge = {}, {}     # arm id → 바깥쪽 첫 진입 엣지 / 마지막 진출 엣지
+    chain_in, chain_out = {}, {}       # arm id → 진입 엣지들(바깥→안), 진출 엣지들(안→바깥)
+    for a in arms:
+        aid, L, S = a["id"], int(a["lanes"]), arm_speed
+        K = len(splits[aid])
+        # 안쪽부터 노드 나열: nC, nM_0, nM_1, …, nE
+        pts = ["nC"] + [f"nM_{aid}_{k}" for k in range(K)] + [f"nE_{aid}"]
+        ins, outs = [], []
+        for k in range(K + 1):
+            inner, outer = pts[k], pts[k + 1]
+            # priority="3": 중간 노드에서 팔(큰 길)이 슬립로드(priority 1)보다 우선
+            edges.append(f'    <edge id="{in_edge(aid, k)}" from="{outer}" to="{inner}" '
+                         f'numLanes="{L}" speed="{S}" priority="3"/>')
+            edges.append(f'    <edge id="{out_edge(aid, k)}" from="{inner}" to="{outer}" '
+                         f'numLanes="{L}" speed="{S}" priority="3"/>')
+            ins.append(in_edge(aid, k)); outs.append(out_edge(aid, k))
+        chain_in[aid] = ins[::-1]          # 바깥 → 안 순서
+        chain_out[aid] = outs              # 안 → 바깥 순서
+        entry_edge[aid], exit_edge[aid] = ins[-1], outs[-1]
+    # 슬립로드
+    Lr, Sr = int(cfg.get("ring_lanes", 1)), float(cfg.get("ring_speed", 8.33))
+    seg_count = {}
+    for sg in segs:
+        via = list(sg.get("via", []))
+        shp = f' shape="{_fmt_shape(via)}"' if via else ""
+        key = (sg["from"], sg["to"]); seg_count[key] = seg_count.get(key, 0) + 1
+        suffix = "" if seg_count[key] == 1 else f"_{seg_count[key]}"     # 같은 팔 쌍이 두 번이면 _2
+        edges.append(f'    <edge id="RING_{sg["from"]}_{sg["to"]}{suffix}" from="{node_at(sg["from"], sg["from_r"])}" '
+                     f'to="{node_at(sg["to"], sg["to_r"])}" numLanes="{int(sg.get("lanes", Lr))}" '
+                     f'speed="{float(sg.get("speed", Sr))}" priority="1"{shp}/>')
+    with open(os.path.join(out_dir, "highway.edg.xml"), "w") as f:
+        f.write("<edges>\n" + "\n".join(edges) + "\n</edges>\n")
+
+    # ── 3) 연결 파일: 엉뚱한 U턴 제거 ──
+    #   netconvert 는 모든 노드에서 "맨 왼쪽 차선 U턴"을 자동으로 만든다. 교차로 nC 것만 남기고
+    #   팔 끝(nE)·중간 노드(nM)의 U턴은 지운다. (uturn=False 면 nC 것도 지운다)
+    cons = []
+    for a in arms:
+        aid, K = a["id"], len(splits[a["id"]])
+        if not cfg.get("uturn", True):
+            cons.append(f'    <delete from="{in_edge(aid, 0)}" to="{out_edge(aid, 0)}"/>')
+        for k in range(K + 1):
+            # 노드 pts[k+1] (nM_k 또는 nE) 에서: 나가던 차가 되돌아오는 U턴 / 들어오던 차가 되돌아가는 U턴
+            cons.append(f'    <delete from="{out_edge(aid, k)}" to="{in_edge(aid, k)}"/>')
+            if k + 1 <= K:
+                cons.append(f'    <delete from="{in_edge(aid, k + 1)}" to="{out_edge(aid, k + 1)}"/>')
+    with open(os.path.join(out_dir, "highway.con.xml"), "w") as f:
+        f.write("<connections>\n" + "\n".join(cons) + "\n</connections>\n")
+
+    # ── 4) 라우트: ego 경로 r0 + 배경차 flow ──
+    vtypes_block, flow_type = _vtypes_block(traffic)
+    er = cfg["ego_route"]
+    r0_edges = chain_in[er["from"]] + chain_out[er["to"]]
+
+    pairs = [(a, b) for a in arms for b in arms if cfg.get("uturn", True) or a["id"] != b["id"]]
+    uf = float(cfg.get("uturn_flow_factor", 0.15))        # U턴 수요는 직진/회전보다 훨씬 적다
+    def _pw(a, b):
+        w = float(a.get("weight", 1)) * float(b.get("weight", 1))
+        return w * uf if a["id"] == b["id"] else w
+    total_w = sum(_pw(a, b) for a, b in pairs)
+    flows = []
+    for a, b in pairs:
+        w = _pw(a, b) / total_w
+        period = 3600.0 / (float(traffic["vehs_per_hour"]) * w)      # 이 경로에 몇 초마다 1대
+        flows.append(
+            f'    <flow id="f_{a["id"]}_{b["id"]}" type="{flow_type}" '
+            f'from="{entry_edge[a["id"]]}" to="{exit_edge[b["id"]]}" '
+            f'begin="0" end="100000" period="{period:.2f}" '
+            f'departLane="{traffic["depart_lane"]}" departSpeed="{traffic["depart_speed"]}"/>')
+    with open(os.path.join(out_dir, "highway.rou.xml"), "w") as f:
+        f.write(f"""<routes>
+    <vType id="ego_type" accel="{ego['accel']}" decel="{ego['decel']}" maxSpeed="{ego['max_speed']}" color="1,0,0" vClass="passenger" guiShape="passenger/sedan"/>
+{vtypes_block}
+    <route id="r0" edges="{' '.join(r0_edges)}"/>
+{chr(10).join(flows)}
+</routes>
+""")
+
+    # ── 5) GUI: 교차로 중심부가 화면에 들어오게 ──
+    gui_delay = float(SIMULATION.get("gui_delay", 100.0))
+    extent = 2 * max(float(a["length"]) for a in arms)      # 네트워크 전체 폭 (m)
+    view_width = float(SIMULATION.get("gui_view_width", 500.0))
+    zoom = extent / min(view_width, extent) * 100.0
+    with open(os.path.join(out_dir, "highway.gui.xml"), "w") as f:
+        f.write(f"""<viewsettings>
+    <scheme name="real world"/>
+    <viewport zoom="{zoom:.0f}" x="0" y="0" angle="0"/>
+    <delay value="{gui_delay}"/>
+</viewsettings>
+""")
+
+    # ── 6) sumocfg + netconvert ──
+    cfg_path = os.path.join(out_dir, "highway.sumocfg")
+    with open(cfg_path, "w") as f:
+        f.write("""<configuration>
+    <input>
+        <net-file value="highway.net.xml"/>
+        <route-files value="highway.rou.xml"/>
+        <additional-files value="highway.scenery.xml"/>
+    </input>
+    <gui_only>
+        <gui-settings-file value="highway.gui.xml"/>
+    </gui_only>
+</configuration>
+""")
+    netconvert = checkBinary("netconvert")
+    result = subprocess.run(
+        [netconvert,
+         "--node-files", os.path.join(out_dir, "highway.nod.xml"),
+         "--edge-files", os.path.join(out_dir, "highway.edg.xml"),
+         "--connection-files", os.path.join(out_dir, "highway.con.xml"),
+         "-o", os.path.join(out_dir, "highway.net.xml"),
+         "--offset.disable-normalization", "true",   # 좌표를 (0,0) 구석으로 옮기지 말 것
+                                                     # (녹지 poly·GUI 중심이 우리 좌표계 기준이므로)
+         "--junctions.join", "false",     # 가까운 노드끼리 멋대로 합치지 않게
+         "--junctions.corner-detail", "5",  # 교차로 모서리를 둥글게 (보기 좋게)
+         "--tls.default-type", "static"],   # 신호: 고정 주기 (netconvert 가 자동 생성)
+        capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError("netconvert 실패:\n" + result.stderr)
+
+    # ── 7) 장식: 녹지 + 횡단보도 줄무늬 ──
+    #   횡단보도는 SUMO의 보행자 <crossing> 이 아니라 그림(poly)이다.
+    #   (정식 crossing 은 인도 차선이 필요해서 차선 번호가 밀리고 sumo_env 의 차선 로직과 충돌한다.)
+    _write_nohyeong_scenery(out_dir, cfg, arms, splits)
+    return cfg_path
+
+
+def _write_nohyeong_scenery(out_dir, cfg, arms, splits):
+    import sumolib
+    net = sumolib.net.readNet(os.path.join(out_dir, "highway.net.xml"))
+    LANE_W = 3.2
+    cw_w = float(cfg.get("crosswalk_width", 4.0))
+    cw_cfg = cfg.get("crosswalks", {})
+    lines = ["<additional>"]
+    for isl in cfg.get("islands", []):
+        lines.append(f'    <poly id="{isl["id"]}" color="{isl.get("color", "168,196,150")}" fill="1" '
+                     f'layer="-1" shape="{_fmt_shape(isl["pts"])}"/>')
+
+    def stripes(pid, r_center, angle_deg, half_width):
+        """팔 방향 angle 에 수직으로, 중심에서 r_center 떨어진 곳에 폭 cw_w 의 얼룩말 줄무늬."""
+        a = math.radians(angle_deg)
+        ux, uy = math.cos(a), math.sin(a)          # 팔 방향 단위벡터
+        nx, ny = -uy, ux                           # 수직 방향
+        stripe, gap = 0.6, 0.6
+        t, k = -half_width, 0
+        while t + stripe <= half_width + 1e-6:
+            cx, cy = ux * r_center, uy * r_center
+            p0 = (cx + nx * t - ux * cw_w / 2,            cy + ny * t - uy * cw_w / 2)
+            p1 = (cx + nx * (t + stripe) - ux * cw_w / 2, cy + ny * (t + stripe) - uy * cw_w / 2)
+            p2 = (cx + nx * (t + stripe) + ux * cw_w / 2, cy + ny * (t + stripe) + uy * cw_w / 2)
+            p3 = (cx + nx * t + ux * cw_w / 2,            cy + ny * t + uy * cw_w / 2)
+            lines.append(f'    <poly id="{pid}_{k}" color="245,245,245" fill="1" layer="2" '
+                         f'shape="{_fmt_shape([p0, p1, p2, p3])}"/>')
+            t += stripe + gap
+            k += 1
+
+    for a in arms:
+        aid = a["id"]
+        half_w = int(a["lanes"]) * LANE_W + 0.3      # 양방향 전체 폭의 절반 (+여유)
+        mode = cw_cfg.get(aid, "center")
+        if isinstance(mode, (int, float)):
+            r = float(mode)
+        elif mode == "center":
+            x, y = net.getEdge(f"{aid}_in").getShape()[-1]     # 교차로 경계
+            r = math.hypot(x, y) + cw_w / 2 + 0.5
+        else:
+            r = None
+        if r is not None:
+            stripes(f"cw_{aid}", r, a["angle"], half_w)
+        if cfg.get("ring_crosswalks", False):
+            for k, rs in enumerate(splits[aid]):
+                stripes(f"cwr_{aid}_{k}", rs + 7.0, a["angle"], half_w)   # 중간 노드 바로 바깥
+    lines.append("</additional>")
+    with open(os.path.join(out_dir, "highway.scenery.xml"), "w") as f:
         f.write("\n".join(lines) + "\n")

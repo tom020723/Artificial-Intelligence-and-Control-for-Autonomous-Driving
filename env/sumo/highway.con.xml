@@ -1,0 +1,23 @@
+<connections>
+    <delete from="A1_out" to="A1_in"/>
+    <delete from="A1_in1" to="A1_out1"/>
+    <delete from="A1_out1" to="A1_in1"/>
+    <delete from="A1_in2" to="A1_out2"/>
+    <delete from="A1_out2" to="A1_in2"/>
+    <delete from="A2_out" to="A2_in"/>
+    <delete from="A2_in1" to="A2_out1"/>
+    <delete from="A2_out1" to="A2_in1"/>
+    <delete from="A2_in2" to="A2_out2"/>
+    <delete from="A2_out2" to="A2_in2"/>
+    <delete from="A3_out" to="A3_in"/>
+    <delete from="A3_in1" to="A3_out1"/>
+    <delete from="A3_out1" to="A3_in1"/>
+    <delete from="A4_out" to="A4_in"/>
+    <delete from="A4_in1" to="A4_out1"/>
+    <delete from="A4_out1" to="A4_in1"/>
+    <delete from="A4_in2" to="A4_out2"/>
+    <delete from="A4_out2" to="A4_in2"/>
+    <delete from="A5_out" to="A5_in"/>
+    <delete from="A5_in1" to="A5_out1"/>
+    <delete from="A5_out1" to="A5_in1"/>
+</connections>
