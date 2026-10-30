@@ -1,4 +1,16 @@
 <nodes>
-    <node id="n0" x="0" y="0"/>
-    <node id="n1" x="12000" y="0"/>
+    <node id="nC" x="0" y="0" type="traffic_light"/>
+    <node id="nE_A1" x="-274.29" y="-164.81"/>
+    <node id="nM_A1_0" x="-59.14" y="-35.54" type="priority"/>
+    <node id="nM_A1_1" x="-76.29" y="-45.84" type="priority"/>
+    <node id="nE_A2" x="277.13" y="160.00"/>
+    <node id="nM_A2_0" x="39.84" y="23.00" type="priority"/>
+    <node id="nM_A2_1" x="65.82" y="38.00" type="priority"/>
+    <node id="nE_A3" x="88.20" y="-307.60"/>
+    <node id="nM_A3_0" x="21.22" y="-74.02" type="priority"/>
+    <node id="nE_A4" x="-190.15" y="177.32"/>
+    <node id="nM_A4_0" x="-43.88" y="40.92" type="priority"/>
+    <node id="nM_A4_1" x="-52.66" y="49.10" type="priority"/>
+    <node id="nE_A5" x="317.61" y="39.00"/>
+    <node id="nM_A5_0" x="89.33" y="10.97" type="priority"/>
 </nodes>
