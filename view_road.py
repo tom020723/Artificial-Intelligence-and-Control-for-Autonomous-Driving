@@ -50,7 +50,10 @@ def print_summary():
     print(f"  차선 수        : {ROAD['num_lanes']}")
     print(f"  제한속도       : {ROAD['speed_limit']} m/s "
           f"(≈ {float(ROAD['speed_limit']) * 3.6:.0f} km/h)")
-    print(f"  배경 교통량    : {TRAFFIC['vehs_per_hour']} 대/시간")
+    right_vph = (sum(TRAFFIC.get("right_turn_vehs_per_hour", {}).values())
+                 if ROAD.get("type") == "nohyeong" else 0)
+    print(f"  배경 교통량    : {TRAFFIC['vehs_per_hour'] + right_vph} 대/시간 "
+          f"(기본 {TRAFFIC['vehs_per_hour']} + 우회전 추가 {right_vph})")
     print(f"  배경차 최고속도: {TRAFFIC['max_speed']} m/s")
     print(f"  ego 가속/감속  : +{EGO['accel']} / -{EGO['decel']} m/s²")
     print("─" * 46)

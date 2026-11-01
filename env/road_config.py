@@ -52,9 +52,43 @@ ROAD = {
 #   · 녹지: 위성사진 격자에서 읽은 윤곽 (순수 시각 요소).
 # ──────────────────────────────────────────────────────────────
 NOHYEONG = {
+    # Simulation plan: one approach at a time, straight and left together.
+    # Central traffic follows this plan; slip-road traffic yields independently.
+    "signal_plan": {
+        "order": ["A1", "A2", "A3", "A4", "A5"],
+        "green_seconds": {"A1": 20, "A2": 20, "A3": 20, "A4": 20, "A5": 20},
+        "yellow_seconds": 3,
+        "all_red_seconds": 2,
+    },
     "center_node_type": "traffic_light",   # "traffic_light" | "priority"(신호 없음, 우선순위만)
     "uturn": True,             # 교차로에서 U턴 연결 생성 여부
+    "uturn_target_lane": 0,    # 반대편 바깥쪽 차선으로 크게 회전 (SUMO: 오른쪽=0)
+    "uturn_speed": 3.0,        # U턴 연결 구간 제한속도 (m/s, 약 11 km/h)
     "uturn_flow_factor": 0.15, # U턴 배경차 수요 = 같은 비중의 직진 수요 × 이 값
+    # SUMO lane index 0 = rightmost; A1 road lane 1 = index 3.
+    # Each tuple is (destination arm, destination lane index).
+    "central_lane_movements": {
+        "A1": {0: [("A2", 0)], 1: [("A2", 1)], 2: [("A2", 2)],
+               3: [("A1", 0), ("A4", 1)]},
+        "A2": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A1", 2)],
+               3: [("A3", 3)]},
+        "A3": {0: [("A5", 0)], 1: [("A2", 0)],
+               2: [("A4", 0), ("A2", 1)], 3: [("A4", 1)],
+               4: [("A1", 3)]},
+        "A4": {0: [("A3", 0)], 1: [("A5", 0), ("A3", 1)],
+               2: [("A2", 3), ("A5", 1)]},
+        "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
+    },
+    "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0}},
+    # Segment indices run from the central junction outward.
+    "inbound_lanes": {"A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
+    "inbound_lane_links": {"A2": {
+        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
+        1: [(1, 0), (2, 1), (3, 2), (4, 3)],
+    }, "A3": {
+        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
+        1: [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)],
+    }},
     "crosswalk_width": 4.0,    # 횡단보도 폭 (m)
 
     # 다섯 팔. angle=방향(°), lanes=편도 차선 수, length=교차로 중심에서 바깥 끝까지 (m), weight=배경 교통량 비중
@@ -62,7 +96,7 @@ NOHYEONG = {
         {"id": "A1", "name": "Nohyeong-ro (SW)", "angle": 211, "lanes": 4, "length": 320, "weight": 4},
         {"id": "A2", "name": "Nohyeong-ro (NE)", "angle": 30,  "lanes": 4, "length": 320, "weight": 4},
         {"id": "A3", "name": "1100-ro (S)",      "angle": 286, "lanes": 4, "length": 320, "weight": 4},
-        {"id": "A4", "name": "Wollang-ro (NW)",  "angle": 137, "lanes": 2, "length": 260, "weight": 1},
+        {"id": "A4", "name": "Wollang-ro (NW)",  "angle": 137, "lanes": 3, "length": 260, "weight": 1},
         {"id": "A5", "name": "Noyeon-ro (E)",    "angle": 7,   "lanes": 3, "length": 320, "weight": 2},
     ],
 
@@ -72,6 +106,12 @@ NOHYEONG = {
     #   · 바깥 2개: 북·서쪽 녹지 바깥을 도는 주차장 길 (1차선). 남쪽 슬립로드들과 이어져 바깥 고리가 닫힌다.
     "ring_lanes": 2,
     "ring_speed": 8.33,        # m/s ≈ 30 km/h
+    # Simulation spacing adjustment, not satellite measurements. Move nearby
+    # split/merge nodes apart; connected slip-road shapes follow these offsets.
+    "split_radius_overrides": {
+        "A2": {46: 65, 76: 100},
+        "A4": {60: 65, 72: 105},
+    },
     "ring_segments": [
         {"from": "A2", "from_r": 46, "to": "A4", "to_r": 60,
          "via": [(22, 27), (5, 24), (-12, 24), (-28, 28), (-40, 36)]},                 # 북쪽 녹지 안쪽
@@ -90,16 +130,21 @@ NOHYEONG = {
          "via": [(-66, 46), (-80, 36), (-90, 18), (-93, -2), (-90, -22), (-84, -38)]},      # 서쪽 녹지 바깥
     ],
 
-    # 횡단보도(그림) 위치: 중심에서의 거리(m). 위성사진의 얼룩말 무늬 위치.
-    "crosswalks": {"A1": 43, "A2": 45, "A3": 24, "A4": 38, "A5": 48},
-    "ring_crosswalks": True,   # 슬립로드가 팔과 만나는 지점 바깥쪽에도 횡단보도
+    # Visual crossings anchored to actual road lanes, not island coordinates.
+    # center: at the central junction mouth; behind_block: outside last split.
+    "crosswalks": {"A1": "center", "A2": {"segment": 1}, "A3": "center",
+                   "A4": "center", "A5": {"segment": 0}},
+    # Move the physical red-light waiting position upstream of the zebra.
+    "stop_offsets": {"A1": 8.0, "A3": 8.0, "A4": 8.0},
+    "crosswalk_block_offset": 6.0,  # last split boundary -> crossing edge (m)
+    "ring_crosswalks": False,  # avoid duplicated stripes at every split node
 
     # ego 기본 경로 (sumo_env.py 가 쓰는 route "r0"). 같은 팔이면 U턴.
-    "ego_route": {"from": "A1", "to": "A3"},
+    "ego_route": {"from": "A1", "to": "A2"},
 
     # 녹지 윤곽 (위성사진 격자에서 읽음, m, 중심 (0,0))
     "islands": [
-        {"id": "green_N",  "pts": [(-30, 33), (-29, 46), (-22, 58), (-10, 68), (5, 71), (18, 66), (27, 56), (31, 44), (27, 34), (10, 29), (-10, 29), (-24, 30)]},
+        {"id": "green_N",  "pts": [(-19.5, 38.95), (-18.85, 47.4), (-14.3, 55.2), (-6.5, 61.7), (3.25, 63.65), (11.7, 60.4), (17.55, 53.9), (20.15, 46.1), (17.55, 39.6), (6.5, 36.35), (-6.5, 36.35), (-15.6, 37)]},
         {"id": "green_W",  "pts": [(-80, 22), (-66, 34), (-54, 36), (-48, 28), (-48, 10), (-50, -6), (-58, -20), (-70, -20), (-80, -8), (-84, 8)]},
         {"id": "green_S",  "pts": [(-55, -45), (-40, -36), (-18, -30), (-8, -38), (2, -55), (5, -70), (-10, -78), (-30, -77), (-48, -66), (-56, -55)]},
         {"id": "green_SE", "pts": [(18, -25), (30, -10), (45, -3), (62, -5), (76, -18), (80, -35), (72, -52), (55, -60), (35, -58), (22, -48)]},
@@ -141,6 +186,16 @@ EGO = {
 #    상황이 자연스럽게 만들어지도록 했다.
 # ──────────────────────────────────────────────────────────────
 TRAFFIC = {
+    # Additional right-turn demand using the first (inner) slip road per arm.
+    # Vehicles/hour; set an approach to 0 to disable its additional flow.
+    # This is added to vehs_per_hour (central traffic in sequential mode).
+    "right_turn_vehs_per_hour": {"A1": 120, "A2": 120, "A3": 120, "A4": 120, "A5": 120},
+    "right_turn_only_lane": True,  # 우회전 분기 직전 lane 0은 연결로 전용
+    "right_turn_path_count": {"A2": 2},  # split A2's right-turn demand across both exits
+    "startup_spread_seconds": 60,  # 중앙 경로의 첫 출발을 60초에 걸쳐 분산
+    "prepare_departure_lanes": True,  # 중앙 회전 연결에 맞춰 출발 차선 배정
+    "lc_speed_gain": 0.0,  # 속도 이득만을 위한 잦은 차선 변경 억제
+    "lc_keep_right": 0.0,  # 우회전 전용 차선으로 돌아오는 경향 억제
     # ══════════════════════════════════════════════════════
     # ★ 추월 학습 시나리오 ★
     #
@@ -159,7 +214,7 @@ TRAFFIC = {
     "vehs_per_hour": 800,    # 시간당 투입 대수. 1500→1200 완화:
                               #   전체가 꽉 막힌 느낌을 줄이고
                               #   차선 사이 속도차/틈이 살아나게 한다
-    "depart_lane": "random",
+    "depart_lane": "best",  # 경로에 맞는 출발 차선 선택: 우회전 전용 차선의 직진차 감소
     # 배경차 차선변경 허용 여부 (컨트롤러별 "keep_lane" 이 없을 때의 기본값).
     #   직선 추월 예제에서는 True(차선 유지)였지만, 교차로에서는 좌/우회전 차선으로
     #   옮겨가야 하므로 False. (True 로 두면 엉뚱한 차선에서 멈춰 서서 정체가 생긴다)
