@@ -1,13 +1,51 @@
+<?xml version='1.0' encoding='utf-8'?>
 <routes>
-    <vType id="ego_type" accel="5.4" decel="5.4" maxSpeed="33.33" color="1,0,0" vClass="passenger" guiShape="passenger/sedan"/>
+    <vType id="ego_type" accel="5.4" decel="5.4" maxSpeed="33.33" color="1,0,0" vClass="passenger" guiShape="passenger/sedan" />
     <vTypeDistribution id="carDist">
-        <vType id="car_krauss" probability="0.3500" carFollowModel="Krauss" accel="2.0" decel="4.5" tau="1.0" minGap="2.5" maxSpeed="14.0" speedDev="0.15" color="1,1,0" vClass="passenger" guiShape="passenger/sedan" sigma="0.3" lcStrategic="0" lcCooperative="0" lcSpeedGain="0" lcKeepRight="0"/>
-        <vType id="car_idm" probability="0.3000" carFollowModel="IDM" accel="1.8" decel="3.5" tau="1.2" minGap="2.0" maxSpeed="16.0" speedDev="0.1" color="0,1,1" vClass="passenger" guiShape="passenger/sedan" lcStrategic="0" lcCooperative="0" lcSpeedGain="0" lcKeepRight="0"/>
-        <vType id="car_eidm" probability="0.2000" carFollowModel="EIDM" accel="2.0" decel="4.0" tau="1.1" minGap="2.0" maxSpeed="16.5" speedDev="0.1" color="1,0.6,0" vClass="passenger" guiShape="passenger/sedan" lcStrategic="0" lcCooperative="0" lcSpeedGain="0" lcKeepRight="0"/>
-        <vType id="car_acc" probability="0.1500" carFollowModel="ACC" accel="2.0" decel="4.0" tau="1.5" minGap="2.0" maxSpeed="19.0" speedDev="0.05" color="1,0,1" vClass="passenger" guiShape="passenger/sedan" lcStrategic="0" lcCooperative="0" lcSpeedGain="0" lcKeepRight="0"/>
+        <vType id="car_krauss" probability="0.3500" carFollowModel="Krauss" accel="2.0" decel="4.5" tau="1.0" minGap="2.5" maxSpeed="14.0" speedDev="0.15" color="1,1,0" vClass="passenger" guiShape="passenger/sedan" sigma="0.3" lcSpeedGain="0.0" lcKeepRight="0.0" />
+        <vType id="car_idm" probability="0.3000" carFollowModel="IDM" accel="1.8" decel="3.5" tau="1.2" minGap="2.0" maxSpeed="16.0" speedDev="0.1" color="0,1,1" vClass="passenger" guiShape="passenger/sedan" lcSpeedGain="0.0" lcKeepRight="0.0" />
+        <vType id="car_eidm" probability="0.2000" carFollowModel="EIDM" accel="2.0" decel="4.0" tau="1.1" minGap="2.0" maxSpeed="16.5" speedDev="0.1" color="1,0.6,0" vClass="passenger" guiShape="passenger/sedan" lcSpeedGain="0.0" lcKeepRight="0.0" />
+        <vType id="car_acc" probability="0.1500" carFollowModel="ACC" accel="2.0" decel="4.0" tau="1.5" minGap="2.0" maxSpeed="19.0" speedDev="0.05" color="1,0,1" vClass="passenger" guiShape="passenger/sedan" lcSpeedGain="0.0" lcKeepRight="0.0" />
     </vTypeDistribution>
-    <route id="r0" edges="e0"/>
-    <flow id="traffic" type="carDist" route="r0" begin="0" end="100000"
-          period="3.00"
-          departLane="random" departSpeed="8.0"/>
+    <route id="r0" edges="A1_in2 A1_in1 A1_in A2_out A2_out1 A2_out2" />
+    <route id="r_A1_A1" edges="A1_in2 A1_in1 A1_in A1_out A1_out1 A1_out2" />
+    <route id="r_A1_A2" edges="A1_in2 A1_in1 A1_in A2_out A2_out1 A2_out2" />
+    <route id="r_A1_A4" edges="A1_in2 A1_in1 A1_in A4_out A4_out1 A4_out2" />
+    <route id="r_A2_A1" edges="A2_in2 A2_in1 A2_in A1_out A1_out1 A1_out2" />
+    <route id="r_A2_A3" edges="A2_in2 A2_in1 A2_in A3_out A3_out1 A3_out2" />
+    <route id="r_A3_A1" edges="A3_in2 A3_in1 A3_in A1_out A1_out1 A1_out2" />
+    <route id="r_A3_A2" edges="A3_in2 A3_in1 A3_in A2_out A2_out1 A2_out2" />
+    <route id="r_A3_A3" edges="A3_in2 A3_in1 A3_out1 A3_out2" />
+    <route id="r_A3_A4" edges="A3_in2 A3_in1 A3_in A4_out A4_out1 A4_out2" />
+    <route id="r_A3_A5" edges="A3_in2 A3_in1 A3_in A5_out A5_out1" />
+    <route id="r_A4_A2" edges="A4_in2 A4_in1 A4_in A2_out A2_out1 A2_out2" />
+    <route id="r_A4_A3" edges="A4_in2 A4_in1 A4_in A3_out A3_out1 A3_out2" />
+    <route id="r_A4_A5" edges="A4_in2 A4_in1 A4_in A5_out A5_out1" />
+    <route id="r_A5_A1" edges="A5_in1 A5_in A1_out A1_out1 A1_out2" />
+    <route id="r_A5_A3" edges="A5_in1 A5_in A3_out A3_out1 A3_out2" />
+    <flow id="f_A1_A1" type="carDist" route="r_A1_A1" begin="0" end="100000" period="237.75" departLane="3" departSpeed="8.0" />
+    <flow id="lf_RING_A2_A4" type="carDist" from="A2_in2" to="A4_out2" via="RING_A2_A4" begin="0" end="100000" period="60.00" departLane="best" departSpeed="8.0" />
+    <flow id="lf_RING_A4_A1" type="carDist" from="A4_in2" to="A1_out2" via="RING_A4_A1" begin="0" end="100000" period="90.00" departLane="best" departSpeed="8.0" />
+    <flow id="lf_RING_A1_A3" type="carDist" from="A1_in2" to="A3_out2" via="RING_A1_A3" begin="0" end="100000" period="45.00" departLane="best" departSpeed="8.0" />
+    <flow id="lf_RING_A3_A5" type="carDist" from="A3_in2" to="A5_out1" via="RING_A3_A5" begin="0" end="100000" period="45.00" departLane="best" departSpeed="8.0" />
+    <flow id="lf_RING_A5_A2" type="carDist" from="A5_in1" to="A2_out2" via="RING_A5_A2" begin="0" end="100000" period="60.00" departLane="best" departSpeed="8.0" />
+    <flow id="lf_OUTER_N" type="carDist" from="A2_in2" to="A4_out2" via="OUTER_N" begin="0" end="100000" period="60.00" departLane="best" departSpeed="8.0" />
+    <flow id="lf_OUTER_W" type="carDist" from="A4_in2" to="A1_out2" via="OUTER_W" begin="0" end="100000" period="90.00" departLane="best" departSpeed="8.0" />
+    <flow id="lr_0_A2_A1" type="carDist" from="A2_in2" to="A1_out2" via="OUTER_N OUTER_W" begin="0" end="100000" period="90.00" departLane="best" departSpeed="8.0" />
+    <flow id="lr_1_A2_A3" type="carDist" from="A2_in2" to="A3_out2" via="OUTER_N OUTER_W RING_A1_A3" begin="0" end="100000" period="120.00" departLane="best" departSpeed="8.0" />
+    <flow id="lr_2_A1_A5" type="carDist" from="A1_in2" to="A5_out1" via="RING_A1_A3 RING_A3_A5" begin="0" end="100000" period="90.00" departLane="best" departSpeed="8.0" />
+    <flow id="f_A1_A2" type="carDist" route="r_A1_A2" begin="4" end="100000" period="35.66" departLane="1" departSpeed="8.0" />
+    <flow id="f_A1_A4" type="carDist" route="r_A1_A4" begin="8" end="100000" period="142.65" departLane="3" departSpeed="8.0" />
+    <flow id="f_A2_A1" type="carDist" route="r_A2_A1" begin="12" end="100000" period="35.66" departLane="0" departSpeed="8.0" />
+    <flow id="f_A2_A3" type="carDist" route="r_A2_A3" begin="16" end="100000" period="35.66" departLane="3" departSpeed="8.0" />
+    <flow id="f_A3_A1" type="carDist" route="r_A3_A1" begin="20" end="100000" period="35.66" departLane="3" departSpeed="8.0" />
+    <flow id="f_A3_A2" type="carDist" route="r_A3_A2" begin="24" end="100000" period="35.66" departLane="0" departSpeed="8.0" />
+    <flow id="f_A3_A3" type="carDist" route="r_A3_A3" begin="28" end="100000" period="237.75" departLane="3" departSpeed="8.0" />
+    <flow id="f_A3_A4" type="carDist" route="r_A3_A4" begin="32" end="100000" period="142.65" departLane="1" departSpeed="8.0" />
+    <flow id="f_A3_A5" type="carDist" route="r_A3_A5" begin="36" end="100000" period="71.33" departLane="0" departSpeed="8.0" />
+    <flow id="f_A4_A2" type="carDist" route="r_A4_A2" begin="40" end="100000" period="142.65" departLane="2" departSpeed="8.0" />
+    <flow id="f_A4_A3" type="carDist" route="r_A4_A3" begin="44" end="100000" period="142.65" departLane="1" departSpeed="8.0" />
+    <flow id="f_A4_A5" type="carDist" route="r_A4_A5" begin="48" end="100000" period="285.30" departLane="1" departSpeed="8.0" />
+    <flow id="f_A5_A1" type="carDist" route="r_A5_A1" begin="52" end="100000" period="71.33" departLane="1" departSpeed="8.0" />
+    <flow id="f_A5_A3" type="carDist" route="r_A5_A3" begin="56" end="100000" period="71.33" departLane="2" departSpeed="8.0" />
 </routes>

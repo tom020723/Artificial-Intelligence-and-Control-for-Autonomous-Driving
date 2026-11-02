@@ -15,12 +15,183 @@ road_builder.py가 SUMO 도로 파일(.net.xml 등)을 자동으로 다시 만�
 #    (교차로, 합류부 등 복잡한 도로는 road_builder.py를 확장해야 함)
 # ──────────────────────────────────────────────────────────────
 ROAD = {
-    "length": 12000,       # 도로 전체 길이 (m). 이 끝까지 가면 "완주".
-                           # 스텝당 0.5초 × 평균 24 m/s 기준 약 1000스텝 분량.
-                           # (최고속도 33.3 m/s로 내내 달리면 약 720스텝에 완주)
-    "num_lanes": 3,        # 차선 수. 관측의 차선 정규화에도 쓰임
-    "speed_limit": 33.33,  # 도로 제한속도 (m/s). ego의 이론상 최고속도이자
-                           # 관측/보상에서 속도를 정규화하는 기준(vmax)
+    # ── 도로 종류 ──
+    #   "straight" : 교수님 기본 예제(직선 편도 고속도로). 아래 length/num_lanes 사용.
+    #   "nohyeong" : 제주 노형오거리 (5지 신호교차로). 형상은 아래 NOHYEONG 에서 정의.
+    "type": "nohyeong",
+
+    # 아래 세 값은 sumo_env.py / view_road.py 가 공통으로 참조하므로 유지한다.
+    # nohyeong 일 때의 의미:
+    #   length      : ego 기본 경로(NOHYEONG["ego_route"])의 대략적 길이 (m)
+    #   num_lanes   : 관측 정규화에 쓰는 "기준 차선 수" (= 가장 넓은 도로의 한 방향 차선 수)
+    #   speed_limit : 다섯 도로(A1~A5)의 제한속도 (m/s). 13.89 m/s ≈ 50 km/h (제주 시내)
+    "length": 600,
+    "num_lanes": 4,
+    "speed_limit": 13.89,
+}
+
+# ──────────────────────────────────────────────────────────────
+# 1-A) 노형오거리 형상 — 네이버 위성사진 실측 (축척 막대 30 m 기준, 1 px = 0.161 m)
+#
+#   좌표계: 교차로 중심(지도의 '노형오거리' 핀)이 (0, 0), 단위 m. 각도는 수학 기준(동쪽 0°, 반시계 +).
+#
+#   ── 용어 정리 (이 파일과 road_builder.py 공통) ──
+#   · 도로 A1~A5    : 교차로에 모이는 큰 길 5개. 코드에서는 "arms" 라는 이름으로 묶여 있다.
+#   · 들어오는/나가는 방향 : 같은 도로라도 교차로 쪽으로 오는 차선(_in)과 교차로에서 멀어지는 차선(_out)이 따로 있다.
+#   · 우회전 전용 길 : 교차로 신호를 거치지 않고 옆 도로로 바로 빠지는 짧은 일방통행 길.
+#   · 주차장 길      : 북쪽·서쪽 녹지 바깥을 도는 일방통행 길.
+#   · 원형도로       : 우회전 전용 길 + 주차장 길을 합쳐 부르는 말. 이어 붙이면 교차로를 한 바퀴 두른다.
+#                      코드에서는 "ring_segments" 라는 이름으로 묶여 있다.
+#   · 갈림점         : 원형도로가 큰 도로에서 갈라지거나 큰 도로로 합류하는 지점.
+#   · 노드 / 엣지    : SUMO 용어. 노드 = 길이 만나는 점(교차로·갈림점·도로 끝), 엣지 = 두 노드 사이의 한 방향 도로 구간.
+#
+#                 A4 월랑로 (북서, 137°)          A2 노형로 (북동, 30°)
+#                        \        [green_N]        /
+#            [green_W]    \                      /   [삼각 섬]
+#   A1 노형로 (남서, 211°) ───────  nC (신호교차로)  ────── A5 노연로 (동, 7°)
+#                              /          \        [green_SE]
+#                     [green_S]            \
+#                                    A3 1100로 (남, 286°)
+#
+#   · 가운데 nC 는 신호등 교차로 하나. 다섯 도로가 모두 여기서 만난다.
+#   · U턴: 각 도로의 맨 왼쪽 차선에서 교차로를 통해 같은 도로로 되돌아갈 수 있다.
+#   · 원형도로 7개 (모두 일방통행, 시계 반대 방향으로 돈다):
+#     - 우회전 전용 길 5개(2차선): 북·서쪽은 녹지 안쪽, 남·동남쪽은 녹지 바깥을 지난다.
+#     - 주차장 길 2개(2차선): 북·서쪽 녹지 바깥을 돈다. 남쪽 우회전 전용 길과 이어져 바깥쪽 원이 닫힌다.
+#   · 횡단보도: 그림(poly). 주행과 무관.
+#   · 녹지: 위성사진 격자에서 읽은 윤곽 (순수 시각 요소).
+# ──────────────────────────────────────────────────────────────
+NOHYEONG = {
+    # Simulation plan: one approach at a time, straight and left together.
+    # Central traffic follows this plan; slip-road traffic yields independently.
+    "signal_plan": {
+        "order": ["A1", "A2", "A3", "A4", "A5"],
+        "green_seconds": {"A1": 20, "A2": 20, "A3": 20, "A4": 20, "A5": 20},
+        "yellow_seconds": 3,
+        "all_red_seconds": 2,
+    },
+    "center_node_type": "traffic_light",   # "traffic_light" | "priority"(신호 없음, 우선순위만)
+    "uturn": True,             # 교차로에서 U턴 연결 생성 여부
+    "uturn_target_lane": 0,    # 반대편 바깥쪽 차선으로 크게 회전 (SUMO: 오른쪽=0)
+    "uturn_speed": 3.0,        # U턴 연결 구간 제한속도 (m/s, 약 11 km/h)
+    "uturn_flow_factor": 0.15, # U턴 배경차 수요 = 같은 비중의 직진 수요 × 이 값
+    # SUMO lane index 0 = rightmost; A1 road lane 1 = index 3.
+    # Each tuple is (destination arm, destination lane index).
+    "central_lane_movements": {
+        "A1": {0: [("A2", 0)], 1: [("A2", 1)], 2: [("A2", 2)],
+               3: [("A1", 0), ("A4", 1)]},
+        "A2": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A1", 2)],
+               3: [("A3", 3)]},
+        "A3": {0: [("A5", 0)], 1: [("A2", 0)],
+               2: [("A4", 0), ("A2", 1)], 3: [("A4", 1)],
+               4: [("A1", 3)]},
+        "A4": {0: [("A3", 0)], 1: [("A5", 0), ("A3", 1)],
+               2: [("A2", 3), ("A5", 1)]},
+        "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
+    },
+    "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0}},
+    # Segment indices run from the central junction outward.
+    "inbound_lanes": {"A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
+    "inbound_lane_links": {"A2": {
+        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
+        1: [(1, 0), (2, 1), (3, 2), (4, 3)],
+    }, "A3": {
+        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
+        1: [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)],
+    }},
+    "crosswalk_width": 4.0,    # 횡단보도 폭 (m)
+
+    # 다섯 도로 (A1~A5)
+    #   angle  = 교차로 중심에서 본 도로 방향(°)
+    #   lanes  = 한 방향 차선 수
+    #   length = 교차로 중심에서 도로 바깥 끝까지 거리 (m)
+    #   weight = 배경 차량이 이 도로로 드나드는 비중 (클수록 차가 많음)
+    "arms": [
+        {"id": "A1", "name": "Nohyeong-ro (SW)", "angle": 211, "lanes": 4, "length": 320, "weight": 4},
+        {"id": "A2", "name": "Nohyeong-ro (NE)", "angle": 30,  "lanes": 4, "length": 320, "weight": 4},
+        {"id": "A3", "name": "1100-ro (S)",      "angle": 286, "lanes": 4, "length": 320, "weight": 4},
+        {"id": "A4", "name": "Wollang-ro (NW)",  "angle": 137, "lanes": 3, "length": 260, "weight": 1},
+        {"id": "A5", "name": "Noyeon-ro (E)",    "angle": 7,   "lanes": 3, "length": 320, "weight": 2},
+    ],
+
+    # 원형도로 7개 (우회전 전용 길 5개 + 주차장 길 2개, 모두 일방통행)
+    #   하나의 원형도로 = from 도로에서 갈라져 → via 좌표들을 지나 → to 도로에 합류하는 길.
+    #   from_r / to_r = 갈림점이 교차로 중심에서 얼마나 떨어져 있는지 (m)
+    #                   (같은 도로에 같은 거리가 두 번 나오면 그 갈림점을 함께 쓴다)
+    #   via   = 길이 지나가는 좌표들 (m). 위성사진에서 읽은 값.
+    #   id    = 이 길의 이름. SUMO 안에서도 이 이름으로 불리고, 아래 loop_routes 에서도 이 이름을 쓴다.
+    #   vph   = 이 길 하나만 지나가도록 따로 보내는 일반 차량 수 (시간당). 0 이면 따로 안 보냄.
+    #   lanes / speed 를 적으면 아래 기본값 대신 그 값을 쓴다.
+    "ring_lanes": 2,           # 원형도로 기본 차선 수
+    "ring_speed": 8.33,        # 원형도로 기본 제한속도 (m/s ≈ 30 km/h)
+    # Simulation spacing adjustment, not satellite measurements. Move nearby
+    # split/merge nodes apart; connected slip-road shapes follow these offsets.
+    "split_radius_overrides": {
+        "A2": {46: 65, 76: 100},
+        "A4": {60: 65, 72: 105},
+    },
+    "ring_segments": [
+        # ── 우회전 전용 길 (2차선) ──
+        {"id": "RING_A2_A4", "from": "A2", "from_r": 46, "to": "A4", "to_r": 60, "vph": 60,
+         "via": [(22, 27), (5, 24), (-12, 24), (-28, 28), (-40, 36)]},                 # 북쪽 녹지 안쪽
+        {"id": "RING_A4_A1", "from": "A4", "from_r": 60, "to": "A1", "to_r": 69, "vph": 40,
+         "via": [(-44, 24), (-44, 4), (-47, -14), (-54, -27)]},                        # 서쪽 녹지 안쪽
+        {"id": "RING_A1_A3", "from": "A1", "from_r": 89, "to": "A3", "to_r": 77, "vph": 80,
+         "via": [(-70, -56), (-58, -68), (-42, -78), (-22, -84), (-3, -84), (12, -80)]}, # 남쪽 녹지 바깥 (아래쪽 원형도로)
+        {"id": "RING_A3_A5", "from": "A3", "from_r": 77, "to": "A5", "to_r": 90, "vph": 80,
+         "via": [(40, -75), (58, -68), (73, -57), (83, -43), (89, -27), (91, -8)]},    # 동남 녹지 바깥 (아래쪽 원형도로)
+        {"id": "RING_A5_A2", "from": "A5", "from_r": 90, "to": "A2", "to_r": 76, "vph": 60,
+         "via": [(83, 21), (76, 29), (70, 35)]},                                        # 삼각 섬 바깥
+        # ── 주차장 길 (위쪽 원형도로, 2차선) ──
+        {"id": "OUTER_N", "from": "A2", "from_r": 76, "to": "A4", "to_r": 72, "lanes": 2, "vph": 60,
+         "via": [(52, 56), (38, 68), (20, 78), (0, 83), (-20, 82), (-36, 74), (-47, 62)]},   # 북쪽 녹지 바깥
+        {"id": "OUTER_W", "from": "A4", "from_r": 72, "to": "A1", "to_r": 89, "lanes": 2, "vph": 40,
+         "via": [(-66, 46), (-80, 36), (-90, 18), (-93, -2), (-90, -22), (-84, -38)]},      # 서쪽 녹지 바깥
+    ],
+
+    # 원형도로를 여러 개 이어서 지나가는 일반 차량 (출발 도로 → 지나갈 원형도로들 → 도착 도로)
+    #   일반 차량은 보통 "가장 빠른 길"로만 다녀서, 돌아가는 길인 원형도로는 잘 안 탄다.
+    #   그래서 원형도로에도 차가 다니도록 이렇게 직접 지정한다.
+    #   via 에는 위 원형도로의 id 를 지나갈 순서대로 적는다. vph = 시간당 대수.
+    "loop_routes": [
+        {"from": "A2", "to": "A1", "via": ["OUTER_N", "OUTER_W"], "vph": 40},                 # 위쪽 원형도로 전체
+        {"from": "A2", "to": "A3", "via": ["OUTER_N", "OUTER_W", "RING_A1_A3"], "vph": 30},   # 위쪽 → 아래쪽
+        {"from": "A1", "to": "A5", "via": ["RING_A1_A3", "RING_A3_A5"], "vph": 40},           # 아래쪽 원형도로 전체
+    ],
+
+    # Visual crossings anchored to actual road lanes, not island coordinates.
+    # center: at the central junction mouth; behind_block: outside last split.
+    "crosswalks": {"A1": "center", "A2": {"segment": 1}, "A3": "center",
+                   "A4": "center", "A5": {"segment": 0}},
+    # Move the physical red-light waiting position upstream of the zebra.
+    "stop_offsets": {"A1": 8.0, "A3": 8.0, "A4": 8.0},
+    "crosswalk_block_offset": 6.0,  # last split boundary -> crossing edge (m)
+    "ring_crosswalks": False,  # avoid duplicated stripes at every split node
+
+    # ego 기본 경로 (sumo_env.py 가 쓰는 route "r0"). 같은 팔이면 U턴.
+    "ego_route": {"from": "A1", "to": "A2"},
+
+    # ego 경로 랜덤 선택 (에피소드마다 새로 뽑음)
+    #   random    : True 면 매 에피소드 출발·도착 도로를 무작위로 뽑는다. False 면 위 ego_route 고정.
+    #   ring_prob : 원형도로를 일부러 거쳐 가는 경로를 뽑을 확률. 나머지(1 - ring_prob)는 가장 빠른 경로.
+    #               0 이면 원형도로로 일부러 보내지 않는다. 1 이면 항상 원형도로를 거친다.
+    #               (가장 빠른 경로라도 우회전이면 실제 도로처럼 우회전 전용 길을 탄다)
+    #   uturn     : True 면 "출발 도로 = 도착 도로"(교차로 U턴) 경로도 후보에 넣는다.
+    "ego_routes": {"random": True, "ring_prob": 0.3, "uturn": True},
+
+    # 에피소드 시작 전에 배경 차량만 먼저 돌려 두는 시간 (초).
+    #   교차로는 직선 도로처럼 차를 미리 줄 세워 둘 수 없어서(아래 TRAFFIC["prefill"] 은 직선 도로 전용),
+    #   이 시간 동안 다섯 방향에서 차가 들어와 교차로가 자연스럽게 채워진 뒤 ego 를 투입한다.
+    "warmup_seconds": 90,
+
+    # 녹지 윤곽 (위성사진 격자에서 읽음, m, 중심 (0,0))
+    "islands": [
+        {"id": "green_N",  "pts": [(-19.5, 38.95), (-18.85, 47.4), (-14.3, 55.2), (-6.5, 61.7), (3.25, 63.65), (11.7, 60.4), (17.55, 53.9), (20.15, 46.1), (17.55, 39.6), (6.5, 36.35), (-6.5, 36.35), (-15.6, 37)]},
+        {"id": "green_W",  "pts": [(-80, 22), (-66, 34), (-54, 36), (-48, 28), (-48, 10), (-50, -6), (-58, -20), (-70, -20), (-80, -8), (-84, 8)]},
+        {"id": "green_S",  "pts": [(-55, -45), (-40, -36), (-18, -30), (-8, -38), (2, -55), (5, -70), (-10, -78), (-30, -77), (-48, -66), (-56, -55)]},
+        {"id": "green_SE", "pts": [(18, -25), (30, -10), (45, -3), (62, -5), (76, -18), (80, -35), (72, -52), (55, -60), (35, -58), (22, -48)]},
+        {"id": "island_triangle", "pts": [(58, 22), (79, 20), (67, 37)]},
+    ],
 }
 
 # ──────────────────────────────────────────────────────────────
@@ -35,7 +206,7 @@ ROAD = {
 # ego 추적 화면에서 "지나가는 배경"이 생겨 속도감이 보인다.
 # ──────────────────────────────────────────────────────
 SCENERY = {
-    "trees": True,          # 나무 심기 on/off
+    "trees": False,         # 나무 심기 on/off (nohyeong 에서는 녹지(NOHYEONG["islands"])가 대신 그려짐)
     "tree_spacing": 45.0,   # 같은 쪽 나무 사이 평균 간격 (m)
     "tree_jitter": 0.5,     # 간격/위치의 무작위 흔들림 비율
     "side_offset": 6.0,     # 도로 가장자리에서 나무까지 거리 (m)
@@ -57,6 +228,12 @@ EGO = {
 #    상황이 자연스럽게 만들어지도록 했다.
 # ──────────────────────────────────────────────────────────────
 TRAFFIC = {
+    # Right-turn demand is configured by NOHYEONG.ring_segments[*].vph.
+    "right_turn_only_lane": True,
+    "startup_spread_seconds": 60,  # 중앙 경로의 첫 출발을 60초에 걸쳐 분산
+    "prepare_departure_lanes": True,  # 중앙 회전 연결에 맞춰 출발 차선 배정
+    "lc_speed_gain": 0.0,  # 속도 이득만을 위한 잦은 차선 변경 억제
+    "lc_keep_right": 0.0,  # 우회전 전용 차선으로 돌아오는 경향 억제
     # ══════════════════════════════════════════════════════
     # ★ 추월 학습 시나리오 ★
     #
@@ -75,7 +252,11 @@ TRAFFIC = {
     "vehs_per_hour": 800,    # 시간당 투입 대수. 1500→1200 완화:
                               #   전체가 꽉 막힌 느낌을 줄이고
                               #   차선 사이 속도차/틈이 살아나게 한다
-    "depart_lane": "random",
+    "depart_lane": "best",  # 경로에 맞는 출발 차선 선택: 우회전 전용 차선의 직진차 감소
+    # 배경차 차선변경 허용 여부 (컨트롤러별 "keep_lane" 이 없을 때의 기본값).
+    #   직선 추월 예제에서는 True(차선 유지)였지만, 교차로에서는 좌/우회전 차선으로
+    #   옮겨가야 하므로 False. (True 로 두면 엉뚱한 차선에서 멈춰 서서 정체가 생긴다)
+    "keep_lane": False,
     "depart_speed": 8.0,      # 신규 차량 진입 속도 (m/s).
                               # 입구에서 천천히 들어와 자기 컨트롤러로 가속.
                               # "random"이면 고속 스폰 차량이 입구 부근에서

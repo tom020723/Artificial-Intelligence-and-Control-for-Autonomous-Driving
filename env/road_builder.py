@@ -13,6 +13,8 @@ road_config.py만 수정하면 도로가 자동으로 다시 만들어진다.
 """
 import os
 import subprocess
+import re
+import xml.etree.ElementTree as ET
 
 from sumolib import checkBinary  # SUMO 실행파일(sumo, netconvert 등) 경로를 찾아주는 유틸
 from env.mdp_config import SIMULATION
@@ -20,6 +22,10 @@ try:
     from env.road_config import SCENERY
 except ImportError:      # 구버전 설정 하위호환
     SCENERY = {"trees": False}
+try:
+    from env.road_config import NOHYEONG     # 노형오거리 형상 설정
+except ImportError:
+    NOHYEONG = None
 
 
 def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
@@ -32,6 +38,12 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         out_dir: 생성 위치 (보통 프로젝트의 sumo/ 폴더)
     """
     os.makedirs(out_dir, exist_ok=True)
+
+    # ── 도로 종류 분기 ──
+    # ROAD["type"] == "nohyeong" 이면 노형오거리 생성 (파일 맨 아래 _build_nohyeong).
+    # 그 외("straight" 또는 키 없음)는 기존 직선 도로 그대로 생성한다.
+    if road.get("type", "straight") == "nohyeong":
+        return _build_nohyeong(road, ego, traffic, out_dir)
 
     # ──────────────────────────────────────────────────────
     # 1) 노드 파일: 직선 도로의 양 끝점 2개
@@ -70,58 +82,7 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     #               ego는 여기에 없고, 환경(sumo_env.py)이 reset마다
     #               traci.vehicle.add()로 직접 투입한다.
     # ──────────────────────────────────────────────────────
-    controllers = traffic.get("controllers")
-    if controllers:
-        # probability 합이 1이 아니어도 되도록 자동 정규화
-        total_p = sum(float(c.get("probability", 1.0))
-                      for c in controllers.values())
-        vtype_lines = []
-        for name, c in controllers.items():
-            prob = float(c.get("probability", 1.0)) / total_p
-            attrs = [
-                f'id="car_{name}"',
-                f'probability="{prob:.4f}"',
-                f'carFollowModel="{c["carFollowModel"]}"',
-                f'accel="{c.get("accel", 2.5)}"',
-                f'decel="{c.get("decel", 4.5)}"',
-                f'tau="{c.get("tau", 1.0)}"',
-                f'minGap="{c.get("min_gap", 2.5)}"',
-                # 컨트롤러별 희망속도 오버라이드 (없으면 공통 max_speed).
-                # 컨트롤러마다 속도를 다르게 주면 차선 간 속도차가 생겨
-                # "추월할 이유"가 자연스럽게 만들어진다.
-                f'maxSpeed="{c.get("max_speed", traffic["max_speed"])}"',
-                # speedDev: 같은 타입 안에서도 개체별 희망속도 편차 (0~)
-                f'speedDev="{c.get("speed_dev", 0.1)}"',
-                f'color="{c.get("color", "1,1,0")}"',
-                'vClass="passenger"', 'guiShape="passenger/sedan"',
-            ]
-            # sigma는 Krauss 계열에만 의미가 있으므로 지정된 경우에만 넣는다
-            if "sigma" in c:
-                attrs.append(f'sigma="{c["sigma"]}"')
-            # ── 배경차 차선 유지 (keep_lane, 기본 True) ──
-            # 배경차의 자율 차선변경(전략/협조/속도이득/우측유지)을 전부 꺼서
-            # 각자 자기 차선을 지키게 한다. 이유:
-            #   배경차가 자유롭게 돌아다니면 (측정: 150스텝에 477회 변경)
-            #   차선 간 틈이 수시로 닫혀서, ego가 틈을 노려 파고드는
-            #   "칼치기 추월"을 학습할 안정적인 기회 자체가 사라진다.
-            #   배경차가 차선을 유지하면 "느린 차 뒤 → 옆 틈으로 변경 →
-            #   가속"이라는 추월 패턴이 재현 가능한 형태로 나타난다.
-            # 특정 컨트롤러만 돌아다니게 하려면 그 항목에 "keep_lane": False.
-            if c.get("keep_lane", True):
-                attrs += ['lcStrategic="0"', 'lcCooperative="0"',
-                          'lcSpeedGain="0"', 'lcKeepRight="0"']
-            vtype_lines.append("        <vType " + " ".join(attrs) + "/>")
-        vtypes_block = ('    <vTypeDistribution id="carDist">\n'
-                        + "\n".join(vtype_lines)
-                        + "\n    </vTypeDistribution>")
-        flow_type = "carDist"
-    else:
-        # controllers 설정이 없으면 예전 방식(단일 Krauss)으로 동작 (하위호환)
-        vtypes_block = (f'    <vType id="car" accel="2.5" decel="4.5" '
-                        f'maxSpeed="{traffic["max_speed"]}" '
-                        f'sigma="{traffic.get("sigma", 0.5)}" '
-                        f'vClass="passenger" guiShape="passenger/sedan"/>')
-        flow_type = "car"
+    vtypes_block, flow_type = _vtypes_block(traffic)
 
     with open(os.path.join(out_dir, "highway.rou.xml"), "w") as f:
         f.write(f"""<routes>
@@ -204,6 +165,72 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         capture_output=True,  # 출력은 조용히 삼킴
     )
     return cfg_path
+
+
+def _vtypes_block(traffic: dict):
+    """TRAFFIC["controllers"] → <vTypeDistribution> XML 문자열과 flow가 쓸 type 이름.
+
+    직선 도로/회전교차로 공용. (배경차 종류·비율 정의는 도로 형상과 무관하므로 분리)
+    """
+    controllers = traffic.get("controllers")
+    if controllers:
+        # probability 합이 1이 아니어도 되도록 자동 정규화
+        total_p = sum(float(c.get("probability", 1.0))
+                      for c in controllers.values())
+        vtype_lines = []
+        for name, c in controllers.items():
+            prob = float(c.get("probability", 1.0)) / total_p
+            attrs = [
+                f'id="car_{name}"',
+                f'probability="{prob:.4f}"',
+                f'carFollowModel="{c["carFollowModel"]}"',
+                f'accel="{c.get("accel", 2.5)}"',
+                f'decel="{c.get("decel", 4.5)}"',
+                f'tau="{c.get("tau", 1.0)}"',
+                f'minGap="{c.get("min_gap", 2.5)}"',
+                # 컨트롤러별 희망속도 오버라이드 (없으면 공통 max_speed).
+                # 컨트롤러마다 속도를 다르게 주면 차선 간 속도차가 생겨
+                # "추월할 이유"가 자연스럽게 만들어진다.
+                f'maxSpeed="{c.get("max_speed", traffic["max_speed"])}"',
+                # speedDev: 같은 타입 안에서도 개체별 희망속도 편차 (0~)
+                f'speedDev="{c.get("speed_dev", 0.1)}"',
+                f'color="{c.get("color", "1,1,0")}"',
+                'vClass="passenger"', 'guiShape="passenger/sedan"',
+            ]
+            # sigma는 Krauss 계열에만 의미가 있으므로 지정된 경우에만 넣는다
+            if "sigma" in c:
+                attrs.append(f'sigma="{c["sigma"]}"')
+            # ── 배경차 차선 유지 (keep_lane, 기본 True) ──
+            # 배경차의 자율 차선변경(전략/협조/속도이득/우측유지)을 전부 꺼서
+            # 각자 자기 차선을 지키게 한다. 이유:
+            #   배경차가 자유롭게 돌아다니면 (측정: 150스텝에 477회 변경)
+            #   차선 간 틈이 수시로 닫혀서, ego가 틈을 노려 파고드는
+            #   "칼치기 추월"을 학습할 안정적인 기회 자체가 사라진다.
+            #   배경차가 차선을 유지하면 "느린 차 뒤 → 옆 틈으로 변경 →
+            #   가속"이라는 추월 패턴이 재현 가능한 형태로 나타난다.
+            # 특정 컨트롤러만 돌아다니게 하려면 그 항목에 "keep_lane": False.
+            # 전체 기본값은 TRAFFIC["keep_lane"] (없으면 True). 교차로 도로(nohyeong)에서는
+            # 배경차가 좌/우회전 차선으로 옮겨가야 하므로 False 로 둔다.
+            if c.get("keep_lane", traffic.get("keep_lane", True)):
+                attrs += ['lcStrategic="0"', 'lcCooperative="0"',
+                          'lcSpeedGain="0"', 'lcKeepRight="0"']
+            else:
+                attrs += [f'lcSpeedGain="{traffic.get("lc_speed_gain", 1.0)}"',
+                          f'lcKeepRight="{traffic.get("lc_keep_right", 1.0)}"']
+            vtype_lines.append("        <vType " + " ".join(attrs) + "/>")
+        vtypes_block = ('    <vTypeDistribution id="carDist">\n'
+                        + "\n".join(vtype_lines)
+                        + "\n    </vTypeDistribution>")
+        flow_type = "carDist"
+    else:
+        # controllers 설정이 없으면 예전 방식(단일 Krauss)으로 동작 (하위호환)
+        vtypes_block = (f'    <vType id="car" accel="2.5" decel="4.5" '
+                        f'maxSpeed="{traffic["max_speed"]}" '
+                        f'sigma="{traffic.get("sigma", 0.5)}" '
+                        f'vClass="passenger" guiShape="passenger/sedan"/>')
+        flow_type = "car"
+
+    return vtypes_block, flow_type
 
 
 def _blob(cx: float, cy: float, r: float, rng, n: int = 14,
@@ -314,4 +341,659 @@ def _write_scenery(out_dir: str, road: dict):
             x += spacing * rng.uniform(1.0 - jitter, 1.0 + jitter)
     lines.append("</additional>")
     with open(path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+# ══════════════════════════════════════════════════════════════
+#  제주 노형오거리 (ROAD["type"] == "nohyeong")
+#
+#  용어는 road_config.py 의 "용어 정리" 와 같다.
+#    도로 A1~A5 (코드 이름 arms) / 원형도로 (코드 이름 ring_segments) / 갈림점 / 노드·엣지
+#
+#  만들어지는 것 (NOHYEONG 설정 기준):
+#    노드 (길이 만나는 점)
+#      nC          : 교차로 가운데 (신호등). 다섯 도로가 모두 여기서 만난다.
+#      nE_A1 …     : 각 도로의 바깥 끝. 차가 생겨나고 사라지는 곳.
+#      nM_A1_0 …   : 각 도로 위의 갈림점 (원형도로가 갈라지거나 합류하는 곳). 교차로에 가까운 것부터 0, 1, 2 …
+#    엣지 (두 노드 사이의 한 방향 도로 구간). 도로 하나가 갈림점마다 잘려서 여러 구간이 된다.
+#      A1_in, A1_in1, A1_in2 …    : 교차로로 "들어오는" 방향. A1_in 이 교차로에 바로 닿는 구간, 숫자가 클수록 바깥.
+#      A1_out, A1_out1, A1_out2 … : 교차로에서 "나가는" 방향. A1_out 이 교차로에서 바로 나오는 구간.
+#      (갈림점이 없는 도로는 A1_in / A1_out 두 개뿐 — 교수님 코드와 같은 이름 규칙)
+#      RING_A1_A3, OUTER_N …      : 원형도로 (road_config.py 의 id 그대로)
+#    연결 정리 (highway.con.xml)
+#      도로 끝·갈림점에서 SUMO 가 멋대로 만드는 U턴, 반대 방향으로 원형도로에 들어가는 연결 등을 지운다.
+#    경로/교통
+#      r0          : ego 기본 경로 (ego_route)
+#      ego_d_*/ego_r_* : ego 후보 경로 (highway.ego.rou.xml). sumo_env.py 가 에피소드마다 하나를 뽑는다.
+#      f_A1_A2 …   : 도로 A1 → 도로 A2 로 가는 배경 차량 (SUMO 가 가장 빠른 길로 보냄)
+#      lf_* / lr_* : 원형도로를 일부러 지나가는 배경 차량
+#    장식
+#      녹지 + 횡단보도 줄무늬 그림 (highway.scenery.xml). 차 움직임과 무관.
+# ══════════════════════════════════════════════════════════════
+import math
+
+
+def _polar(r: float, angle_deg: float):
+    """극좌표 (반지름, 각도°) → 직교좌표 (x, y). 각도는 동쪽 0°, 반시계 +."""
+    a = math.radians(angle_deg)
+    return r * math.cos(a), r * math.sin(a)
+
+
+def _fmt_shape(points) -> str:
+    """[(x,y), ...] → SUMO shape 속성 문자열 'x1,y1 x2,y2 ...'."""
+    return " ".join(f"{x:.2f},{y:.2f}" for x, y in points)
+
+
+
+
+def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
+    cfg = NOHYEONG
+    if cfg is None:
+        raise RuntimeError("ROAD['type']='nohyeong' 인데 road_config.py 에 NOHYEONG 설정이 없습니다.")
+
+    arm_speed = float(road["speed_limit"])
+    arms = list(cfg["arms"])
+    by_id = {a["id"]: a for a in arms}
+    segs = []
+    overrides = cfg.get("split_radius_overrides", {})
+    for original in cfg.get("ring_segments", []):
+        sg = dict(original)
+        shifts = []
+        for side in ("from", "to"):
+            aid = sg[side]
+            old = float(sg[f"{side}_r"])
+            new = float(overrides.get(aid, {}).get(old, old))
+            if not 0 < new < float(by_id[aid]["length"]):
+                raise ValueError(f"Invalid split radius for {aid}: {new}")
+            sg[f"{side}_r"] = new
+            shifts.append(_polar(new - old, by_id[aid]["angle"]))
+        via = original.get("via", [])
+        # Blend endpoint displacements along the curve to avoid sharp kinks.
+        sg["via"] = [
+            (x + (1-t)*shifts[0][0] + t*shifts[1][0],
+             y + (1-t)*shifts[0][1] + t*shifts[1][1])
+            for i, (x, y) in enumerate(via)
+            for t in [(i + 1) / (len(via) + 1)]
+        ]
+        segs.append(sg)
+
+    # ── 0) 도로마다 갈림점 위치(교차로 중심에서의 거리) 모으기 ──
+    #   원형도로가 갈라지는 곳(from_r)과 합류하는 곳(to_r). 같은 거리는 하나의 갈림점으로 합친다.
+    radii = {a["id"]: set() for a in arms}
+    for sg in segs:
+        radii[sg["from"]].add(float(sg["from_r"]))
+        radii[sg["to"]].add(float(sg["to_r"]))
+    for a in arms:
+        if a.get("split_at"):
+            radii[a["id"]].add(float(a["split_at"]))
+    upstream_uturns = cfg.get("upstream_uturns", {}) if cfg.get("uturn", True) else {}
+    for aid, turn in upstream_uturns.items():
+        radii[aid].add(float(turn["radius"]))
+    splits = {aid: sorted(rs) for aid, rs in radii.items()}       # 안쪽(작은 r) → 바깥쪽
+
+    def node_at(aid, r):
+        """도로 aid 위, 교차로 중심에서 r 떨어진 갈림점의 노드 이름."""
+        return f"nM_{aid}_{splits[aid].index(float(r))}"
+
+    # 도로 구간(엣지) 이름: k=0 이 교차로에 바로 붙는 구간
+    def in_edge(aid, k):  return f"{aid}_in" if k == 0 else f"{aid}_in{k}"
+    def out_edge(aid, k): return f"{aid}_out" if k == 0 else f"{aid}_out{k}"
+    def inbound_lanes(aid, k):
+        return int(cfg.get("inbound_lanes", {}).get(aid, {}).get(k, by_id[aid]["lanes"]))
+
+    # ── 1) 노드 ──
+    nodes = [f'    <node id="nC" x="0" y="0" type="{cfg.get("center_node_type", "traffic_light")}"/>']
+    for a in arms:
+        x, y = _polar(float(a["length"]), a["angle"])
+        nodes.append(f'    <node id="nE_{a["id"]}" x="{x:.2f}" y="{y:.2f}"/>')
+        for k, r in enumerate(splits[a["id"]]):
+            x, y = _polar(r, a["angle"])
+            aid = a["id"]
+            is_uturn = aid in upstream_uturns and r == float(upstream_uturns[aid]["radius"])
+            node_type = "traffic_light" if is_uturn else "priority"
+            nodes.append(f'    <node id="nM_{aid}_{k}" x="{x:.2f}" y="{y:.2f}" type="{node_type}"/>')
+    with open(os.path.join(out_dir, "highway.nod.xml"), "w") as f:
+        f.write("<nodes>\n" + "\n".join(nodes) + "\n</nodes>\n")
+
+    # ── 2) 엣지 ──
+    edges = []
+    entry_edge, exit_edge = {}, {}     # 도로 id → 차가 처음 들어서는 구간 / 마지막으로 빠져나가는 구간
+    chain_in, chain_out = {}, {}       # 도로 id → 들어오는 구간들(바깥→안 순서), 나가는 구간들(안→바깥 순서)
+    for a in arms:
+        aid, L, S = a["id"], int(a["lanes"]), arm_speed
+        K = len(splits[aid])
+        # 교차로에서부터 노드 나열: nC, 갈림점 0, 갈림점 1, …, 도로 끝
+        pts = ["nC"] + [f"nM_{aid}_{k}" for k in range(K)] + [f"nE_{aid}"]
+        ins, outs = [], []
+        for k in range(K + 1):
+            inner, outer = pts[k], pts[k + 1]
+            # priority="3": 중간 노드에서 팔(큰 길)이 슬립로드(priority 1)보다 우선
+            stop_offset = float(cfg.get("stop_offsets", {}).get(aid, 0)) if k == 0 else 0
+            if not math.isfinite(stop_offset) or stop_offset < 0:
+                raise ValueError(f"Invalid stop offset for {aid}")
+            stop_child = f'<stopOffset value="{stop_offset:g}"/>' if stop_offset else ""
+            edges.append(f'    <edge id="{in_edge(aid, k)}" from="{outer}" to="{inner}" '
+                         f'numLanes="{inbound_lanes(aid, k)}" speed="{S}" priority="3">{stop_child}</edge>')
+            edges.append(f'    <edge id="{out_edge(aid, k)}" from="{inner}" to="{outer}" '
+                         f'numLanes="{L}" speed="{S}" priority="3"/>')
+            ins.append(in_edge(aid, k)); outs.append(out_edge(aid, k))
+        chain_in[aid] = ins[::-1]          # 바깥 → 안 순서
+        chain_out[aid] = outs              # 안 → 바깥 순서
+        entry_edge[aid], exit_edge[aid] = ins[-1], outs[-1]
+    # 원형도로
+    Lr, Sr = int(cfg.get("ring_lanes", 1)), float(cfg.get("ring_speed", 8.33))
+    seg_count = {}
+    for sg in segs:
+        via = list(sg.get("via", []))
+        shp = f' shape="{_fmt_shape(via)}"' if via else ""
+        key = (sg["from"], sg["to"]); seg_count[key] = seg_count.get(key, 0) + 1
+        suffix = "" if seg_count[key] == 1 else f"_{seg_count[key]}"     # 같은 도로 쌍을 잇는 길이 두 개면 _2
+        sg["_eid"] = sg.get("id") or f'RING_{sg["from"]}_{sg["to"]}{suffix}'
+        sg["edge_id"] = sg["_eid"]
+        edges.append(f'    <edge id="{sg["_eid"]}" from="{node_at(sg["from"], sg["from_r"])}" '
+                     f'to="{node_at(sg["to"], sg["to_r"])}" numLanes="{int(sg.get("lanes", Lr))}" '
+                     f'speed="{float(sg.get("speed", Sr))}" priority="1"{shp}/>')
+    with open(os.path.join(out_dir, "highway.edg.xml"), "w") as f:
+        f.write("<edges>\n" + "\n".join(edges) + "\n</edges>\n")
+
+    # ── 3) 연결 파일: 엉뚱한 U턴 제거 ──
+    #   netconvert(SUMO 도로 변환 도구)는 모든 노드에서 "맨 왼쪽 차선 U턴"을 자동으로 만든다.
+    #   교차로 가운데(nC) U턴만 남기고, 도로 끝·갈림점의 U턴은 지운다. (uturn=False 면 nC 것도 지운다)
+    cons = []
+    for a in arms:
+        aid, K = a["id"], len(splits[a["id"]])
+        if not cfg.get("uturn", True):
+            cons.append(f'    <delete from="{in_edge(aid, 0)}" to="{out_edge(aid, 0)}"/>')
+        for k in range(K + 1):
+            # 갈림점·도로 끝에서: 나가던 차가 되돌아오는 U턴 / 들어오던 차가 되돌아가는 U턴
+            cons.append(f'    <delete from="{out_edge(aid, k)}" to="{in_edge(aid, k)}"/>')
+            if k + 1 <= K:
+                is_uturn = aid in upstream_uturns and splits[aid][k] == float(upstream_uturns[aid]["radius"])
+                if not is_uturn:
+                    cons.append(f'    <delete from="{in_edge(aid, k + 1)}" to="{out_edge(aid, k + 1)}"/>')
+    if traffic.get("right_turn_only_lane", False):
+        # Reserve the rightmost lane at each primary slip-road entrance.
+        # Through traffic must change lanes before reaching the split.
+        seen = set()
+        for sg in segs:
+            aid = sg["from"]
+            if aid in seen:
+                continue
+            seen.add(aid)
+            k = splits[aid].index(float(sg["from_r"]))
+            source = in_edge(aid, k + 1)
+            configured_links = cfg.get("inbound_lane_links", {}).get(aid, {}).get(k + 1)
+            if configured_links is None:
+                for target_lane in range(inbound_lanes(aid, k)):
+                    cons.append(f'    <delete from="{source}" to="{in_edge(aid, k)}" fromLane="0" toLane="{target_lane}"/>')
+            for lane in range(1, inbound_lanes(aid, k + 1)):
+                for target_lane in range(int(sg.get("lanes", Lr))):
+                    cons.append(f'    <delete from="{source}" to="{sg["edge_id"]}" fromLane="{lane}" toLane="{target_lane}"/>')
+    for aid, segments in cfg.get("inbound_lane_links", {}).items():
+        for k, links in segments.items():
+            allowed = set(links)
+            for src in range(inbound_lanes(aid, k)):
+                for dst in range(inbound_lanes(aid, k - 1)):
+                    tag = "connection" if (src, dst) in allowed else "delete"
+                    cons.append(f'    <{tag} from="{in_edge(aid,k)}" to="{in_edge(aid,k-1)}" fromLane="{src}" toLane="{dst}"/>')
+        for sg in segs:
+            if sg["from"] == aid:
+                k = splits[aid].index(float(sg["from_r"])) + 1
+                cons.append(f'    <connection from="{in_edge(aid,k)}" to="{sg["edge_id"]}" fromLane="0" toLane="0"/>')
+    for aid, turn in upstream_uturns.items():
+        k = splits[aid].index(float(turn["radius"])) + 1
+        cons.append(f'    <connection from="{in_edge(aid,k)}" to="{out_edge(aid,k)}" '
+                    f'fromLane="{turn["from_lane"]}" toLane="{turn["to_lane"]}" '
+                    f'speed="{cfg.get("uturn_speed", 3.0)}"/>')
+    # 원형도로는 올바른 방향으로만 드나들게 한다:
+    #   · 갈라지는 갈림점: 교차로로 "들어오는" 차만 원형도로로 빠질 수 있다.
+    #                     교차로에서 "나가던" 차가 다시 꺾어 들어가는 연결은 지운다.
+    #   · 합류하는 갈림점: 원형도로 차는 교차로에서 "나가는" 방향으로만 합류한다.
+    #                     교차로 쪽으로 되돌아 들어가는 연결은 지운다.
+    #   (갈림점이 도로 한가운데 선 위에 있어서 netconvert 가 양방향 모두 이어 버리기 때문)
+    for sg in segs:
+        k_from = splits[sg["from"]].index(float(sg["from_r"]))
+        k_to = splits[sg["to"]].index(float(sg["to_r"]))
+        cons.append(f'    <delete from="{out_edge(sg["from"], k_from)}" to="{sg["_eid"]}"/>')
+        cons.append(f'    <delete from="{sg["_eid"]}" to="{in_edge(sg["to"], k_to)}"/>')
+    with open(os.path.join(out_dir, "highway.con.xml"), "w") as f:
+        f.write("<connections>\n" + "\n".join(cons) + "\n</connections>\n")
+
+    # ── 4) 경로: ego 기본 경로 r0 + 배경 차량 ──
+    vtypes_block, flow_type = _vtypes_block(traffic)
+    er = cfg["ego_route"]
+    r0_edges = chain_in[er["from"]] + chain_out[er["to"]]
+
+    movement_rules = cfg.get("central_lane_movements", {})
+    allowed_destinations = {aid: {dest for moves in lanes.values() for dest, _ in moves}
+                            for aid, lanes in movement_rules.items()}
+    for aid in upstream_uturns:
+        if aid in allowed_destinations:
+            allowed_destinations[aid].add(aid)
+    pairs = [(a, b) for a in arms for b in arms
+             if (cfg.get("uturn", True) or a["id"] != b["id"])
+             and (a["id"] not in allowed_destinations or b["id"] in allowed_destinations[a["id"]])]
+    uf = float(cfg.get("uturn_flow_factor", 0.15))        # U턴 수요는 직진/회전보다 훨씬 적다
+    def _pw(a, b):
+        w = float(a.get("weight", 1)) * float(b.get("weight", 1))
+        return w * uf if a["id"] == b["id"] else w
+    total_w = sum(_pw(a, b) for a, b in pairs)
+    flows = []
+    routes = []
+    startup_spread = float(traffic.get("startup_spread_seconds", 0))
+    if not math.isfinite(startup_spread) or startup_spread < 0:
+        raise ValueError("startup_spread_seconds must be finite and nonnegative")
+    for flow_index, (a, b) in enumerate(pairs):
+        w = _pw(a, b) / total_w
+        period = 3600.0 / (float(traffic["vehs_per_hour"]) * w)      # 이 경로에 몇 초마다 1대
+        if cfg.get("signal_plan"):
+            route_id = f'r_{a["id"]}_{b["id"]}'
+            route_edges = chain_in[a["id"]] + chain_out[b["id"]]
+            if a["id"] == b["id"] and a["id"] in upstream_uturns:
+                aid = a["id"]
+                k = splits[aid].index(float(upstream_uturns[aid]["radius"])) + 1
+                route_edges = ([in_edge(aid, j) for j in range(len(splits[aid]), k - 1, -1)]
+                               + [out_edge(aid, j) for j in range(k, len(splits[aid]) + 1)])
+            routes.append(f'    <route id="{route_id}" edges="{" ".join(route_edges)}"/>')
+            routing = f'route="{route_id}" '
+        else:
+            routing = f'from="{entry_edge[a["id"]]}" to="{exit_edge[b["id"]]}" '
+        flows.append(
+            f'    <flow id="f_{a["id"]}_{b["id"]}" type="{flow_type}" '
+            f'{routing}'
+            f'begin="{startup_spread * flow_index / len(pairs):g}" end="100000" period="{period:.2f}" '
+            f'departLane="{traffic["depart_lane"]}" departSpeed="{traffic["depart_speed"]}"/>')
+    flows.extend(_loop_flows(cfg, segs, entry_edge, exit_edge, flow_type, traffic))
+
+    flows.sort(key=lambda line: float(ET.fromstring(line).get("begin")))
+    with open(os.path.join(out_dir, "highway.rou.xml"), "w") as f:
+        f.write(f"""<routes>
+    <vType id="ego_type" accel="{ego['accel']}" decel="{ego['decel']}" maxSpeed="{ego['max_speed']}" color="1,0,0" vClass="passenger" guiShape="passenger/sedan"/>
+{vtypes_block}
+    <route id="r0" edges="{' '.join(r0_edges)}"/>
+{chr(10).join(routes)}
+{chr(10).join(flows)}
+</routes>
+""")
+
+    # ── 5) GUI: 교차로 중심부가 화면에 들어오게 ──
+    gui_delay = float(SIMULATION.get("gui_delay", 100.0))
+    extent = 2 * max(float(a["length"]) for a in arms)      # 네트워크 전체 폭 (m)
+    view_width = float(SIMULATION.get("gui_view_width", 500.0))
+    zoom = extent / min(view_width, extent) * 100.0
+    with open(os.path.join(out_dir, "highway.gui.xml"), "w") as f:
+        f.write(f"""<viewsettings>
+    <scheme name="real world"/>
+    <viewport zoom="{zoom:.0f}" x="0" y="0" angle="0"/>
+    <delay value="{gui_delay}"/>
+</viewsettings>
+""")
+
+    # ── 6) sumocfg + netconvert ──
+    cfg_path = os.path.join(out_dir, "highway.sumocfg")
+    with open(cfg_path, "w") as f:
+        f.write("""<configuration>
+    <input>
+        <net-file value="highway.net.xml"/>
+        <route-files value="highway.rou.xml,highway.ego.rou.xml"/>
+        <additional-files value="highway.scenery.xml"/>
+    </input>
+    <gui_only>
+        <gui-settings-file value="highway.gui.xml"/>
+    </gui_only>
+</configuration>
+""")
+    netconvert = checkBinary("netconvert")
+    result = subprocess.run(
+        [netconvert,
+         "--node-files", os.path.join(out_dir, "highway.nod.xml"),
+         "--edge-files", os.path.join(out_dir, "highway.edg.xml"),
+         "--connection-files", os.path.join(out_dir, "highway.con.xml"),
+         "-o", os.path.join(out_dir, "highway.net.xml"),
+         "--offset.disable-normalization", "true",   # 좌표를 (0,0) 구석으로 옮기지 말 것
+                                                     # (녹지 poly·GUI 중심이 우리 좌표계 기준이므로)
+         "--junctions.join", "false",     # 가까운 노드끼리 멋대로 합치지 않게
+         "--junctions.corner-detail", "5",  # 교차로 모서리를 둥글게 (보기 좋게)
+         "--junctions.internal-link-detail", "20",
+         "--tls.default-type", "static"],   # 신호: 고정 주기 (netconvert 가 자동 생성)
+        capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError("netconvert 실패:\n" + result.stderr)
+
+    if cfg.get("uturn", True) or movement_rules:
+        # Preserve every generated central lane connection, changing only the
+        # U-turn destination. netconvert then recomputes geometry and conflicts.
+        net = ET.parse(os.path.join(out_dir, "highway.net.xml")).getroot()
+        target = cfg.get("uturn_target_lane", 0)
+        speed = float(cfg.get("uturn_speed", 3.0))
+        if not isinstance(target, int) or target < 0 or any(target >= int(a["lanes"]) for a in arms):
+            raise ValueError("uturn_target_lane must exist on every approach")
+        if not math.isfinite(speed) or speed <= 0:
+            raise ValueError("uturn_speed must be finite and positive")
+        for c in net.findall("connection"):
+            if c.get("tl") != "nC":
+                continue
+            attrs = {key: c.get(key) for key in ("from", "to", "fromLane", "toLane")}
+            aid = c.get("from").removesuffix("_in")
+            if aid in movement_rules:
+                # Explicitly remove generated movements before adding the
+                # reviewed lane map. Other approaches keep their connections.
+                desired = {(str(lane), dest + "_out", str(dst_lane))
+                           for lane, moves in movement_rules[aid].items()
+                           for dest, dst_lane in moves
+                           if cfg.get("uturn", True) or dest != aid}
+                if (attrs["fromLane"], attrs["to"], attrs["toLane"]) not in desired:
+                    cons.append("    " + ET.tostring(ET.Element("delete", attrs), encoding="unicode"))
+                continue
+            if c.get("dir") == "t":
+                attrs["toLane"] = str(target)
+                attrs["speed"] = str(speed)
+            cons.append("    " + ET.tostring(ET.Element("connection", attrs), encoding="unicode"))
+        for aid, lanes in movement_rules.items():
+            for lane, moves in lanes.items():
+                for dest, dst_lane in moves:
+                    if dest == aid and not cfg.get("uturn", True):
+                        continue
+                    if not 0 <= lane < inbound_lanes(aid, 0) or not 0 <= dst_lane < by_id[dest]["lanes"]:
+                        raise ValueError(f"Invalid central lane movement: {aid} -> {dest}")
+                    attrs = {"from": f"{aid}_in", "to": f"{dest}_out",
+                             "fromLane": str(lane), "toLane": str(dst_lane)}
+                    if dest == aid:
+                        attrs["speed"] = str(speed)
+                    cons.append("    " + ET.tostring(ET.Element("connection", attrs), encoding="unicode"))
+        with open(os.path.join(out_dir, "highway.con.xml"), "w") as f:
+            f.write("<connections>\n" + "\n".join(cons) + "\n</connections>\n")
+        result = subprocess.run(result.args + ["--no-turnarounds", "true"],
+                                capture_output=True, text=True)
+        if result.returncode != 0:
+            raise RuntimeError("U-turn netconvert failed:\n" + result.stderr)
+
+    if cfg.get("signal_plan"):
+        _write_approach_signals(os.path.join(out_dir, "highway.net.xml"), cfg)
+        for aid, turn in upstream_uturns.items():
+            k = splits[aid].index(float(turn["radius"]))
+            _write_upstream_uturn_signals(os.path.join(out_dir, "highway.net.xml"),
+                                          cfg, aid, node_at(aid, turn["radius"]),
+                                          in_edge(aid, k + 1), out_edge(aid, k + 1))
+
+    if traffic.get("prepare_departure_lanes", False):
+        _prepare_departure_lanes(out_dir)
+
+    # ── 7) 완성된 도로망에서 ego 후보 경로 생성 ──
+    _write_ego_routes(out_dir, cfg, arms, segs, entry_edge, exit_edge)
+
+    # ── 8) 장식: 녹지 + 횡단보도 줄무늬 ──
+    #   횡단보도는 SUMO의 보행자 <crossing> 이 아니라 그림(poly)이다.
+    #   (정식 crossing 은 인도 차선이 필요해서 차선 번호가 밀리고 sumo_env 의 차선 로직과 충돌한다.)
+    _write_nohyeong_scenery(out_dir, cfg, arms, splits)
+    return cfg_path
+
+
+def _write_upstream_uturn_signals(net_path, cfg, aid, node_id, source, destination):
+    """Synchronize the separate U-turn light with the central approach phase.
+
+    Through traffic continues to the main stop line. U-turns yield to outbound
+    traffic and receive permissive green only during this approach's phase.
+    """
+    with open(net_path, encoding="utf-8") as f:
+        text = f.read()
+    root = ET.fromstring(text)
+    connections = [c for c in root.findall("connection") if c.get("tl") == node_id]
+    turn_links = {int(c.get("linkIndex")) for c in connections
+                  if c.get("from") == source and c.get("to") == destination}
+    if not turn_links:
+        raise ValueError(f"Missing upstream U-turn signal: {aid}")
+    count = max(int(c.get("linkIndex")) for c in connections) + 1
+    program = ET.Element("tlLogic", id=node_id, type="static", programID="0", offset="0")
+    for phase in root.find("tlLogic[@id='nC']").findall("phase"):
+        state = ["G"] * count
+        turn_state = "g" if phase.get("name") == f"{aid}_green" else ("y" if phase.get("name") == f"{aid}_yellow" else "r")
+        for i in turn_links:
+            state[i] = turn_state
+        ET.SubElement(program, "phase", duration=phase.get("duration"),
+                      state="".join(state), name=phase.get("name"))
+    ET.indent(program, space="    ")
+    pattern = rf'<tlLogic\b[^>]*\bid="{re.escape(node_id)}"[^>]*>.*?</tlLogic>'
+    text, replaced = re.subn(pattern, lambda _: ET.tostring(program, encoding="unicode"), text, flags=re.DOTALL)
+    if replaced != 1:
+        raise ValueError(f"Expected one signal program at {node_id}")
+    with open(net_path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+
+def _prepare_departure_lanes(out_dir):
+    """Choose a departure lane minimizing required downstream lane changes.
+
+    A turn may require lane 0 after the dedicated slip-road split; allow that
+    later change rather than requiring one unchanged lane across the route.
+    """
+    net = ET.parse(os.path.join(out_dir, "highway.net.xml")).getroot()
+    connections = net.findall("connection")
+    route_path = os.path.join(out_dir, "highway.rou.xml")
+    tree = ET.parse(route_path)
+    root = tree.getroot()
+    routes = {r.get("id"): r.get("edges").split() for r in root.findall("route")}
+    for flow in root.findall("flow"):
+        edges = routes.get(flow.get("route"))
+        if not edges:
+            continue
+        costs = None
+        for source, dest in reversed(list(zip(edges, edges[1:]))):
+            previous = {}
+            for c in connections:
+                if c.get("from") != source or c.get("to") != dest:
+                    continue
+                src, dst = int(c.get("fromLane")), int(c.get("toLane"))
+                cost = 0 if costs is None else min(abs(dst-lane) + value for lane, value in costs.items())
+                previous[src] = min(previous.get(src, float("inf")), cost)
+            if not previous:
+                raise ValueError(f"Missing connection for {flow.get('id')}: {source} -> {dest}")
+            costs = previous
+        if costs:
+            flow.set("departLane", str(min(costs, key=lambda lane: (costs[lane], lane))))
+    ET.indent(tree, space="    ")
+    tree.write(route_path, encoding="utf-8", xml_declaration=True)
+
+
+def _write_approach_signals(net_path, cfg):
+    """Replace the generated central program using actual connection indices."""
+    plan = cfg["signal_plan"]
+    order = plan["order"]
+    arm_ids = {a["id"] for a in cfg["arms"]}
+    if len(order) != len(arm_ids) or set(order) != arm_ids:
+        raise ValueError("signal_plan.order must contain every approach exactly once")
+    yellow = float(plan["yellow_seconds"])
+    clearance = float(plan["all_red_seconds"])
+    durations = {a: float(plan["green_seconds"][a]) for a in order}
+    if any(not math.isfinite(t) or t <= 0 for t in [yellow, clearance, *durations.values()]):
+        raise ValueError("Signal durations must be finite and positive")
+    with open(net_path, encoding="utf-8") as f:
+        text = f.read()
+    root = ET.fromstring(text)
+    connections = [c for c in root.findall("connection") if c.get("tl") == "nC"]
+    if not connections:
+        raise ValueError("Sequential signal plan requires traffic_light junction nC")
+    count = max(int(c.get("linkIndex")) for c in connections) + 1
+    program = ET.Element("tlLogic", id="nC", type="static", programID="0", offset="0")
+    for arm in order:
+        state = ["r"] * count
+        for c in connections:
+            if c.get("from") == f"{arm}_in":
+                # U-turns yield to other movements from the same approach.
+                state[int(c.get("linkIndex"))] = "g" if c.get("dir") == "t" else "G"
+        if not any(s in "Gg" for s in state):
+            raise ValueError(f"No signal connections found for {arm}")
+        ET.SubElement(program, "phase", duration=f"{durations[arm]:g}",
+                      state="".join(state), name=f"{arm}_green")
+        ET.SubElement(program, "phase", duration=f"{yellow:g}",
+                      state="".join("y" if s in "Gg" else "r" for s in state), name=f"{arm}_yellow")
+        ET.SubElement(program, "phase", duration=f"{clearance:g}",
+                      state="r" * count, name=f"{arm}_clearance")
+    ET.indent(program, space="    ")
+    replacement = ET.tostring(program, encoding="unicode")
+    text, replaced = re.subn(r'<tlLogic\b[^>]*\bid="nC"[^>]*>.*?</tlLogic>',
+                             lambda _: replacement, text, flags=re.DOTALL)
+    if replaced != 1:
+        raise ValueError(f"Expected one central signal program, found {replaced}")
+    with open(net_path, "w", encoding="utf-8") as f:
+        f.write(text)
+
+
+def _write_ego_routes(out_dir, cfg, arms, segs, entry_edge, exit_edge):
+    """ego 가 탈 수 있는 후보 경로를 highway.ego.rou.xml 에 저장한다.
+
+    경로 이름 규칙 (sumo_env.py 가 이 접두어로 구분한다):
+      ego_d_<출발>_<도착>          : 교차로를 바로 지나는 경로 (최단 경로)
+      ego_r_<원형도로>_<출발>_<도착> : 원형도로를 반드시 한 번 이상 거치는 경로
+    완성된 도로망(net.xml)에서 sumolib 로 실제 최단 경로를 계산하므로,
+    갈 수 없는 조합은 자동으로 빠진다.
+    """
+    import sumolib
+    net = sumolib.net.readNet(os.path.join(out_dir, "highway.net.xml"))
+    er = cfg.get("ego_routes", {})
+    uturn = bool(er.get("uturn", True))
+
+    def path(edge_ids):
+        """edge_ids 를 순서대로 지나는 최단 경로의 엣지 목록 (불가능하면 None)."""
+        full = []
+        for a, b in zip(edge_ids[:-1], edge_ids[1:]):
+            p, _ = net.getShortestPath(net.getEdge(a), net.getEdge(b), vClass="passenger")
+            if p is None:
+                return None
+            ids = [e.getID() for e in p]
+            full += ids if not full else ids[1:]
+        return full
+
+    routes = {}
+    for a in arms:                                   # 1) 바로 가는 경로
+        for b in arms:
+            if a["id"] == b["id"] and not uturn:
+                continue
+            r = path([entry_edge[a["id"]], exit_edge[b["id"]]])
+            if r:
+                routes[f'ego_d_{a["id"]}_{b["id"]}'] = r
+    # 2) 원형도로를 거치는 경로: 원형도로 하나(또는 loop_routes 묶음)를 지난 뒤 아무 도로로나 나간다
+    ring_groups = [([sg["_eid"]], sg["from"], sg["_eid"]) for sg in segs]
+    ids = {sg.get("id"): sg["_eid"] for sg in segs if sg.get("id")}
+    for i, lr in enumerate(cfg.get("loop_routes", [])):
+        ring_groups.append(([ids.get(v, v) for v in lr["via"]], lr["from"], f"loop{i}"))
+    for via, start, tag in ring_groups:
+        for b in arms:
+            r = path([entry_edge[start]] + via + [exit_edge[b["id"]]])
+            if r and len(set(r)) == len(r):          # 같은 길을 두 번 지나는 경로는 제외
+                routes[f'ego_r_{tag}_{start}_{b["id"]}'] = r
+    with open(os.path.join(out_dir, "highway.ego.rou.xml"), "w") as f:
+        f.write("<routes>\n" + "\n".join(
+            f'    <route id="{rid}" edges="{" ".join(r)}"/>' for rid, r in routes.items()) + "\n</routes>\n")
+    return routes
+
+
+def _loop_flows(cfg, segs, entry_edge, exit_edge, flow_type, traffic):
+    """원형도로를 일부러 지나가는 배경 차량(flow = 일정 간격으로 계속 생겨나는 차량 흐름)을 만든다.
+
+    일반 flow 는 출발·도착만 정하고 SUMO 가 최단 경로를 고르기 때문에, 돌아가는 원형도로는
+    아무도 안 쓴다. 여기서는 via(반드시 지나갈 엣지)를 지정해서 원형도로에도 차가 다니게 한다.
+      · ring_segments[*]["vph"] : 그 길 하나만 지나가는 차 (from 도로 → 그 길 → to 도로)
+      · loop_routes[*]          : 여러 길을 이어서 지나가는 차
+    """
+    def flow(fid, fa, ta, via, vph):
+        if not vph or float(vph) <= 0:
+            return None
+        return (f'    <flow id="{fid}" type="{flow_type}" from="{entry_edge[fa]}" to="{exit_edge[ta]}" '
+                f'via="{" ".join(via)}" begin="0" end="100000" period="{3600.0 / float(vph):.2f}" '
+                f'departLane="{traffic["depart_lane"]}" departSpeed="{traffic["depart_speed"]}"/>')
+    out = []
+    for sg in segs:
+        out.append(flow(f'lf_{sg["_eid"]}', sg["from"], sg["to"], [sg["_eid"]], sg.get("vph", 0)))
+    ids = {sg.get("id"): sg["_eid"] for sg in segs if sg.get("id")}
+    for i, lr in enumerate(cfg.get("loop_routes", [])):
+        via = [ids.get(v, v) for v in lr["via"]]
+        out.append(flow(f'lr_{i}_{lr["from"]}_{lr["to"]}', lr["from"], lr["to"], via, lr.get("vph", 0)))
+    return [f for f in out if f]
+
+
+def _write_nohyeong_scenery(out_dir, cfg, arms, splits):
+    import sumolib
+    net = sumolib.net.readNet(os.path.join(out_dir, "highway.net.xml"))
+    LANE_W = 3.2
+    cw_w = float(cfg.get("crosswalk_width", 4.0))
+    cw_cfg = cfg.get("crosswalks", {})
+    lines = ["<additional>"]
+    for isl in cfg.get("islands", []):
+        lines.append(f'    <poly id="{isl["id"]}" color="{isl.get("color", "168,196,150")}" fill="1" '
+                     f'layer="-1" shape="{_fmt_shape(isl["pts"])}"/>')
+
+    def stripes(pid, r_center, angle_deg, half_width, lateral_bounds=None):
+        """팔 방향 angle 에 수직으로, 중심에서 r_center 떨어진 곳에 폭 cw_w 의 얼룩말 줄무늬."""
+        a = math.radians(angle_deg)
+        ux, uy = math.cos(a), math.sin(a)          # 도로 방향 (길이 1 짜리 방향 화살표)
+        nx, ny = -uy, ux                           # 수직 방향
+        stripe, gap = 0.6, 0.6
+        left, right = lateral_bounds or (-half_width, half_width)
+        t, k = left, 0
+        while t + stripe <= right + 1e-6:
+            cx, cy = ux * r_center, uy * r_center
+            p0 = (cx + nx * t - ux * cw_w / 2,            cy + ny * t - uy * cw_w / 2)
+            p1 = (cx + nx * (t + stripe) - ux * cw_w / 2, cy + ny * (t + stripe) - uy * cw_w / 2)
+            p2 = (cx + nx * (t + stripe) + ux * cw_w / 2, cy + ny * (t + stripe) + uy * cw_w / 2)
+            p3 = (cx + nx * t + ux * cw_w / 2,            cy + ny * t + uy * cw_w / 2)
+            # Lane surfaces use layer 2: equal-depth polygons can disappear.
+            # Draw markings above the road, while keeping them below vehicles.
+            lines.append(f'    <poly id="{pid}_{k}" color="255,255,255" fill="1" layer="10" '
+                         f'shape="{_fmt_shape([p0, p1, p2, p3])}"/>')
+            t += stripe + gap
+            k += 1
+
+    for a in arms:
+        aid = a["id"]
+        half_w = int(a["lanes"]) * LANE_W + 0.3      # 양방향 전체 폭의 절반 (+여유)
+        mode = cw_cfg.get(aid, "center")
+        lateral_bounds = None
+        if isinstance(mode, (int, float)):
+            r = float(mode)
+        elif isinstance(mode, dict) or mode in ("center", "behind_block"):
+            k = int(mode["segment"]) if isinstance(mode, dict) else (len(splits[aid]) if mode == "behind_block" else 0)
+            suffix = str(k) if k else ""
+            angle = math.radians(a["angle"])
+            ux, uy = math.cos(angle), math.sin(angle)
+            # Use the intersection of all lane extents: the complete zebra
+            # must fit on both carriageways, outside junction/island polygons.
+            extents = []
+            sideways = []
+            for direction in ("in", "out"):
+                for lane in net.getEdge(f"{aid}_{direction}{suffix}").getLanes():
+                    radii = [x*ux + y*uy for x, y in lane.getShape()]
+                    extents.append((min(radii), max(radii)))
+                    offsets = [-x*uy + y*ux for x, y in lane.getShape()]
+                    sideways.append((min(offsets)-lane.getWidth()/2, max(offsets)+lane.getWidth()/2))
+            lateral_bounds = (min(lo for lo, _ in sideways), max(hi for _, hi in sideways))
+            lower = max(lo for lo, _ in extents) + cw_w / 2 + 0.5
+            upper = min(hi for _, hi in extents) - cw_w / 2 - 0.5
+            if lower > upper:
+                raise ValueError(f"Road section too short for crossing {aid}: {mode}")
+            offset = float(cfg.get("crosswalk_block_offset", 6.0)) if mode == "behind_block" else 0
+            r = (lower + upper) / 2 if isinstance(mode, dict) else min(lower + offset, upper)
+        else:
+            r = None
+        if r is not None:
+            stripes(f"cw_{aid}", r, a["angle"], half_w, lateral_bounds)
+        stop_offset = float(cfg.get("stop_offsets", {}).get(aid, 0))
+        if stop_offset:
+            angle = math.radians(a["angle"])
+            ux, uy = math.cos(angle), math.sin(angle)
+            nx, ny = -uy, ux
+            for lane in net.getEdge(f"{aid}_in").getLanes():
+                x, y = lane.getShape()[-1]
+                cx, cy = x + ux*stop_offset, y + uy*stop_offset
+                if r is not None and cx*ux + cy*uy < r + cw_w/2 + 1.0:
+                    raise ValueError(f"Stop line overlaps crossing on {lane.getID()}; increase stop_offsets")
+                w = lane.getWidth()/2
+                pts = [(cx + nx*s*w + ux*t*0.2, cy + ny*s*w + uy*t*0.2)
+                       for s,t in [(-1,-1),(1,-1),(1,1),(-1,1)]]
+                lines.append(f'    <poly id="stop_{lane.getID()}" color="255,255,255" fill="1" layer="10" shape="{_fmt_shape(pts)}"/>')
+        if cfg.get("ring_crosswalks", False):
+            for k, rs in enumerate(splits[aid]):
+                stripes(f"cwr_{aid}_{k}", rs + 7.0, a["angle"], half_w)   # 갈림점 바로 바깥
+    lines.append("</additional>")
+    with open(os.path.join(out_dir, "highway.scenery.xml"), "w") as f:
         f.write("\n".join(lines) + "\n")

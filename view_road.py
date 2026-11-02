@@ -31,7 +31,7 @@ import argparse
 import os
 import subprocess
 
-from env.road_config import ROAD, EGO, TRAFFIC
+from env.road_config import ROAD, EGO, TRAFFIC, NOHYEONG
 from env.mdp_config import SIMULATION
 from env import road_builder
 # sumo_env를 import하면 SUMO_HOME 자동 감지 로직이 함께 실행된다
@@ -50,7 +50,11 @@ def print_summary():
     print(f"  차선 수        : {ROAD['num_lanes']}")
     print(f"  제한속도       : {ROAD['speed_limit']} m/s "
           f"(≈ {float(ROAD['speed_limit']) * 3.6:.0f} km/h)")
-    print(f"  배경 교통량    : {TRAFFIC['vehs_per_hour']} 대/시간")
+    right_vph = (sum(s.get("vph", 0) for s in NOHYEONG.get("ring_segments", []))
+                 + sum(r.get("vph", 0) for r in NOHYEONG.get("loop_routes", []))
+                 if ROAD.get("type") == "nohyeong" else 0)
+    print(f"  배경 교통량    : {TRAFFIC['vehs_per_hour'] + right_vph} 대/시간 "
+          f"(기본 {TRAFFIC['vehs_per_hour']} + 원형도로 추가 {right_vph})")
     print(f"  배경차 최고속도: {TRAFFIC['max_speed']} m/s")
     print(f"  ego 가속/감속  : +{EGO['accel']} / -{EGO['decel']} m/s²")
     print("─" * 46)
