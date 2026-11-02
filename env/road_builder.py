@@ -556,6 +556,12 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         k_to = splits[sg["to"]].index(float(sg["to_r"]))
         cons.append(f'    <delete from="{out_edge(sg["from"], k_from)}" to="{sg["_eid"]}"/>')
         cons.append(f'    <delete from="{sg["_eid"]}" to="{in_edge(sg["to"], k_to)}"/>')
+        if sg.get("right_exit_only", False):
+            # End this slip road at the outbound arm, not the next ring segment.
+            for following in segs:
+                if (following["from"] == sg["to"]
+                        and float(following["from_r"]) == float(sg["to_r"])):
+                    cons.append(f'    <delete from="{sg["_eid"]}" to="{following["_eid"]}"/>')
     with open(os.path.join(out_dir, "highway.con.xml"), "w") as f:
         f.write("<connections>\n" + "\n".join(cons) + "\n</connections>\n")
 

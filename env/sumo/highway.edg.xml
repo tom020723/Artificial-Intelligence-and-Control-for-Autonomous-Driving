@@ -27,11 +27,11 @@
     <edge id="A5_out" from="nC" to="nM_A5_0" numLanes="3" speed="13.89" priority="3"/>
     <edge id="A5_in1" from="nE_A5" to="nM_A5_0" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A5_out1" from="nM_A5_0" to="nE_A5" numLanes="3" speed="13.89" priority="3"/>
-    <edge id="RING_A2_A4" from="nM_A2_0" to="nM_A4_0" numLanes="2" speed="8.33" priority="1" shape="35.10,35.48 14.75,31.47 -5.60,30.45 -24.95,33.44 -40.30,40.42"/>
-    <edge id="RING_A4_A1" from="nM_A4_0" to="nM_A1_0" numLanes="2" speed="8.33" priority="1" shape="-46.93,26.73 -46.19,6.05 -48.46,-12.64 -54.73,-26.32"/>
+    <edge id="RING_A2_A4" from="nM_A2_0" to="nM_A4_0" numLanes="1" speed="8.33" priority="1" shape="35.10,35.48 14.75,31.47 -5.60,30.45 -24.95,33.44 -40.30,40.42"/>
+    <edge id="RING_A4_A1" from="nM_A4_0" to="nM_A1_0" numLanes="1" speed="8.33" priority="1" shape="-46.93,26.73 -46.19,6.05 -48.46,-12.64 -54.73,-26.32"/>
     <edge id="RING_A1_A3" from="nM_A1_1" to="nM_A3_1" numLanes="2" speed="8.33" priority="1" shape="-70.00,-56.00 -58.00,-68.00 -42.00,-78.00 -22.00,-84.00 -3.00,-84.00 12.00,-80.00"/>
     <edge id="RING_A3_A5" from="nM_A3_1" to="nM_A5_0" numLanes="2" speed="8.33" priority="1" shape="40.00,-75.00 58.00,-68.00 73.00,-57.00 83.00,-43.00 89.00,-27.00 91.00,-8.00"/>
-    <edge id="RING_A5_A2" from="nM_A5_0" to="nM_A2_1" numLanes="2" speed="8.33" priority="1" shape="88.20,24.00 86.39,35.00 85.59,44.00"/>
+    <edge id="RING_A5_A2" from="nM_A5_0" to="nM_A2_1" numLanes="1" speed="8.33" priority="1" shape="88.20,24.00 86.39,35.00 85.59,44.00"/>
     <edge id="OUTER_N" from="nM_A2_1" to="nM_A4_1" numLanes="2" speed="8.33" priority="1" shape="67.17,69.31 47.55,82.63 23.94,93.94 -1.68,100.25 -27.29,100.57 -48.90,93.88 -65.52,83.19"/>
     <edge id="OUTER_W" from="nM_A4_1" to="nM_A1_1" numLanes="2" speed="8.33" priority="1" shape="-86.69,65.29 -97.24,52.08 -103.79,30.86 -103.34,7.65 -96.90,-15.57 -87.45,-34.78"/>
 </edges>
