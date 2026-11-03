@@ -14,7 +14,7 @@
     <route id="ego_d_A3_A3" edges="A3_in2 A3_in1 A3_out1 A3_out2"/>
     <route id="ego_d_A3_A4" edges="A3_in2 A3_in1 A3_in A4_out A4_out1 A4_out2"/>
     <route id="ego_d_A3_A5" edges="A3_in2 A3_in1 A3_in A5_out A5_out1"/>
-    <route id="ego_d_A4_A1" edges="A4_in2 OUTER_W A1_out2"/>
+    <route id="ego_d_A4_A1" edges="A4_in2 A4_in1 RING_A4_A1 A1_out1 A1_out2"/>
     <route id="ego_d_A4_A2" edges="A4_in2 A4_in1 A4_in A2_out A2_out1 A2_out2"/>
     <route id="ego_d_A4_A3" edges="A4_in2 A4_in1 A4_in A3_out A3_out1 A3_out2"/>
     <route id="ego_d_A4_A5" edges="A4_in2 A4_in1 A4_in A5_out A5_out1"/>

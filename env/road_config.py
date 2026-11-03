@@ -79,19 +79,20 @@ NOHYEONG = {
     # Each tuple is (destination arm, destination lane index).
     "central_lane_movements": {
         "A1": {0: [("A2", 0)], 1: [("A2", 1)], 2: [("A2", 2)],
-               3: [("A1", 0), ("A4", 1)]},
+               3: [("A4", 1)], 4: [("A1", 0)]},          # 8시 방향: 직진 3, 좌회전 1, 가장 왼쪽은 유턴 전용
         "A2": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A1", 2)],
                3: [("A3", 3)]},
         "A3": {0: [("A5", 0)], 1: [("A2", 0)],
                2: [("A4", 0), ("A2", 1)], 3: [("A4", 1)],
-               4: [("A1", 3)]},
+               4: [("A1", 2)]},
         "A4": {0: [("A3", 0)], 1: [("A5", 0), ("A3", 1)],
                2: [("A2", 3), ("A5", 1)]},
         "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
     },
     "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0}},
     # Segment indices run from the central junction outward.
-    "inbound_lanes": {"A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
+    #   8시 방향(A1): 교차로로 들어오는 쪽 5차선 (나가는 쪽 3차선은 아래 도로 목록의 lanes)
+    "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
     # 나가는 방향 차선 수 (구간 번호 k: 0 = 교차로에 붙은 구간). 없으면 도로 기본 차선 수.
     #   월랑로(A4): 교차로~첫 갈림점은 2차선, 그 바깥은 3차선. 늘어난 가장 바깥 차선(0번)은
     #   노형로 북동쪽에서 오는 우회전 길이 이어받는다 (실제 도로처럼 차선이 하나 늘어나는 합류).
@@ -112,7 +113,7 @@ NOHYEONG = {
     #   length = 교차로 중심에서 도로 바깥 끝까지 거리 (m)
     #   weight = 배경 차량이 이 도로로 드나드는 비중 (클수록 차가 많음)
     "arms": [
-        {"id": "A1", "name": "Nohyeong-ro (SW)", "angle": 211, "lanes": 4, "length": 320, "weight": 4},
+        {"id": "A1", "name": "Nohyeong-ro (SW)", "angle": 211, "lanes": 3, "length": 320, "weight": 4},
         {"id": "A2", "name": "Nohyeong-ro (NE)", "angle": 30,  "lanes": 4, "length": 320, "weight": 4},
         {"id": "A3", "name": "1100-ro (S)",      "angle": 286, "lanes": 4, "length": 320, "weight": 4},
         {"id": "A4", "name": "Wollang-ro (NW)",  "angle": 137, "lanes": 3, "length": 260, "weight": 1},

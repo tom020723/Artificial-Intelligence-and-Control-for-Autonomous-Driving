@@ -23,7 +23,7 @@
     <route id="r_A4_A5" edges="A4_in2 A4_in1 A4_in A5_out A5_out1" />
     <route id="r_A5_A1" edges="A5_in1 A5_in A1_out A1_out1 A1_out2" />
     <route id="r_A5_A3" edges="A5_in1 A5_in A3_out A3_out1 A3_out2" />
-    <flow id="f_A1_A1" type="carDist" route="r_A1_A1" begin="0" end="100000" period="237.75" departLane="3" departSpeed="8.0" />
+    <flow id="f_A1_A1" type="carDist" route="r_A1_A1" begin="0" end="100000" period="237.75" departLane="4" departSpeed="8.0" />
     <flow id="lf_RING_A2_A4" type="carDist" from="A2_in2" to="A4_out2" via="RING_A2_A4" begin="0" end="100000" period="60.00" departLane="best" departSpeed="8.0" />
     <flow id="lf_RING_A4_A1" type="carDist" from="A4_in2" to="A1_out2" via="RING_A4_A1" begin="0" end="100000" period="90.00" departLane="best" departSpeed="8.0" />
     <flow id="lf_RING_A1_A3" type="carDist" from="A1_in2" to="A3_out2" via="RING_A1_A3" begin="0" end="100000" period="45.00" departLane="best" departSpeed="8.0" />

@@ -1,10 +1,10 @@
 <edges>
-    <edge id="A1_in" from="nM_A1_0" to="nC" numLanes="4" speed="13.89" priority="3"><stopOffset value="8"/></edge>
-    <edge id="A1_out" from="nC" to="nM_A1_0" numLanes="4" speed="13.89" priority="3"/>
-    <edge id="A1_in1" from="nM_A1_1" to="nM_A1_0" numLanes="4" speed="13.89" priority="3"></edge>
-    <edge id="A1_out1" from="nM_A1_0" to="nM_A1_1" numLanes="4" speed="13.89" priority="3"/>
-    <edge id="A1_in2" from="nE_A1" to="nM_A1_1" numLanes="4" speed="13.89" priority="3"></edge>
-    <edge id="A1_out2" from="nM_A1_1" to="nE_A1" numLanes="4" speed="13.89" priority="3"/>
+    <edge id="A1_in" from="nM_A1_0" to="nC" numLanes="5" speed="13.89" priority="3"><stopOffset value="8"/></edge>
+    <edge id="A1_out" from="nC" to="nM_A1_0" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A1_in1" from="nM_A1_1" to="nM_A1_0" numLanes="5" speed="13.89" priority="3"></edge>
+    <edge id="A1_out1" from="nM_A1_0" to="nM_A1_1" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A1_in2" from="nE_A1" to="nM_A1_1" numLanes="5" speed="13.89" priority="3"></edge>
+    <edge id="A1_out2" from="nM_A1_1" to="nE_A1" numLanes="3" speed="13.89" priority="3"/>
     <edge id="A2_in" from="nM_A2_0" to="nC" numLanes="4" speed="13.89" priority="3"></edge>
     <edge id="A2_out" from="nC" to="nM_A2_0" numLanes="4" speed="13.89" priority="3"/>
     <edge id="A2_in1" from="nM_A2_1" to="nM_A2_0" numLanes="5" speed="13.89" priority="3"></edge>
