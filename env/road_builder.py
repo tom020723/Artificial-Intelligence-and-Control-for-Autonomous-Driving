@@ -440,6 +440,9 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     def out_edge(aid, k): return f"{aid}_out" if k == 0 else f"{aid}_out{k}"
     def inbound_lanes(aid, k):
         return int(cfg.get("inbound_lanes", {}).get(aid, {}).get(k, by_id[aid]["lanes"]))
+    def outbound_lanes(aid, k):
+        """나가는 방향 k번 구간의 차선 수 (outbound_lanes 설정, 없으면 도로 기본 차선 수)."""
+        return int(cfg.get("outbound_lanes", {}).get(aid, {}).get(k, by_id[aid]["lanes"]))
 
     # ── 1) 노드 ──
     nodes = [f'    <node id="nC" x="0" y="0" type="{cfg.get("center_node_type", "traffic_light")}"/>']
@@ -475,7 +478,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             edges.append(f'    <edge id="{in_edge(aid, k)}" from="{outer}" to="{inner}" '
                          f'numLanes="{inbound_lanes(aid, k)}" speed="{S}" priority="3">{stop_child}</edge>')
             edges.append(f'    <edge id="{out_edge(aid, k)}" from="{inner}" to="{outer}" '
-                         f'numLanes="{L}" speed="{S}" priority="3"/>')
+                         f'numLanes="{outbound_lanes(aid, k)}" speed="{S}" priority="3"/>')
             ins.append(in_edge(aid, k)); outs.append(out_edge(aid, k))
         chain_in[aid] = ins[::-1]          # 바깥 → 안 순서
         chain_out[aid] = outs              # 안 → 바깥 순서
@@ -540,6 +543,23 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             if sg["from"] == aid:
                 k = splits[aid].index(float(sg["from_r"])) + 1
                 cons.append(f'    <connection from="{in_edge(aid,k)}" to="{sg["edge_id"]}" fromLane="0" toLane="0"/>')
+    # 나가는 방향 차선 늘리기 (실제 도로처럼 원형도로가 "늘어나는 가장 바깥 차선"으로 합류)
+    #   outbound_lane_links[도로][k] = [(k번 구간 차선, k+1번 구간 차선), ...]
+    #   k+1번 구간에서 위 목록에 없는 차선(= 새로 생긴 바깥 차선)은 이 갈림점으로 합류하는 원형도로가 이어받는다.
+    for aid, segments in cfg.get("outbound_lane_links", {}).items():
+        for k, links in segments.items():
+            allowed = set(links)
+            for src in range(outbound_lanes(aid, k)):
+                for dst in range(outbound_lanes(aid, k + 1)):
+                    tag = "connection" if (src, dst) in allowed else "delete"
+                    cons.append(f'    <{tag} from="{out_edge(aid,k)}" to="{out_edge(aid,k+1)}" fromLane="{src}" toLane="{dst}"/>')
+            free = [d for d in range(outbound_lanes(aid, k + 1)) if d not in {d for _, d in links}]
+            for sg in segs:
+                if sg["to"] == aid and splits[aid].index(float(sg["to_r"])) == k:
+                    for src in range(int(sg.get("lanes", Lr))):
+                        for dst in range(outbound_lanes(aid, k + 1)):
+                            tag = "connection" if (src < len(free) and dst == free[src]) else "delete"
+                            cons.append(f'    <{tag} from="{sg["edge_id"]}" to="{out_edge(aid,k+1)}" fromLane="{src}" toLane="{dst}"/>')
     for aid, turn in upstream_uturns.items():
         k = splits[aid].index(float(turn["radius"])) + 1
         cons.append(f'    <connection from="{in_edge(aid,k)}" to="{out_edge(aid,k)}" '
