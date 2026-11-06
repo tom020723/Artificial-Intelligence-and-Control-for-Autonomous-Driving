@@ -609,7 +609,8 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     startup_spread = float(traffic.get("startup_spread_seconds", 0))
     if not math.isfinite(startup_spread) or startup_spread < 0:
         raise ValueError("startup_spread_seconds must be finite and nonnegative")
-    for flow_index, (a, b) in enumerate(pairs):
+    active_pairs = pairs if traffic.get("background_enabled", True) and float(traffic["vehs_per_hour"]) > 0 else []
+    for flow_index, (a, b) in enumerate(active_pairs):
         w = _pw(a, b) / total_w
         period = 3600.0 / (float(traffic["vehs_per_hour"]) * w)      # 이 경로에 몇 초마다 1대
         if cfg.get("signal_plan"):
@@ -741,6 +742,22 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             _write_upstream_uturn_signals(os.path.join(out_dir, "highway.net.xml"),
                                           cfg, aid, node_at(aid, turn["radius"]),
                                           in_edge(aid, k + 1), out_edge(aid, k + 1))
+
+    if cfg.get("all_signals_green", False):
+        net_path = os.path.join(out_dir, "highway.net.xml")
+        with open(net_path) as f:
+            net_text = f.read()
+        def all_green(match):
+            program = ET.fromstring(match.group(0))
+            phases = program.findall("phase")
+            state_length = len(phases[0].get("state"))
+            for phase in phases:
+                program.remove(phase)
+            ET.SubElement(program, "phase", duration="100000", state="G" * state_length)
+            return ET.tostring(program, encoding="unicode")
+        net_text = re.sub(r'<tlLogic\b[^>]*>.*?</tlLogic>', all_green, net_text, flags=re.DOTALL)
+        with open(net_path, "w") as f:
+            f.write(net_text)
 
     if traffic.get("prepare_departure_lanes", False):
         _prepare_departure_lanes(out_dir)
@@ -922,6 +939,9 @@ def _loop_flows(cfg, segs, entry_edge, exit_edge, flow_type, traffic):
       · ring_segments[*]["vph"] : 그 길 하나만 지나가는 차 (from 도로 → 그 길 → to 도로)
       · loop_routes[*]          : 여러 길을 이어서 지나가는 차
     """
+    if not traffic.get("background_enabled", True):
+        return []
+
     def flow(fid, fa, ta, via, vph):
         if not vph or float(vph) <= 0:
             return None

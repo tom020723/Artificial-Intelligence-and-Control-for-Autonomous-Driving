@@ -17,7 +17,7 @@ import os
 import shutil
 from datetime import datetime
 
-from env.road_config import ROAD, EGO, TRAFFIC
+from env.road_config import ROAD, EGO, TRAFFIC, ROUTE_ONLY_EXPERIMENT
 from env.mdp_config import SIMULATION, OBSERVATION, ACTION
 from env.mdp_config import REWARD as REWARD_DEFAULTS
 from env import road_builder
@@ -118,7 +118,8 @@ RUN_NAME = None         # None이면 run_날짜_시각 자동 생성.
 
 def make_run_dir() -> str:
     """results/<run이름>/ 폴더를 만들고 경로를 반환."""
-    name = RUN_NAME or datetime.now().strftime("run_%Y%m%d_%H%M%S")
+    prefix = "route_only" if ROUTE_ONLY_EXPERIMENT else "run"
+    name = RUN_NAME or datetime.now().strftime(f"{prefix}_%Y%m%d_%H%M%S")
     run_dir = os.path.join(BASE, RESULTS_DIR, name)
     os.makedirs(run_dir, exist_ok=True)
     if not os.path.isdir(run_dir):
@@ -152,6 +153,7 @@ if __name__ == "__main__":
     # 2) 결과 폴더 + 로거
     run_dir = make_run_dir()
     logger = RunLogger(run_dir)
+    snapshot_configs(run_dir)
     print(f"결과 폴더: {run_dir}")
 
     # 3) 환경
