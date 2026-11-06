@@ -880,7 +880,10 @@ class SumoHighwayEnv(gym.Env):
 
         # ---- 잘못된 차선에 갇힘: 감점 후 Episode 종료 ----
         #   경로로 이어지지 않는 차선 끝에서 멈추면 더 갈 방법이 없으므로 끝낸다.
+        wrong_lane = (not alive and not collided and not arrived
+                      and self.road_type == "nohyeong")
         if alive and not terminated and self._stuck_in_wrong_lane():
+            wrong_lane = True
             reward -= float(self.rw.get("wrong_lane_penalty", 2.0))
             terminated = True
 
@@ -891,6 +894,7 @@ class SumoHighwayEnv(gym.Env):
             "route": self.ego_route_id,
             "collided": collided,
             "arrived": arrived,
+            "wrong_lane": wrong_lane,
             "speed": ego_speed,
             "gap": ego_gap,
             "accel_raw": accel_raw,

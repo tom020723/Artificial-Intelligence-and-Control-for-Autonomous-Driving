@@ -20,7 +20,8 @@ class DrivingMetrics:
     """평가 1회(n_episodes 평균)의 주행 지표."""
     collision_rate: float   # 충돌로 끝난 에피소드 비율 (0~1, 낮을수록 좋음)
     success_rate: float     # 도로 끝까지 완주한 비율 (0~1, 높을수록 좋음)
-    timeout_rate: float     # 시간초과로 끝난 비율 (= 1 - 충돌 - 완주)
+    timeout_rate: float     # 실제 시간 제한으로 끝난 비율
+    wrong_lane_rate: float  # 경로에 맞지 않는 차선으로 종료된 비율
     mean_speed: float       # 전 스텝 평균 주행속도 (m/s)
     mean_gap: float         # 선행차 감지 스텝에서의 평균 차간거리 (m)
     min_gap: float          # 관측된 최소 차간거리 (m) — 위험 운전 지표
@@ -37,6 +38,8 @@ class DrivingMetrics:
         """콘솔 한 줄 출력용 문자열."""
         return (f"충돌률={self.collision_rate:.0%}  "
                 f"완주율={self.success_rate:.0%}  "
+                f"차선실패={self.wrong_lane_rate:.0%}  "
+                f"시간초과={self.timeout_rate:.0%}  "
                 f"평균속도={self.mean_speed:.1f}m/s  "
                 f"평균차간={self.mean_gap:.1f}m  "
                 f"최소차간={self.min_gap:.1f}m  "
@@ -59,7 +62,7 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         모든 지표는 env.step()의 info(collided/arrived/speed/gap)에서 읽는다.
         관측(obs) 벡터의 구성과 무관하므로, 관측을 바꿔도 이 코드는 안 깨진다.
     """
-    n_collide, n_arrive, n_timeout = 0, 0, 0
+    n_collide, n_arrive, n_timeout, n_wrong_lane = 0, 0, 0, 0
     speeds, gaps, returns, lengths, lane_changes = [], [], [], [], []
 
     for _ in range(n_episodes):
@@ -83,6 +86,10 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
                 ended_by = "collision"
             elif info.get("arrived"):
                 ended_by = "arrival"
+            elif info.get("wrong_lane"):
+                ended_by = "wrong_lane"
+            elif truncated:
+                ended_by = "timeout"
 
             # 속도/차간거리는 env가 info로 넘겨주는 원시값(m/s, m)을 쓴다.
             # 관측(obs) 레이아웃이 바뀌어도 평가 코드는 영향받지 않는다.
@@ -96,7 +103,9 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
             n_collide += 1
         elif ended_by == "arrival":
             n_arrive += 1
-        else:
+        elif ended_by == "wrong_lane":
+            n_wrong_lane += 1
+        elif ended_by == "timeout":
             n_timeout += 1
 
         returns.append(ep_ret)
@@ -107,6 +116,7 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         collision_rate=n_collide / n_episodes,
         success_rate=n_arrive / n_episodes,
         timeout_rate=n_timeout / n_episodes,
+        wrong_lane_rate=n_wrong_lane / n_episodes,
         mean_speed=float(np.mean(speeds)) if speeds else 0.0,
         mean_gap=float(np.mean(gaps)) if gaps else float(env.visibility),
         min_gap=float(np.min(gaps)) if gaps else float(env.visibility),
