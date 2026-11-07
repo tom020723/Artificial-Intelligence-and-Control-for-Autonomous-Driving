@@ -13,6 +13,10 @@
 
 실행:  python train.py
 """
+import argparse
+import csv
+import hashlib
+import json
 import os
 import shutil
 from datetime import datetime
@@ -42,6 +46,12 @@ TOTAL_TIMESTEPS = 200_000   # 총 학습 스텝 수
 #  이 파일이 run 폴더에 스냅샷되므로 "그 결과가 어떤 계수였는지"도 남는다.
 # ══════════════════════════════════════════════════════════════════
 REWARD_OVERRIDES = dict(
+    red_light_penalty=5.0,     # 실험 4·5: 적신호 위반 후 즉시 종료
+    green_pass_bonus=10.0,     # 경로에 맞는 청신호 정지선 통과당 1회
+    red_stop_penalty_coef=0.05,  # 적신호 거리 감점의 스텝당 상한 (속도 조건 없음)
+    red_stop_safe_gap=3.0,     # 앞차와 유지할 간격(m)
+    red_stop_margin=3.0,       # 정지선 앞 정차 여유(m)
+    red_stop_distance_scale=100.0,  # 여유 거리 정규화(m)
     speed_weight=0.1,          # 속도 보상 (스텝당 최대 이 값)
     collision_penalty=5.0,     # 충돌 시 -이 값, 즉시 종료
     arrival_bonus=2.0,         # 완주 보너스
@@ -50,8 +60,8 @@ REWARD_OVERRIDES = dict(
     blocked_penalty=0.05,      # "느린 앞차에 막힘" 스텝당 감점 (추월 학습 핵심)
     blocked_gap=20.0,          #   막힘 판정: 앞차 이 거리 이내
     blocked_speed_frac=0.7,    #   그리고 내 속도 < vmax × 이 값
-    lane_change_penalty=0.0,   # 변경 실행당 감점 (커리큘럼: 초기 0,
-    invalid_action_penalty=0.0,#  추월 학습 후 지그재그 과하면 0.02~0.05)
+    lane_change_penalty=0.1,   # 실험 4: 수락된 차선변경 명령당 감점
+    invalid_action_penalty=0.2,# 실험 4: 거절된 차선변경 명령당 감점
 )
 REWARD = {**REWARD_DEFAULTS, **REWARD_OVERRIDES}
 
@@ -150,6 +160,15 @@ def snapshot_configs(run_dir: str):
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="PPO 학습 (저장 가중치에서 추가 학습 가능)")
+    parser.add_argument("--init-model", default=None,
+                        help="초기 가중치 model.pt 경로. optimizer/환경/스텝 카운터는 새로 시작")
+    args = parser.parse_args()
+    if args.init_model:
+        args.init_model = os.path.abspath(args.init_model)
+        if not os.path.isfile(args.init_model):
+            parser.error(f"초기 모델 파일을 찾을 수 없습니다: {args.init_model}")
+
     # 1) 도로 생성 (env/road_config.py 기준으로 매번 재생성)
     sumocfg = road_builder.build(ROAD, EGO, TRAFFIC,
                                  os.path.join(BASE, "env", "sumo"))
@@ -190,6 +209,27 @@ if __name__ == "__main__":
     # 5) 학습 → 저장
     #    try/finally: Ctrl+C나 에러로 중단돼도 SUMO 정리 + 결과 저장은 수행
     try:
+        if args.init_model:
+            initial_model = os.path.join(run_dir, "initial_model.pt")
+            shutil.copy2(args.init_model, initial_model)
+            agent.load(initial_model)
+            parent_steps = None
+            parent_log = os.path.join(os.path.dirname(args.init_model), "training_log.csv")
+            if os.path.isfile(parent_log):
+                with open(parent_log, newline="") as f:
+                    rows = list(csv.DictReader(f))
+                if rows:
+                    parent_steps = int(rows[-1]["steps"])
+            with open(initial_model, "rb") as f:
+                digest = hashlib.sha256(f.read()).hexdigest()
+            with open(os.path.join(run_dir, "initialization.json"), "w") as f:
+                json.dump({"source_model": args.init_model, "sha256": digest,
+                           "parent_run_steps": parent_steps,
+                           "additional_timesteps_target": TOTAL_TIMESTEPS,
+                           "optimizer_restored": False,
+                           "step_counter": "local to this additional training run"}, f, indent=2)
+            print(f"초기 가중치 로드: {args.init_model}")
+            print(f"기존 run {parent_steps} step + 추가 목표 {TOTAL_TIMESTEPS} step (optimizer 새로 생성)")
         agent.learn(env,
                     total_timesteps=TOTAL_TIMESTEPS,
                     logger=logger,

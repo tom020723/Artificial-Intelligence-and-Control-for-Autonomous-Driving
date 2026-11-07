@@ -1,5 +1,5 @@
 <nodes>
-    <node id="nC" x="0" y="0" type="traffic_light"/>
+    <node id="nC" x="0" y="0" type="traffic_light" controlledInner="A3_in"/>
     <node id="nE_A1" x="-274.29" y="-164.81"/>
     <node id="nM_A1_0" x="-59.14" y="-35.54" type="priority"/>
     <node id="nM_A1_1" x="-76.29" y="-45.84" type="priority"/>
@@ -7,7 +7,7 @@
     <node id="nM_A2_0" x="56.29" y="32.50" type="priority"/>
     <node id="nM_A2_1" x="86.60" y="50.00" type="priority"/>
     <node id="nE_A3" x="88.20" y="-307.60"/>
-    <node id="nM_A3_0" x="13.23" y="-46.14" type="traffic_light"/>
+    <node id="nM_A3_0" x="13.23" y="-46.14" type="traffic_light" tl="nC"/>
     <node id="nM_A3_1" x="21.22" y="-74.02" type="priority"/>
     <node id="nE_A4" x="-190.15" y="177.32"/>
     <node id="nM_A4_0" x="-47.54" y="44.33" type="priority"/>

@@ -1,0 +1,8 @@
+{
+  "source_model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving/results/signal_reward_v2_20261107_143114/model.pt",
+  "sha256": "d1f2a2bb007249481be093374e0a1fcbcd83849a473e334583fed9069d6c3803",
+  "parent_run_steps": 200704,
+  "additional_timesteps_target": 200000,
+  "optimizer_restored": false,
+  "step_counter": "local to this additional training run"
+}

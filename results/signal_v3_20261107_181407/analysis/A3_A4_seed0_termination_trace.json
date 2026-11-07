@@ -1,0 +1,3363 @@
+[
+  {
+    "step": 1,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 0.0,
+      "remaining": 226.06,
+      "speed": 10.0,
+      "distance": 0.0,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 271.84,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 287.99,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.29339370131492615,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 5.3960814967751505,
+      "remaining": 220.66391850322486,
+      "speed": 10.792162993550301,
+      "distance": 5.3960814967751505,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 266.44391850322484,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 282.59391850322487,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.07769735776494097,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 2,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 5.3960814967751505,
+      "remaining": 220.66391850322486,
+      "speed": 10.792162993550301,
+      "distance": 5.3960814967751505,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 266.44391850322484,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 282.59391850322487,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.2833190858364105,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 11.174643759429454,
+      "remaining": 214.88535624057056,
+      "speed": 11.557124525308609,
+      "distance": 11.174643759429454,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 260.66535624057053,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 276.81535624057057,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.0832046402110051,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 3,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 11.174643759429454,
+      "remaining": 214.88535624057056,
+      "speed": 11.557124525308609,
+      "distance": 11.174643759429454,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 260.66535624057053,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 276.81535624057057,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.2736932337284088,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 17.32269188761711,
+      "remaining": 208.7373081123829,
+      "speed": 12.296096256375312,
+      "distance": 17.32269188761711,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 254.5173081123829,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 270.6673081123829,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.08852481106101737,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 4,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 17.32269188761711,
+      "remaining": 208.7373081123829,
+      "speed": 12.296096256375312,
+      "distance": 17.32269188761711,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 254.5173081123829,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 270.6673081123829,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.2643989324569702,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 23.82767857462168,
+      "remaining": 202.23232142537833,
+      "speed": 13.009973374009132,
+      "distance": 23.82767857462168,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 248.01232142537833,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 264.16232142537837,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.09366431514765393,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 5,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 23.82767857462168,
+      "remaining": 202.23232142537833,
+      "speed": 13.009973374009132,
+      "distance": 23.82767857462168,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 248.01232142537833,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 264.16232142537837,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.2553778290748596,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 30.677425330877305,
+      "remaining": 195.3825746691227,
+      "speed": 13.699493512511253,
+      "distance": 30.677425330877305,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 241.1625746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 257.31257466912274,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.09862846301303999,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 6,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 30.677425330877305,
+      "remaining": 195.3825746691227,
+      "speed": 13.699493512511253,
+      "distance": 30.677425330877305,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 241.1625746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 257.31257466912274,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24680325388908386,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 37.622425330877306,
+      "remaining": 188.43757466912268,
+      "speed": 13.89,
+      "distance": 37.622425330877306,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 234.21757466912268,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 250.3675746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 7,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 37.622425330877306,
+      "remaining": 188.43757466912268,
+      "speed": 13.89,
+      "distance": 37.622425330877306,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 234.21757466912268,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 250.3675746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 44.567425330877306,
+      "remaining": 181.4925746691227,
+      "speed": 13.89,
+      "distance": 44.567425330877306,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 227.2725746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 243.4225746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 8,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 44.567425330877306,
+      "remaining": 181.4925746691227,
+      "speed": 13.89,
+      "distance": 44.567425330877306,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 227.2725746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 243.4225746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 51.512425330877306,
+      "remaining": 174.5475746691227,
+      "speed": 13.89,
+      "distance": 51.512425330877306,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 220.3275746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 236.4775746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 9,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 51.512425330877306,
+      "remaining": 174.5475746691227,
+      "speed": 13.89,
+      "distance": 51.512425330877306,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 220.3275746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 236.4775746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 58.45742533087731,
+      "remaining": 167.6025746691227,
+      "speed": 13.89,
+      "distance": 58.45742533087731,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 213.3825746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 229.5325746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 10,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 58.45742533087731,
+      "remaining": 167.6025746691227,
+      "speed": 13.89,
+      "distance": 58.45742533087731,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 213.3825746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 229.5325746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 65.4024253308773,
+      "remaining": 160.6575746691227,
+      "speed": 13.89,
+      "distance": 65.4024253308773,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 206.4375746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 222.58757466912272,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 11,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 65.4024253308773,
+      "remaining": 160.6575746691227,
+      "speed": 13.89,
+      "distance": 65.4024253308773,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 206.4375746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 222.58757466912272,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 72.34742533087731,
+      "remaining": 153.7125746691227,
+      "speed": 13.89,
+      "distance": 72.34742533087731,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 199.4925746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 215.6425746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 12,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 72.34742533087731,
+      "remaining": 153.7125746691227,
+      "speed": 13.89,
+      "distance": 72.34742533087731,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 199.4925746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 215.6425746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 79.29242533087731,
+      "remaining": 146.7675746691227,
+      "speed": 13.89,
+      "distance": 79.29242533087731,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 192.5475746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 208.6975746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 13,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 79.29242533087731,
+      "remaining": 146.7675746691227,
+      "speed": 13.89,
+      "distance": 79.29242533087731,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 192.5475746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 208.6975746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 86.2374253308773,
+      "remaining": 139.8225746691227,
+      "speed": 13.89,
+      "distance": 86.2374253308773,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 185.6025746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 201.7525746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 14,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 86.2374253308773,
+      "remaining": 139.8225746691227,
+      "speed": 13.89,
+      "distance": 86.2374253308773,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 185.6025746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 201.7525746691227,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 93.1824253308773,
+      "remaining": 132.8775746691227,
+      "speed": 13.89,
+      "distance": 93.1824253308773,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 178.6575746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 194.80757466912272,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 15,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 93.1824253308773,
+      "remaining": 132.8775746691227,
+      "speed": 13.89,
+      "distance": 93.1824253308773,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 178.6575746691227,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 194.80757466912272,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 100.12742533087729,
+      "remaining": 125.93257466912272,
+      "speed": 13.89,
+      "distance": 100.12742533087729,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 171.71257466912272,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 187.86257466912272,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 16,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 100.12742533087729,
+      "remaining": 125.93257466912272,
+      "speed": 13.89,
+      "distance": 100.12742533087729,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 171.71257466912272,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 187.86257466912272,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 107.07242533087728,
+      "remaining": 118.98757466912272,
+      "speed": 13.89,
+      "distance": 107.07242533087728,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 164.76757466912272,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 180.91757466912273,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 17,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 107.07242533087728,
+      "remaining": 118.98757466912272,
+      "speed": 13.89,
+      "distance": 107.07242533087728,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 164.76757466912272,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 180.91757466912273,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 114.01742533087727,
+      "remaining": 112.04257466912273,
+      "speed": 13.89,
+      "distance": 114.01742533087727,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 157.82257466912273,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 173.97257466912274,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 18,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 114.01742533087727,
+      "remaining": 112.04257466912273,
+      "speed": 13.89,
+      "distance": 114.01742533087727,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 157.82257466912273,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 173.97257466912274,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 120.96242533087727,
+      "remaining": 105.09757466912274,
+      "speed": 13.89,
+      "distance": 120.96242533087727,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 150.87757466912274,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 167.02757466912274,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 19,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 120.96242533087727,
+      "remaining": 105.09757466912274,
+      "speed": 13.89,
+      "distance": 120.96242533087727,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 150.87757466912274,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 167.02757466912274,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 127.90742533087726,
+      "remaining": 98.15257466912274,
+      "speed": 13.89,
+      "distance": 127.90742533087726,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 143.93257466912274,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 160.08257466912275,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 20,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 127.90742533087726,
+      "remaining": 98.15257466912274,
+      "speed": 13.89,
+      "distance": 127.90742533087726,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 143.93257466912274,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 160.08257466912275,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 134.85242533087725,
+      "remaining": 91.20757466912275,
+      "speed": 13.89,
+      "distance": 134.85242533087725,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 136.98757466912275,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 153.13757466912276,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 21,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 134.85242533087725,
+      "remaining": 91.20757466912275,
+      "speed": 13.89,
+      "distance": 134.85242533087725,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 136.98757466912275,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 153.13757466912276,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 141.79742533087725,
+      "remaining": 84.26257466912276,
+      "speed": 13.89,
+      "distance": 141.79742533087725,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 130.04257466912276,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 146.19257466912276,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 22,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 141.79742533087725,
+      "remaining": 84.26257466912276,
+      "speed": 13.89,
+      "distance": 141.79742533087725,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 130.04257466912276,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 146.19257466912276,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 148.74242533087724,
+      "remaining": 77.31757466912276,
+      "speed": 13.89,
+      "distance": 148.74242533087724,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 123.09757466912276,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 139.24757466912277,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 23,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 148.74242533087724,
+      "remaining": 77.31757466912276,
+      "speed": 13.89,
+      "distance": 148.74242533087724,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 123.09757466912276,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 139.24757466912277,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 155.68742533087723,
+      "remaining": 70.37257466912277,
+      "speed": 13.89,
+      "distance": 155.68742533087723,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 116.15257466912277,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 132.30257466912278,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 24,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 155.68742533087723,
+      "remaining": 70.37257466912277,
+      "speed": 13.89,
+      "distance": 155.68742533087723,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 116.15257466912277,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 132.30257466912278,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 162.63242533087723,
+      "remaining": 63.42757466912278,
+      "speed": 13.89,
+      "distance": 162.63242533087723,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 109.20757466912278,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 125.35757466912278,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 25,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 162.63242533087723,
+      "remaining": 63.42757466912278,
+      "speed": 13.89,
+      "distance": 162.63242533087723,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 109.20757466912278,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 125.35757466912278,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 169.57742533087722,
+      "remaining": 56.48257466912278,
+      "speed": 13.89,
+      "distance": 169.57742533087722,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 102.26257466912278,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 118.41257466912279,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 26,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 169.57742533087722,
+      "remaining": 56.48257466912278,
+      "speed": 13.89,
+      "distance": 169.57742533087722,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 102.26257466912278,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 118.41257466912279,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.24440574645996094,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_2",
+      "position": 176.5224253308772,
+      "remaining": 49.53757466912279,
+      "speed": 13.89,
+      "distance": 176.5224253308772,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 95.31757466912279,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 111.4675746691228,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.10000000000000002,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 27,
+    "before": {
+      "lane": "A3_in2_2",
+      "position": 176.5224253308772,
+      "remaining": 49.53757466912279,
+      "speed": 13.89,
+      "distance": 176.5224253308772,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 3,
+          "distance": 95.31757466912279,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_3",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 11,
+          "distance": 111.4675746691228,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_3",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      -0.008791564963757992,
+      -1.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 183.45555671817613,
+      "remaining": 42.604443281823876,
+      "speed": 13.866262774597853,
+      "distance": 183.45555671817613,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 88.38444328182388,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 104.53444328182388,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": -0.00017089435134734487,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 28,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 183.45555671817613,
+      "remaining": 42.604443281823876,
+      "speed": 13.866262774597853,
+      "distance": 183.45555671817613,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 88.38444328182388,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 104.53444328182388,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.6931160688400269,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 190.40055671817612,
+      "remaining": 35.65944328182388,
+      "speed": 13.89,
+      "distance": 190.40055671817612,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 81.43944328182388,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 97.58944328182389,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.05270527835908807,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 29,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 190.40055671817612,
+      "remaining": 35.65944328182388,
+      "speed": 13.89,
+      "distance": 190.40055671817612,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 81.43944328182388,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 97.58944328182389,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.8271875381469727,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 197.3455567181761,
+      "remaining": 28.71444328182389,
+      "speed": 13.89,
+      "distance": 197.3455567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 74.49444328182389,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 90.6444432818239,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.05617777835908807,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 30,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 197.3455567181761,
+      "remaining": 28.71444328182389,
+      "speed": 13.89,
+      "distance": 197.3455567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 74.49444328182389,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 90.6444432818239,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.8283470869064331,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 204.2905567181761,
+      "remaining": 21.769443281823897,
+      "speed": 13.89,
+      "distance": 204.2905567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 67.5494432818239,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 83.6994432818239,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.059650278359088066,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 31,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 204.2905567181761,
+      "remaining": 21.769443281823897,
+      "speed": 13.89,
+      "distance": 204.2905567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 67.5494432818239,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 83.6994432818239,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.8290340900421143,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 211.2355567181761,
+      "remaining": 14.824443281823903,
+      "speed": 13.89,
+      "distance": 211.2355567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 60.604443281823904,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 76.75444328182391,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.06312277835908806,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 32,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 211.2355567181761,
+      "remaining": 14.824443281823903,
+      "speed": 13.89,
+      "distance": 211.2355567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 60.604443281823904,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 76.75444328182391,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.8296383619308472,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 218.1805567181761,
+      "remaining": 7.87944328182391,
+      "speed": 13.89,
+      "distance": 218.1805567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 53.65944328182391,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 69.80944328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.06659527835908806,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 33,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 218.1805567181761,
+      "remaining": 7.87944328182391,
+      "speed": 13.89,
+      "distance": 218.1805567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 53.65944328182391,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 69.80944328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.8301648497581482,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in2_1",
+      "position": 225.12555671817609,
+      "remaining": 0.934443281823917,
+      "speed": 13.89,
+      "distance": 225.12555671817609,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 46.71444328182392,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 62.864443281823924,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.07006777835908806,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 34,
+    "before": {
+      "lane": "A3_in2_1",
+      "position": 225.12555671817609,
+      "remaining": 0.934443281823917,
+      "speed": 13.89,
+      "distance": 225.12555671817609,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 46.71444328182392,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 62.864443281823924,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.8307051062583923,
+      0.0
+    ],
+    "after": {
+      "lane": ":nM_A3_1_1_1",
+      "position": 6.010556718176076,
+      "remaining": 11.679443281823925,
+      "speed": 13.89,
+      "distance": 232.07055671817608,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 39.769443281823925,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 55.91944328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.07354027835908805,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 35,
+    "before": {
+      "lane": ":nM_A3_1_1_1",
+      "position": 6.010556718176076,
+      "remaining": 11.679443281823925,
+      "speed": 13.89,
+      "distance": 232.07055671817608,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 39.769443281823925,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 55.91944328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.7082116007804871,
+      0.0
+    ],
+    "after": {
+      "lane": ":nM_A3_1_1_1",
+      "position": 12.955556718176076,
+      "remaining": 4.734443281823925,
+      "speed": 13.89,
+      "distance": 239.01555671817607,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 32.824443281823925,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 48.97444328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.07701277835908805,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 36,
+    "before": {
+      "lane": ":nM_A3_1_1_1",
+      "position": 12.955556718176076,
+      "remaining": 4.734443281823925,
+      "speed": 13.89,
+      "distance": 239.01555671817607,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in1"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 32.824443281823925,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 48.97444328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.7109852433204651,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in1_2",
+      "position": 2.2105567181760755,
+      "remaining": 25.879443281823924,
+      "speed": 13.89,
+      "distance": 245.96055671817606,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 25.879443281823924,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 42.02944328182393,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.08048527835908806,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 37,
+    "before": {
+      "lane": "A3_in1_2",
+      "position": 2.2105567181760755,
+      "remaining": 25.879443281823924,
+      "speed": 13.89,
+      "distance": 245.96055671817606,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 25.879443281823924,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 42.02944328182393,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.7138116359710693,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in1_2",
+      "position": 9.155556718176076,
+      "remaining": 18.934443281823924,
+      "speed": 13.89,
+      "distance": 252.9055567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 18.934443281823924,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 35.08444328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.08395777835908806,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 38,
+    "before": {
+      "lane": "A3_in1_2",
+      "position": 9.155556718176076,
+      "remaining": 18.934443281823924,
+      "speed": 13.89,
+      "distance": 252.9055567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 18.934443281823924,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 35.08444328182392,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.7166483402252197,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in1_2",
+      "position": 16.100556718176076,
+      "remaining": 11.989443281823924,
+      "speed": 13.89,
+      "distance": 259.85055671817605,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 11.989443281823924,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 28.13944328182393,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.08743027835908805,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 39,
+    "before": {
+      "lane": "A3_in1_2",
+      "position": 16.100556718176076,
+      "remaining": 11.989443281823924,
+      "speed": 13.89,
+      "distance": 259.85055671817605,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 11.989443281823924,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 28.13944328182393,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.7192966938018799,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in1_2",
+      "position": 23.045556718176076,
+      "remaining": 5.0444432818239235,
+      "speed": 13.89,
+      "distance": 266.7955567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 5.0444432818239235,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 21.194443281823926,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 0.09090277835908805,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 40,
+    "before": {
+      "lane": "A3_in1_2",
+      "position": 23.045556718176076,
+      "remaining": 5.0444432818239235,
+      "speed": 13.89,
+      "distance": 266.7955567181761,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A3_in"
+      ],
+      "signals": [
+        {
+          "id": "nM_A3_0",
+          "link": 2,
+          "distance": 5.0444432818239235,
+          "color": "G",
+          "stop_line": {
+            "lane_id": "A3_in1_2",
+            "lane_position": 28.09
+          }
+        },
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 21.194443281823926,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.7216376066207886,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in_2",
+      "position": 1.6005567181760767,
+      "remaining": 22.249443281823925,
+      "speed": 13.89,
+      "distance": 273.74055671817604,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A2_out",
+        "A4_out"
+      ],
+      "signals": [
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 14.249443281823925,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 10.094375278359088,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 41,
+    "before": {
+      "lane": "A3_in_2",
+      "position": 1.6005567181760767,
+      "remaining": 22.249443281823925,
+      "speed": 13.89,
+      "distance": 273.74055671817604,
+      "route_connected": true,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A2_out",
+        "A4_out"
+      ],
+      "signals": [
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 14.249443281823925,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.3043133020401001,
+      -1.0
+    ],
+    "after": {
+      "lane": "A3_in_1",
+      "position": 8.545556718176076,
+      "remaining": 15.304443281823925,
+      "speed": 13.89,
+      "distance": 280.6855567181761,
+      "route_connected": false,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A2_out"
+      ],
+      "signals": [
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 7.304443281823925,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": -0.0021522216409119443,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 42,
+    "before": {
+      "lane": "A3_in_1",
+      "position": 8.545556718176076,
+      "remaining": 15.304443281823925,
+      "speed": 13.89,
+      "distance": 280.6855567181761,
+      "route_connected": false,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A2_out"
+      ],
+      "signals": [
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 7.304443281823925,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.4564468264579773,
+      -1.0
+    ],
+    "after": {
+      "lane": "A3_in_0",
+      "position": 15.490556718176077,
+      "remaining": 8.359443281823925,
+      "speed": 13.89,
+      "distance": 287.6305567181761,
+      "route_connected": false,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A5_out"
+      ],
+      "signals": [
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 0.3594432818239248,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "reward": 1.3877787807814457e-17,
+    "terminated": false,
+    "truncated": false,
+    "red_violation": false,
+    "wrong_lane": false
+  },
+  {
+    "step": 43,
+    "before": {
+      "lane": "A3_in_0",
+      "position": 15.490556718176077,
+      "remaining": 8.359443281823925,
+      "speed": 13.89,
+      "distance": 287.6305567181761,
+      "route_connected": false,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A5_out"
+      ],
+      "signals": [
+        {
+          "id": "nC",
+          "link": 10,
+          "distance": 0.3594432818239248,
+          "color": "r",
+          "stop_line": {
+            "lane_id": "A3_in_2",
+            "lane_position": 15.850000000000001
+          }
+        }
+      ]
+    },
+    "action": [
+      0.6351495981216431,
+      0.0
+    ],
+    "after": {
+      "lane": "A3_in_0",
+      "position": 22.435556718176077,
+      "remaining": 1.4144432818239245,
+      "speed": 13.89,
+      "distance": 294.5755567181761,
+      "route_connected": false,
+      "stuck_in_wrong_lane": false,
+      "outgoing": [
+        "A5_out"
+      ],
+      "signals": []
+    },
+    "reward": -5.0,
+    "terminated": true,
+    "truncated": false,
+    "red_violation": true,
+    "wrong_lane": false
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "experiment": 5,
+  "tsp_job": 12,
+  "tsp_log": "/tmp/ts-out.MBNcai",
+  "started_kst": "2026-11-07 21:35:05",
+  "training_steps_target": 200000,
+  "expected_actual_additional_steps": 200704,
+  "expected_total_training_steps": 401408,
+  "source_model": "results/signal_v3_20261107_181407/model.pt",
+  "settings": "unchanged from experiment 5",
+  "optimizer_restored": false,
+  "preflight": "training configs and environment/algorithm/utility sources match parent; model load and shell syntax passed"
+}

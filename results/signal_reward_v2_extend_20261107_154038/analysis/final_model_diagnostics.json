@@ -1,0 +1,321 @@
+[
+  {
+    "seed": 0,
+    "route": "ego_d_A3_A2",
+    "result": "red_light_violation",
+    "steps": 43,
+    "saw_red": true,
+    "stop_distance": null,
+    "red_steps": 3,
+    "creep_steps": 0,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 10.904,
+      "speed": 13.89,
+      "accel": -0.91
+    },
+    "violation": {
+      "distance_before": 0.726,
+      "speed_before": 8.924,
+      "accel": -0.93,
+      "step": 42
+    }
+  },
+  {
+    "seed": 1,
+    "route": "ego_d_A4_A2",
+    "result": "arrived",
+    "steps": 210,
+    "saw_red": true,
+    "stop_distance": 45.28093491949147,
+    "red_steps": 130,
+    "creep_steps": 1,
+    "green_passes": 0,
+    "red_entry": {
+      "distance": 97.233,
+      "speed": 13.89,
+      "accel": -0.118
+    },
+    "violation": null
+  },
+  {
+    "seed": 2,
+    "route": "ego_r_OUTER_N_A2_A3",
+    "result": "arrived",
+    "steps": 127,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 3,
+    "route": "ego_r_OUTER_N_A2_A5",
+    "result": "arrived",
+    "steps": 145,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 4,
+    "route": "ego_d_A5_A1",
+    "result": "arrived",
+    "steps": 266,
+    "saw_red": true,
+    "stop_distance": 45.47273007467395,
+    "red_steps": 176,
+    "creep_steps": 1,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 94.803,
+      "speed": 13.89,
+      "accel": -0.142
+    },
+    "violation": null
+  },
+  {
+    "seed": 5,
+    "route": "ego_d_A1_A1",
+    "result": "wrong_lane",
+    "steps": 44,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 6,
+    "route": "ego_d_A3_A2",
+    "result": "red_light_violation",
+    "steps": 43,
+    "saw_red": true,
+    "stop_distance": null,
+    "red_steps": 3,
+    "creep_steps": 0,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 10.904,
+      "speed": 13.89,
+      "accel": -0.91
+    },
+    "violation": {
+      "distance_before": 0.726,
+      "speed_before": 8.924,
+      "accel": -0.93,
+      "step": 42
+    }
+  },
+  {
+    "seed": 7,
+    "route": "ego_d_A4_A1",
+    "result": "arrived",
+    "steps": 76,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 8,
+    "route": "ego_d_A2_A1",
+    "result": "arrived",
+    "steps": 112,
+    "saw_red": true,
+    "stop_distance": 22.69282078191649,
+    "red_steps": 26,
+    "creep_steps": 1,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 95.314,
+      "speed": 13.89,
+      "accel": 0.368
+    },
+    "violation": null
+  },
+  {
+    "seed": 9,
+    "route": "ego_d_A5_A3",
+    "result": "arrived",
+    "steps": 264,
+    "saw_red": true,
+    "stop_distance": 45.47273007467395,
+    "red_steps": 176,
+    "creep_steps": 1,
+    "green_passes": 2,
+    "red_entry": {
+      "distance": 94.803,
+      "speed": 13.89,
+      "accel": -0.142
+    },
+    "violation": null
+  },
+  {
+    "seed": 10,
+    "route": "ego_d_A2_A1",
+    "result": "arrived",
+    "steps": 112,
+    "saw_red": true,
+    "stop_distance": 22.69282078191649,
+    "red_steps": 26,
+    "creep_steps": 1,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 95.314,
+      "speed": 13.89,
+      "accel": 0.368
+    },
+    "violation": null
+  },
+  {
+    "seed": 11,
+    "route": "ego_r_loop0_A2_A5",
+    "result": "arrived",
+    "steps": 145,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 12,
+    "route": "ego_r_loop2_A1_A5",
+    "result": "arrived",
+    "steps": 98,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 13,
+    "route": "ego_d_A4_A5",
+    "result": "arrived",
+    "steps": 211,
+    "saw_red": true,
+    "stop_distance": 45.28093491949147,
+    "red_steps": 130,
+    "creep_steps": 1,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 97.233,
+      "speed": 13.89,
+      "accel": -0.118
+    },
+    "violation": null
+  },
+  {
+    "seed": 14,
+    "route": "ego_d_A3_A5",
+    "result": "red_light_violation",
+    "steps": 43,
+    "saw_red": true,
+    "stop_distance": null,
+    "red_steps": 3,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": {
+      "distance": 10.904,
+      "speed": 13.89,
+      "accel": -0.935
+    },
+    "violation": {
+      "distance_before": 0.826,
+      "speed_before": 8.79,
+      "accel": -0.861,
+      "step": 42
+    }
+  },
+  {
+    "seed": 15,
+    "route": "ego_d_A4_A1",
+    "result": "arrived",
+    "steps": 76,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 16,
+    "route": "ego_d_A4_A5",
+    "result": "arrived",
+    "steps": 211,
+    "saw_red": true,
+    "stop_distance": 45.28093491949147,
+    "red_steps": 130,
+    "creep_steps": 1,
+    "green_passes": 1,
+    "red_entry": {
+      "distance": 97.233,
+      "speed": 13.89,
+      "accel": -0.118
+    },
+    "violation": null
+  },
+  {
+    "seed": 17,
+    "route": "ego_d_A1_A3",
+    "result": "arrived",
+    "steps": 80,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 18,
+    "route": "ego_d_A1_A5",
+    "result": "arrived",
+    "steps": 98,
+    "saw_red": false,
+    "stop_distance": null,
+    "red_steps": 0,
+    "creep_steps": 0,
+    "green_passes": 0,
+    "red_entry": null,
+    "violation": null
+  },
+  {
+    "seed": 19,
+    "route": "ego_d_A2_A3",
+    "result": "wrong_lane",
+    "steps": 57,
+    "saw_red": true,
+    "stop_distance": 22.69282078191649,
+    "red_steps": 26,
+    "creep_steps": 1,
+    "green_passes": 0,
+    "red_entry": {
+      "distance": 95.314,
+      "speed": 13.89,
+      "accel": 0.368
+    },
+    "violation": null
+  }
+]

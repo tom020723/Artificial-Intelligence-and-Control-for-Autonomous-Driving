@@ -11,6 +11,8 @@
 import argparse
 import glob
 import os
+import runpy
+import xml.etree.ElementTree as ET
 import torch
 
 from env.road_config import ROAD, EGO, TRAFFIC
@@ -27,6 +29,31 @@ from utils.evaluator import evaluate_policy
 from train import HPARAMS, RESULTS_DIR, REWARD  # ← 보상도 train과 동일 조건
 
 BASE = os.path.dirname(os.path.abspath(__file__))
+
+
+def load_saved_configs(model_path):
+    """평가 프로세스 안에서만 run의 설정 snapshot을 복원한다."""
+    from env import road_config, mdp_config
+    folder = os.path.dirname(model_path)
+    required = [os.path.join(folder, name) for name in ("road_config.py", "mdp_config.py", "train.py")]
+    for path in required:
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"저장된 설정이 없습니다: {path}")
+    road = runpy.run_path(required[0])
+    # 실험 1처럼 신호 실험 플래그가 없던 snapshot도 지원한다.
+    road_config.SIGNAL_EXPERIMENT = road.get("SIGNAL_EXPERIMENT", False)
+    for name, value in road.items():
+        if name.isupper():
+            setattr(road_config, name, value)
+    mdp = runpy.run_path(required[1])
+    for name, value in mdp.items():
+        if name.isupper():
+            setattr(mdp_config, name, value)
+    training = runpy.run_path(required[2])
+    road_builder.NOHYEONG = road_config.NOHYEONG
+    road_builder.SCENERY = road_config.SCENERY
+    road_builder.SIMULATION = mdp["SIMULATION"]
+    return road, mdp, training
 
 
 def find_latest_model() -> str:
@@ -77,6 +104,12 @@ if __name__ == "__main__":
                         help="model.pt 경로 (생략 시 최근 run 자동 선택)")
     parser.add_argument("--episodes", type=int, default=3,
                         help="재생/평가할 에피소드 수")
+    parser.add_argument("--route", default=None,
+                        help="ego 경로 ID 고정 (예: ego_d_A4_A2). 생략하면 기존 랜덤 경로")
+    parser.add_argument("--seed", type=int, default=None,
+                        help="평가 시작 시드. 에피소드별 seed, seed+1, ... 적용")
+    parser.add_argument("--saved-config", action="store_true",
+                        help="모델 폴더의 저장된 환경/관측/보상/네트워크 설정으로 평가")
     parser.add_argument("--nogui", action="store_true",
                         help="화면 없이 주행 지표만 측정 (빠름)")
     parser.add_argument("--algorithm", choices=["auto", "ppo", "bc"], default="auto",
@@ -84,6 +117,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.episodes < 1:
         parser.error("--episodes는 1 이상이어야 합니다.")
+    if args.seed is not None and not 0 <= args.seed <= 2**32 - args.episodes:
+        parser.error("--seed는 0 이상이며 마지막 에피소드 시드는 2**32 미만이어야 합니다.")
 
     model_path = args.model or find_latest_model()
     if not os.path.isabs(model_path):
@@ -91,11 +126,27 @@ if __name__ == "__main__":
     if not os.path.exists(model_path):
         raise FileNotFoundError(f"모델 파일이 없습니다: {model_path}")
     print(f"모델 로드: {model_path}")
+    if args.saved_config:
+        saved_road, saved_mdp, saved_train = load_saved_configs(model_path)
+        ROAD, EGO, TRAFFIC = (saved_road[name] for name in ("ROAD", "EGO", "TRAFFIC"))
+        SIMULATION, OBSERVATION, ACTION = (saved_mdp[name] for name in ("SIMULATION", "OBSERVATION", "ACTION"))
+        HPARAMS, REWARD = saved_train["HPARAMS"], saved_train["REWARD"]
+        print("저장된 실험 설정 복원 (현재 설정 파일 수정 없음)")
 
     # 주의: 현재 env/ 설정과 다른 설정으로 학습된 모델이면 성능이 이상할 수 있다.
     # 그 run의 설정 스냅샷은 model.pt와 같은 폴더의 *_config.py 에서 확인 가능.
     sumocfg = road_builder.build(ROAD, EGO, TRAFFIC,
                                  os.path.join(BASE, "env", "sumo"))
+    if args.route:
+        route_files = ET.parse(sumocfg).getroot().find("input/route-files").get("value").split(",")
+        routes = {}
+        for filename in route_files:
+            path = os.path.join(os.path.dirname(sumocfg), filename.strip())
+            routes.update({r.get("id"): r.get("edges")
+                           for r in ET.parse(path).getroot().findall("route")})
+        if args.route not in routes:
+            parser.error(f"존재하지 않는 경로 ID: {args.route}")
+        print(f"고정 경로: {args.route} ({routes[args.route]})")
     env = SumoHighwayEnv(
         cfg_path=sumocfg,
         road=ROAD, ego=EGO,
@@ -105,6 +156,9 @@ if __name__ == "__main__":
         gui=not args.nogui,
         gui_autostart=False,   # ▶(플레이) 버튼을 눌러야 에피소드 시작
     )
+    if args.route:
+        # 평가 인스턴스에만 적용한다. 학습 설정과 도로 원본은 변경하지 않는다.
+        env._choose_ego_route = lambda: args.route
 
     if not args.nogui:
         print("※ 창이 뜨면 ▶(플레이) 버튼을 눌러야 에피소드가 시작됩니다.")
@@ -113,13 +167,17 @@ if __name__ == "__main__":
     try:
         agent = load_agent(model_path, env.observation_space.shape[0],
                            env.action_space.shape[0], args.algorithm)
+        if args.seed is not None:
+            print(f"평가 시드: {args.seed} ~ {args.seed + args.episodes - 1}")
         metrics = evaluate_policy(agent, env, n_episodes=args.episodes,
-                                  deterministic=True)
+                                  deterministic=True, seed=args.seed)
     finally:
         env.close()
 
     print(f"\n─── 주행 지표 ({args.episodes} 에피소드 평균) ───")
     print(f"  신호위반율   : {metrics.red_light_violation_rate:.0%}")
+    print(f"  청신호 통과  : {metrics.green_passes:.2f} 회/에피소드")
+    print(f"  적신호 정차 감점 합: {metrics.red_stop_cost:.3f} /에피소드")
     print(f"  차선실패율   : {metrics.wrong_lane_rate:.0%}")
     print(f"  충돌률       : {metrics.collision_rate:.0%}")
     print(f"  완주율       : {metrics.success_rate:.0%}")

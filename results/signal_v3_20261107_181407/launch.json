@@ -1,0 +1,11 @@
+{
+  "experiment": 5,
+  "tsp_job": 11,
+  "tsp_log": "/tmp/ts-out.wMksXd",
+  "started_kst": "2026-11-07 18:14:04",
+  "training_steps_target": 200000,
+  "initialization": "new 41-dimensional model",
+  "signal_count": 2,
+  "red_distance_penalty_speed_condition": false,
+  "regression_tests_passed": 20
+}

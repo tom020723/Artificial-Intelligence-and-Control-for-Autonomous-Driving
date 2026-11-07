@@ -31,6 +31,8 @@ class DrivingMetrics:
     lane_changes: float     # 에피소드당 평균 "실행된" 차선변경 횟수
                             # (추월 시나리오에서 정책이 실제로 차선을
                             #  활용하는지 보는 핵심 지표)
+    green_passes: float     # 에피소드당 청신호 통과 보상을 받은 횟수
+    red_stop_cost: float    # 에피소드당 적신호 정차 감점의 합
 
     def as_dict(self) -> dict:
         return asdict(self)
@@ -42,6 +44,7 @@ class DrivingMetrics:
                 f"신호위반={self.red_light_violation_rate:.0%}  "
                 f"차선실패={self.wrong_lane_rate:.0%}  "
                 f"시간초과={self.timeout_rate:.0%}  "
+                f"청신호통과={self.green_passes:.1f}회  "
                 f"평균속도={self.mean_speed:.1f}m/s  "
                 f"평균차간={self.mean_gap:.1f}m  "
                 f"최소차간={self.min_gap:.1f}m  "
@@ -50,7 +53,8 @@ class DrivingMetrics:
 
 
 def evaluate_policy(policy, env, n_episodes: int = 5,
-                    deterministic: bool = True) -> DrivingMetrics:
+                    deterministic: bool = True,
+                    seed: int | None = None) -> DrivingMetrics:
     """정책을 n_episodes 주행시키고 주행 지표 평균을 반환.
 
     Args:
@@ -59,6 +63,7 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         env:    SumoHighwayEnv (mean_gap 기본값용 visibility 속성만 사용)
         n_episodes: 평가 에피소드 수. 많을수록 지표가 안정적이지만 느리다
         deterministic: True면 탐험 노이즈 없이 평균 행동만 사용
+        seed: 지정하면 에피소드마다 seed, seed+1, ...로 환경과 SUMO 난수 초기화
 
     Note:
         모든 지표는 env.step()의 info(collided/arrived/speed/gap)에서 읽는다.
@@ -67,11 +72,19 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
     n_collide, n_arrive, n_timeout, n_wrong_lane = 0, 0, 0, 0
     n_red_light = 0
     speeds, gaps, returns, lengths, lane_changes = [], [], [], [], []
+    green_passes, red_stop_costs = [], []
 
-    for _ in range(n_episodes):
-        obs, _ = env.reset()
+    for episode in range(n_episodes):
+        if seed is None:
+            obs, _ = env.reset()
+        else:
+            episode_seed = seed + episode
+            # SUMO 시작 시 전역 NumPy에서 뽑는 seed도 에피소드별로 고정한다.
+            np.random.seed(episode_seed)
+            obs, _ = env.reset(seed=episode_seed)
         done, ep_ret, ep_len = False, 0.0, 0
         ep_lc = 0
+        ep_green, ep_red_stop_cost = 0, 0.0
         ended_by = None
 
         while not done:
@@ -80,6 +93,8 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
             ep_ret += reward
             ep_len += 1
             done = terminated or truncated
+            ep_green += int(info.get("green_pass_count", info.get("green_pass_reward", 0.0) > 0))
+            ep_red_stop_cost += float(info.get("red_stop_penalty", 0.0))
 
             # 실행된 차선변경 집계 (유지 명령의 changeLane 핀 동작은 제외)
             if info.get("lane_change", 0) != 0 and info.get("lane_change_applied"):
@@ -118,6 +133,8 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         returns.append(ep_ret)
         lengths.append(ep_len)
         lane_changes.append(ep_lc)
+        green_passes.append(ep_green)
+        red_stop_costs.append(ep_red_stop_cost)
 
     return DrivingMetrics(
         red_light_violation_rate=n_red_light / n_episodes,
@@ -131,4 +148,6 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         ep_return=float(np.mean(returns)),
         ep_length=float(np.mean(lengths)),
         lane_changes=float(np.mean(lane_changes)),
+        green_passes=float(np.mean(green_passes)),
+        red_stop_cost=float(np.mean(red_stop_costs)),
     )

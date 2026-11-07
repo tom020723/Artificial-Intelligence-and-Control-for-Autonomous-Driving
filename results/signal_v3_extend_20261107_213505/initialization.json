@@ -1,0 +1,8 @@
+{
+  "source_model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving/results/signal_v3_20261107_181407/model.pt",
+  "sha256": "3d434ca8058df28e3ca789528c9e760b6a9cf979dfa51221270df2f0b56644a1",
+  "parent_run_steps": 200704,
+  "additional_timesteps_target": 200000,
+  "optimizer_restored": false,
+  "step_counter": "local to this additional training run"
+}

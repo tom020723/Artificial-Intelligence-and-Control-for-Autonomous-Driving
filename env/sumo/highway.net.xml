@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-11-07T14:24:10.016470+09:00 by Eclipse SUMO netconvert 1.28.0
+<!-- generated on 2026-11-08T02:03:04.913157+09:00 by Eclipse SUMO netconvert 1.28.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -173,10 +173,7 @@
         <lane id=":nM_A3_0_0_4" index="4" speed="13.89" length="0.30" shape="14.81,-45.84 14.73,-45.55"/>
     </edge>
     <edge id=":nM_A3_0_5" function="internal">
-        <lane id=":nM_A3_0_5_0" index="0" speed="3.00" length="9.46" shape="14.81,-45.84 13.81,-44.80 12.85,-43.90 11.93,-43.13 11.05,-42.50 10.20,-42.00 9.40,-41.64 8.64,-41.42 7.91,-41.33 7.22,-41.38 6.90,-41.47"/>
-    </edge>
-    <edge id=":nM_A3_0_10" function="internal">
-        <lane id=":nM_A3_0_10_0" index="0" speed="3.00" length="9.46" shape="6.90,-41.47 6.57,-41.56 5.97,-41.89 5.40,-42.34 4.87,-42.94 4.38,-43.67 3.92,-44.54 3.51,-45.54 3.14,-46.68 2.80,-47.96 2.50,-49.37"/>
+        <lane id=":nM_A3_0_5_0" index="0" speed="3.00" length="18.92" shape="14.81,-45.84 13.81,-44.80 12.85,-43.90 11.93,-43.13 11.05,-42.50 10.20,-42.00 9.40,-41.64 8.64,-41.42 7.91,-41.33 7.22,-41.38 6.57,-41.56 5.97,-41.89 5.40,-42.34 4.87,-42.94 4.38,-43.67 3.92,-44.54 3.51,-45.54 3.14,-46.68 2.80,-47.96 2.50,-49.37"/>
     </edge>
     <edge id=":nM_A3_0_6" function="internal">
         <lane id=":nM_A3_0_6_0" index="0" speed="13.89" length="0.30" shape="2.42,-49.08 2.50,-49.37"/>
@@ -452,38 +449,21 @@
     </edge>
 
     <tlLogic id="nC" type="static" programID="0" offset="0">
-    <phase duration="20" state="rrrrrrrrrrrrrGGGGgrrrrr" name="A1_green" />
-    <phase duration="3" state="rrrrrrrrrrrrryyyyyrrrrr" name="A1_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A1_clearance" />
-    <phase duration="20" state="GGGGrrrrrrrrrrrrrrrrrrr" name="A2_green" />
-    <phase duration="3" state="yyyyrrrrrrrrrrrrrrrrrrr" name="A2_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A2_clearance" />
-    <phase duration="20" state="rrrrrrrGGGGGGrrrrrrrrrr" name="A3_green" />
-    <phase duration="3" state="rrrrrrryyyyyyrrrrrrrrrr" name="A3_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A3_clearance" />
-    <phase duration="20" state="rrrrrrrrrrrrrrrrrrGGGGG" name="A4_green" />
-    <phase duration="3" state="rrrrrrrrrrrrrrrrrryyyyy" name="A4_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A4_clearance" />
-    <phase duration="20" state="rrrrGGGrrrrrrrrrrrrrrrr" name="A5_green" />
-    <phase duration="3" state="rrrryyyrrrrrrrrrrrrrrrr" name="A5_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A5_clearance" />
-</tlLogic>
-    <tlLogic id="nM_A3_0" type="static" programID="0" offset="0">
-    <phase duration="20" state="GGGGGrGGGG" name="A1_green" />
-    <phase duration="3" state="GGGGGrGGGG" name="A1_yellow" />
-    <phase duration="2" state="GGGGGrGGGG" name="A1_clearance" />
-    <phase duration="20" state="GGGGGrGGGG" name="A2_green" />
-    <phase duration="3" state="GGGGGrGGGG" name="A2_yellow" />
-    <phase duration="2" state="GGGGGrGGGG" name="A2_clearance" />
-    <phase duration="20" state="GGGGGgGGGG" name="A3_green" />
-    <phase duration="3" state="GGGGGyGGGG" name="A3_yellow" />
-    <phase duration="2" state="GGGGGrGGGG" name="A3_clearance" />
-    <phase duration="20" state="GGGGGrGGGG" name="A4_green" />
-    <phase duration="3" state="GGGGGrGGGG" name="A4_yellow" />
-    <phase duration="2" state="GGGGGrGGGG" name="A4_clearance" />
-    <phase duration="20" state="GGGGGrGGGG" name="A5_green" />
-    <phase duration="3" state="GGGGGrGGGG" name="A5_yellow" />
-    <phase duration="2" state="GGGGGrGGGG" name="A5_clearance" />
+    <phase duration="20" state="rrrrrrrrrrrrrGGGGgrrrrrr" name="A1_green" />
+    <phase duration="3" state="rrrrrrrrrrrrryyyyyrrrrrr" name="A1_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrr" name="A1_clearance" />
+    <phase duration="20" state="GGGGrrrrrrrrrrrrrrrrrrrr" name="A2_green" />
+    <phase duration="3" state="yyyyrrrrrrrrrrrrrrrrrrrr" name="A2_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrr" name="A2_clearance" />
+    <phase duration="20" state="rrrrrrrGGGGGGrrrrrrrrrrg" name="A3_green" />
+    <phase duration="3" state="rrrrrrryyyyyyrrrrrrrrrry" name="A3_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrr" name="A3_clearance" />
+    <phase duration="20" state="rrrrrrrrrrrrrrrrrrGGGGGr" name="A4_green" />
+    <phase duration="3" state="rrrrrrrrrrrrrrrrrryyyyyr" name="A4_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrr" name="A4_clearance" />
+    <phase duration="20" state="rrrrGGGrrrrrrrrrrrrrrrrr" name="A5_green" />
+    <phase duration="3" state="rrrryyyrrrrrrrrrrrrrrrrr" name="A5_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrr" name="A5_clearance" />
 </tlLogic>
 
     <junction id="nC" type="traffic_light" x="0.00" y="0.00" incLanes="A2_in_0 A2_in_1 A2_in_2 A2_in_3 A5_in_0 A5_in_1 A5_in_2 A3_in_0 A3_in_1 A3_in_2 A3_in_3 A3_in_4 A1_in_0 A1_in_1 A1_in_2 A1_in_3 A1_in_4 A4_in_0 A4_in_1 A4_in_2" intLanes=":nC_0_0 :nC_0_1 :nC_0_2 :nC_23_0 :nC_4_0 :nC_4_1 :nC_6_0 :nC_7_0 :nC_8_0 :nC_8_1 :nC_10_0 :nC_10_1 :nC_12_0 :nC_13_0 :nC_13_1 :nC_13_2 :nC_24_0 :nC_25_0 :nC_18_0 :nC_18_1 :nC_20_0 :nC_20_1 :nC_22_0" shape="44.46,40.45 57.26,18.28 57.76,16.77 60.10,-2.29 21.99,-18.66 -5.69,-26.59 -6.68,-24.69 -7.37,-24.23 -8.19,-24.09 -9.14,-24.29 -10.22,-24.81 -23.41,-2.87 -21.18,-1.41 -19.54,-0.05 -18.48,1.22 -18.00,2.38 -18.11,3.44 -18.79,4.39 -7.88,16.10">
@@ -564,17 +544,17 @@
         <request index="9"  response="00000000000" foes="00001100000" cont="0"/>
         <request index="10" response="00000000000" foes="00001100000" cont="0"/>
     </junction>
-    <junction id="nM_A3_0" type="traffic_light" x="13.23" y="-46.14" incLanes="A3_in1_0 A3_in1_1 A3_in1_2 A3_in1_3 A3_in1_4 A3_out_0 A3_out_1 A3_out_2 A3_out_3" intLanes=":nM_A3_0_0_0 :nM_A3_0_0_1 :nM_A3_0_0_2 :nM_A3_0_0_3 :nM_A3_0_0_4 :nM_A3_0_10_0 :nM_A3_0_6_0 :nM_A3_0_6_1 :nM_A3_0_6_2 :nM_A3_0_6_3" shape="28.65,-41.88 0.97,-49.81 0.88,-49.52 28.57,-41.59">
+    <junction id="nM_A3_0" type="traffic_light" x="13.23" y="-46.14" incLanes="A3_in1_0 A3_in1_1 A3_in1_2 A3_in1_3 A3_in1_4 A3_out_0 A3_out_1 A3_out_2 A3_out_3" intLanes=":nM_A3_0_0_0 :nM_A3_0_0_1 :nM_A3_0_0_2 :nM_A3_0_0_3 :nM_A3_0_0_4 :nM_A3_0_5_0 :nM_A3_0_6_0 :nM_A3_0_6_1 :nM_A3_0_6_2 :nM_A3_0_6_3" shape="28.65,-41.88 0.97,-49.81 0.88,-49.52 28.57,-41.59">
         <request index="0" response="0000000000" foes="0000000000" cont="0"/>
         <request index="1" response="0000000000" foes="0000000000" cont="0"/>
         <request index="2" response="0000000000" foes="0000000000" cont="0"/>
         <request index="3" response="0000000000" foes="0000000000" cont="0"/>
         <request index="4" response="0000000000" foes="0000000000" cont="0"/>
-        <request index="5" response="1111000000" foes="1111000000" cont="1"/>
-        <request index="6" response="0000000000" foes="0000100000" cont="0"/>
-        <request index="7" response="0000000000" foes="0000100000" cont="0"/>
-        <request index="8" response="0000000000" foes="0000100000" cont="0"/>
-        <request index="9" response="0000000000" foes="0000100000" cont="0"/>
+        <request index="5" response="0000000000" foes="1111000000" cont="0"/>
+        <request index="6" response="0000100000" foes="0000100000" cont="0"/>
+        <request index="7" response="0000100000" foes="0000100000" cont="0"/>
+        <request index="8" response="0000100000" foes="0000100000" cont="0"/>
+        <request index="9" response="0000100000" foes="0000100000" cont="0"/>
     </junction>
     <junction id="nM_A3_1" type="priority" x="21.22" y="-74.02" incLanes="A3_in2_0 A3_in2_1 A3_in2_2 A3_in2_3 RING_A1_A3_0 RING_A1_A3_1 A3_out1_0 A3_out1_1 A3_out1_2 A3_out1_3" intLanes=":nM_A3_1_0_0 :nM_A3_1_1_0 :nM_A3_1_1_1 :nM_A3_1_1_2 :nM_A3_1_1_3 :nM_A3_1_5_0 :nM_A3_1_5_1 :nM_A3_1_7_0 :nM_A3_1_7_1 :nM_A3_1_9_0 :nM_A3_1_9_1 :nM_A3_1_9_2 :nM_A3_1_9_3" shape="41.99,-74.23 44.31,-80.19 42.14,-81.15 40.43,-82.17 39.18,-83.23 38.39,-84.36 38.06,-85.53 38.19,-86.77 13.58,-93.82 12.85,-91.69 12.02,-90.00 11.08,-88.77 10.04,-87.99 8.89,-87.66 7.64,-87.79 5.99,-81.60 7.98,-80.62 8.57,-79.90 8.89,-79.02 8.93,-78.00 8.71,-76.82 36.39,-68.88 37.09,-70.91 37.88,-72.48 38.76,-73.60 39.74,-74.26 40.82,-74.47">
         <request index="0"  response="0000000000000" foes="0000110000000" cont="0"/>
@@ -627,7 +607,6 @@
     <junction id=":nC_23_0" type="internal" x="13.36" y="2.77" incLanes=":nC_3_0 A1_in_0 A1_in_1 A1_in_2" intLanes=":nC_4_0 :nC_4_1 :nC_6_0 :nC_10_0 :nC_10_1 :nC_12_0 :nC_13_0 :nC_13_1 :nC_13_2 :nC_18_0 :nC_18_1 :nC_20_0 :nC_20_1 :nC_22_0"/>
     <junction id=":nC_24_0" type="internal" x="-4.60" y="-3.54" incLanes=":nC_16_0 A2_in_0 A2_in_1 A2_in_2" intLanes=":nC_0_0 :nC_0_1 :nC_0_2 :nC_4_0 :nC_4_1 :nC_10_0 :nC_10_1 :nC_12_0 :nC_18_0 :nC_18_1 :nC_20_0 :nC_20_1 :nC_22_0"/>
     <junction id=":nC_25_0" type="internal" x="-16.77" y="-10.98" incLanes=":nC_17_0 A2_in_0 A2_in_1 A2_in_2 A3_in_4 A5_in_0 A5_in_1" intLanes=":nC_0_0 :nC_0_1 :nC_0_2 :nC_4_0 :nC_4_1 :nC_12_0"/>
-    <junction id=":nM_A3_0_10_0" type="internal" x="6.90" y="-41.47" incLanes=":nM_A3_0_5_0 A3_out_0 A3_out_1 A3_out_2 A3_out_3" intLanes=":nM_A3_0_6_0 :nM_A3_0_6_1 :nM_A3_0_6_2 :nM_A3_0_6_3"/>
 
     <connection from="A1_in" to="A2_out" fromLane="0" toLane="0" via=":nC_13_0" tl="nC" linkIndex="13" dir="s" state="O"/>
     <connection from="A1_in" to="A2_out" fromLane="1" toLane="1" via=":nC_13_1" tl="nC" linkIndex="14" dir="s" state="O"/>
@@ -678,21 +657,21 @@
     <connection from="A3_in" to="A4_out" fromLane="2" toLane="0" via=":nC_10_0" tl="nC" linkIndex="10" dir="s" state="o"/>
     <connection from="A3_in" to="A4_out" fromLane="3" toLane="1" via=":nC_10_1" tl="nC" linkIndex="11" dir="s" state="o"/>
     <connection from="A3_in" to="A1_out" fromLane="4" toLane="2" via=":nC_12_0" tl="nC" linkIndex="12" dir="l" state="o"/>
-    <connection from="A3_in1" to="A3_in" fromLane="0" toLane="0" via=":nM_A3_0_0_0" tl="nM_A3_0" linkIndex="0" dir="s" state="O"/>
-    <connection from="A3_in1" to="A3_in" fromLane="1" toLane="1" via=":nM_A3_0_0_1" tl="nM_A3_0" linkIndex="1" dir="s" state="O"/>
-    <connection from="A3_in1" to="A3_in" fromLane="2" toLane="2" via=":nM_A3_0_0_2" tl="nM_A3_0" linkIndex="2" dir="s" state="O"/>
-    <connection from="A3_in1" to="A3_in" fromLane="3" toLane="3" via=":nM_A3_0_0_3" tl="nM_A3_0" linkIndex="3" dir="s" state="O"/>
-    <connection from="A3_in1" to="A3_in" fromLane="4" toLane="4" via=":nM_A3_0_0_4" tl="nM_A3_0" linkIndex="4" dir="s" state="O"/>
-    <connection from="A3_in1" to="A3_out1" fromLane="4" toLane="0" speed="3.00" via=":nM_A3_0_5_0" tl="nM_A3_0" linkIndex="5" dir="t" state="o"/>
+    <connection from="A3_in1" to="A3_in" fromLane="0" toLane="0" uncontrolled="1" via=":nM_A3_0_0_0" dir="s" state="M"/>
+    <connection from="A3_in1" to="A3_in" fromLane="1" toLane="1" uncontrolled="1" via=":nM_A3_0_0_1" dir="s" state="M"/>
+    <connection from="A3_in1" to="A3_in" fromLane="2" toLane="2" uncontrolled="1" via=":nM_A3_0_0_2" dir="s" state="M"/>
+    <connection from="A3_in1" to="A3_in" fromLane="3" toLane="3" uncontrolled="1" via=":nM_A3_0_0_3" dir="s" state="M"/>
+    <connection from="A3_in1" to="A3_in" fromLane="4" toLane="4" uncontrolled="1" via=":nM_A3_0_0_4" dir="s" state="M"/>
+    <connection from="A3_in1" to="A3_out1" fromLane="4" toLane="0" speed="3.00" via=":nM_A3_0_5_0" tl="nC" linkIndex="23" dir="t" state="O"/>
     <connection from="A3_in2" to="RING_A3_A5" fromLane="0" toLane="0" via=":nM_A3_1_0_0" dir="r" state="M"/>
     <connection from="A3_in2" to="A3_in1" fromLane="0" toLane="1" via=":nM_A3_1_1_0" dir="s" state="M"/>
     <connection from="A3_in2" to="A3_in1" fromLane="1" toLane="2" via=":nM_A3_1_1_1" dir="s" state="M"/>
     <connection from="A3_in2" to="A3_in1" fromLane="2" toLane="3" via=":nM_A3_1_1_2" dir="s" state="M"/>
     <connection from="A3_in2" to="A3_in1" fromLane="3" toLane="4" via=":nM_A3_1_1_3" dir="s" state="M"/>
-    <connection from="A3_out" to="A3_out1" fromLane="0" toLane="0" via=":nM_A3_0_6_0" tl="nM_A3_0" linkIndex="6" dir="s" state="O"/>
-    <connection from="A3_out" to="A3_out1" fromLane="1" toLane="1" via=":nM_A3_0_6_1" tl="nM_A3_0" linkIndex="7" dir="s" state="O"/>
-    <connection from="A3_out" to="A3_out1" fromLane="2" toLane="2" via=":nM_A3_0_6_2" tl="nM_A3_0" linkIndex="8" dir="s" state="O"/>
-    <connection from="A3_out" to="A3_out1" fromLane="3" toLane="3" via=":nM_A3_0_6_3" tl="nM_A3_0" linkIndex="9" dir="s" state="O"/>
+    <connection from="A3_out" to="A3_out1" fromLane="0" toLane="0" uncontrolled="1" via=":nM_A3_0_6_0" dir="s" state="M"/>
+    <connection from="A3_out" to="A3_out1" fromLane="1" toLane="1" uncontrolled="1" via=":nM_A3_0_6_1" dir="s" state="M"/>
+    <connection from="A3_out" to="A3_out1" fromLane="2" toLane="2" uncontrolled="1" via=":nM_A3_0_6_2" dir="s" state="M"/>
+    <connection from="A3_out" to="A3_out1" fromLane="3" toLane="3" uncontrolled="1" via=":nM_A3_0_6_3" dir="s" state="M"/>
     <connection from="A3_out1" to="A3_out2" fromLane="0" toLane="0" via=":nM_A3_1_9_0" dir="s" state="M"/>
     <connection from="A3_out1" to="A3_out2" fromLane="1" toLane="1" via=":nM_A3_1_9_1" dir="s" state="M"/>
     <connection from="A3_out1" to="A3_out2" fromLane="2" toLane="2" via=":nM_A3_1_9_2" dir="s" state="M"/>
@@ -813,8 +792,7 @@
     <connection from=":nM_A3_0_0" to="A3_in" fromLane="2" toLane="2" dir="s" state="M"/>
     <connection from=":nM_A3_0_0" to="A3_in" fromLane="3" toLane="3" dir="s" state="M"/>
     <connection from=":nM_A3_0_0" to="A3_in" fromLane="4" toLane="4" dir="s" state="M"/>
-    <connection from=":nM_A3_0_5" to="A3_out1" fromLane="0" toLane="0" via=":nM_A3_0_10_0" dir="t" state="m"/>
-    <connection from=":nM_A3_0_10" to="A3_out1" fromLane="0" toLane="0" dir="t" state="M"/>
+    <connection from=":nM_A3_0_5" to="A3_out1" fromLane="0" toLane="0" dir="t" state="M"/>
     <connection from=":nM_A3_0_6" to="A3_out1" fromLane="0" toLane="0" dir="s" state="M"/>
     <connection from=":nM_A3_0_6" to="A3_out1" fromLane="1" toLane="1" dir="s" state="M"/>
     <connection from=":nM_A3_0_6" to="A3_out1" fromLane="2" toLane="2" dir="s" state="M"/>

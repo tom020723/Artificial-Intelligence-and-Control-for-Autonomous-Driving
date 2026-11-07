@@ -93,7 +93,10 @@ NOHYEONG = {
                2: [("A2", 3), ("A5", 1)]},
         "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
     },
-    "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0}},
+    # 유턴 분기는 중앙 정지선 앞에 유지한다. 같은 왼쪽 차선으로 계속 가면 좌회전.
+    # 유턴만 중앙 A3 신호로 제어하고, 이 분기점의 직진은 신호 제어에서 제외한다.
+    "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0,
+                                  "signal_control": "central"}},
     # Segment indices run from the central junction outward.
     #   8시 방향(A1): 교차로로 들어오는 쪽 5차선 (나가는 쪽 3차선은 아래 도로 목록의 lanes)
     "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
