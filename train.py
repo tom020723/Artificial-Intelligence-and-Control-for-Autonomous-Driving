@@ -17,7 +17,7 @@ import os
 import shutil
 from datetime import datetime
 
-from env.road_config import ROAD, EGO, TRAFFIC, ROUTE_ONLY_EXPERIMENT
+from env.road_config import ROAD, EGO, TRAFFIC, ROUTE_ONLY_EXPERIMENT, SIGNAL_EXPERIMENT
 from env.mdp_config import SIMULATION, OBSERVATION, ACTION
 from env.mdp_config import REWARD as REWARD_DEFAULTS
 from env import road_builder
@@ -118,7 +118,8 @@ RUN_NAME = None         # None이면 run_날짜_시각 자동 생성.
 
 def make_run_dir() -> str:
     """results/<run이름>/ 폴더를 만들고 경로를 반환."""
-    prefix = "route_only" if ROUTE_ONLY_EXPERIMENT else "run"
+    prefix = "signal" if SIGNAL_EXPERIMENT else ("route_only" if ROUTE_ONLY_EXPERIMENT else "run")
+    prefix = os.environ.get("SUMO_RUN_PREFIX", prefix)
     name = RUN_NAME or datetime.now().strftime(f"{prefix}_%Y%m%d_%H%M%S")
     run_dir = os.path.join(BASE, RESULTS_DIR, name)
     os.makedirs(run_dir, exist_ok=True)
@@ -140,6 +141,12 @@ def snapshot_configs(run_dir: str):
                 os.path.join(BASE, "env", "mdp_config.py"),
                 os.path.join(BASE, "train.py")]:
         shutil.copy(src, run_dir)
+    source_dir = os.path.join(run_dir, "source")
+    for folder in ("env", "algorithms", "utils", "scripts"):
+        shutil.copytree(os.path.join(BASE, folder), os.path.join(source_dir, folder),
+                        ignore=shutil.ignore_patterns("__pycache__", "sumo"), dirs_exist_ok=True)
+    for name in ("train.py", "test.py", "requirements.txt"):
+        shutil.copy(os.path.join(BASE, name), source_dir)
 
 
 if __name__ == "__main__":
@@ -194,7 +201,6 @@ if __name__ == "__main__":
         logger.close()
         model_path = os.path.join(run_dir, "model.pt")
         agent.save(model_path)
-        snapshot_configs(run_dir)
         print(f"\n저장 완료: {model_path}")
         print(f"재생 방법:      python test.py "
               f"{os.path.relpath(model_path, BASE)}")
