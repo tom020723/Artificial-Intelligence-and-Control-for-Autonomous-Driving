@@ -18,6 +18,7 @@
 """
 import os
 import sys
+import xml.etree.ElementTree as ET
 
 import numpy as np
 import gymnasium as gym
@@ -162,6 +163,28 @@ class SumoHighwayEnv(gym.Env):
         self.visibility = float(mdp_obs["visibility"])   # 관측 거리 W
         # 밀도 정규화용 "차량 1대가 점유하는 길이" (차체 + 최소 간격)
         self.density_veh_len = float(mdp_obs.get("density_veh_length", 7.5))
+        self.signal_enabled = bool(mdp_obs.get("signal_enabled", False))
+        self.signal_visibility = float(mdp_obs.get("signal_visibility", 100.0))
+        if self.signal_visibility <= 0:
+            raise ValueError("signal_visibility must be positive")
+        self._signal_stop_offsets = {}
+        if self.signal_enabled:
+            config = ET.parse(cfg_path).getroot()
+            net_file = config.find("input/net-file").get("value")
+            net = ET.parse(os.path.join(os.path.dirname(cfg_path), net_file)).getroot()
+            lane_offsets = {}
+            for edge in net.findall("edge"):
+                offset = edge.find("stopOffset")
+                default = float(offset.get("value")) if offset is not None else 0.0
+                for lane in edge.findall("lane"):
+                    offset = lane.find("stopOffset")
+                    lane_offsets[lane.get("id")] = (float(offset.get("value"))
+                                                     if offset is not None else default)
+            for connection in net.findall("connection"):
+                if connection.get("tl") is not None:
+                    key = (connection.get("tl"), int(connection.get("linkIndex")))
+                    lane = connection.get("from") + "_" + connection.get("fromLane")
+                    self._signal_stop_offsets[key] = lane_offsets.get(lane, 0.0)
         self.act_dim = int(action["dim"])
         self.accel_index = int(action.get("accel_index", 0))
         self.lane_change_index = int(action.get("lane_change_index", 1))
@@ -185,14 +208,13 @@ class SumoHighwayEnv(gym.Env):
         # 차선변경 명령은 info["lane_change"]에 정확한 -1/0/+1로 반환한다.
         self.action_space = spaces.Box(low=-1.0, high=1.0,
                                        shape=(self.act_dim,), dtype=np.float32)
-        # 관측: 19차원, 범위 [-1,1]. 레이아웃은 env/mdp_config.py 주석 참고.
-        #   [0] 내 속도, [1..12] 3개 차선 × (선행/후행 상대거리·상대속도),
-        #   [13..15] 3개 차선의 연결성(끊김 정도),
+        # 기본 관측 31차원 + 선택적 신호 관측 5차원.
         #   시야 차선: 좌2, 좌1, 현재, 우1, 우2 (5개) — 3차선 도로에서
         #   맨 왼쪽에 있어도 오프셋 -2로 맨 오른쪽 차선까지 보인다.
         self.obs_offsets = (+2, +1, 0, -1, -2)
         n_lanes_view = len(self.obs_offsets)
         self.obs_dim = 1 + n_lanes_view * 4 + n_lanes_view + n_lanes_view
+        self.obs_dim += 5 if self.signal_enabled else 0
         self.observation_space = spaces.Box(-1.0, 1.0, shape=(self.obs_dim,),
                                             dtype=np.float32)
 
@@ -582,6 +604,29 @@ class SumoHighwayEnv(gym.Env):
             pass
         return out
 
+    def _next_signal(self):
+        """TraCI가 ego 경로/연결에 대해 반환하는 가장 가까운 전방 신호.
+
+        관측 범위 필터는 별도로 적용. 위반 검사는 범위 밖에서도 수행한다.
+        """
+        if not self.signal_enabled or self.ego_id not in traci.vehicle.getIDList():
+            return None
+        # getNextTLS 거리는 차선 끝 기준. stopOffset을 빼 실제 정지선에 맞춘다.
+        signals = []
+        for tid, index, distance, state in traci.vehicle.getNextTLS(self.ego_id):
+            distance -= self._signal_stop_offsets.get((tid, index), 0.0)
+            if distance >= 0:
+                signals.append((tid, index, distance, state))
+        return min(signals, key=lambda signal: signal[2]) if signals else None
+
+    def _signal_observation(self, signal):
+        if signal is None or signal[2] > self.signal_visibility:
+            return [1.0, 0.0, 0.0, 0.0, 1.0]
+        color = signal[3].lower()
+        index = {"g": 1, "y": 2, "r": 3}.get(color, 0)
+        one_hot = [float(i == index) for i in range(4)]
+        return one_hot + [float(np.clip(signal[2] / self.signal_visibility, 0, 1))]
+
     def _get_obs(self):
         # ego가 이미 사라졌다면(충돌/도착) 0벡터 반환 — 종료 직전 마지막 관측용
         if self.ego_id not in traci.vehicle.getIDList():
@@ -616,6 +661,8 @@ class SumoHighwayEnv(gym.Env):
         for offset in self.obs_offsets:
             obs.append(self._lane_density(offset))
 
+        if self.signal_enabled:
+            obs.extend(self._signal_observation(self._next_signal()))
         return np.clip(np.array(obs, dtype=np.float32), -1.0, 1.0)
 
     # ==================================================================
@@ -813,6 +860,10 @@ class SumoHighwayEnv(gym.Env):
 
             lane_change_applied = self._apply_lane_change(lane_change)
 
+        # 신호 상태는 행동이 적용되는 스텝 시작 시점을 기준으로 판정한다.
+        signal_before = self._next_signal()
+        distance_before = (traci.vehicle.getDistance(self.ego_id)
+                           if signal_before is not None else None)
         # ----- (2) 시뮬레이션 1스텝 -----
         traci.simulationStep()
         self.step_count += 1
@@ -823,12 +874,23 @@ class SumoHighwayEnv(gym.Env):
         alive = self.ego_id in traci.vehicle.getIDList()
         lane_after = int(traci.vehicle.getLaneIndex(self.ego_id)) if alive else None
 
+        red_light_violation = False
+        if signal_before is not None and signal_before[3].lower() == "r" and alive:
+            traveled = traci.vehicle.getDistance(self.ego_id) - distance_before
+            red_light_violation = traveled > signal_before[2] + 1e-6
+        signal_after = self._next_signal()
+        red_visible = (signal_after is not None
+                       and signal_after[2] <= self.signal_visibility
+                       and signal_after[3].lower() == "r")
         obs = self._get_obs()
         terminated, truncated = False, False
         ego_speed, ego_gap = None, None
 
         # ----- (4) 기존 보상 유지 -----
-        if collided:
+        if red_light_violation:
+            reward = -float(self.rw.get("red_light_penalty", 10.0))
+            terminated = True
+        elif collided:
             reward = -float(self.rw["collision_penalty"])
             terminated = True
         elif arrived:
@@ -847,7 +909,9 @@ class SumoHighwayEnv(gym.Env):
             if same_lane_leader is not None:
                 ego_gap = same_lane_leader[0]
             reward = float(self.rw["speed_weight"]) * ego_speed / self.vmax
-            if (ego_gap is not None and
+            exempt_close = (red_visible and ego_speed <=
+                            float(self.rw.get("signal_wait_speed", 0.5)))
+            if (not exempt_close and ego_gap is not None and
                     ego_gap < float(self.rw["close_gap_threshold"])):
                 reward -= float(self.rw["close_gap_penalty"])
 
@@ -856,7 +920,7 @@ class SumoHighwayEnv(gym.Env):
             # 즉각적인 보상 차등을 만들어 추월 학습 신호를 조밀하게 한다.
             # (자세한 설계 이유는 env/mdp_config.py의 REWARD 주석 참고)
             bp = float(self.rw.get("blocked_penalty", 0.0))
-            if (bp > 0.0 and ego_gap is not None
+            if (not red_visible and bp > 0.0 and ego_gap is not None
                     and ego_gap < float(self.rw.get("blocked_gap", 20.0))
                     and ego_speed < float(self.rw.get("blocked_speed_frac", 0.7))
                         * self.vmax):
@@ -895,6 +959,9 @@ class SumoHighwayEnv(gym.Env):
             "collided": collided,
             "arrived": arrived,
             "wrong_lane": wrong_lane,
+            "red_light_violation": red_light_violation,
+            "signal_red_visible": red_visible,
+            "signal_distance": signal_after[2] if signal_after is not None else None,
             "speed": ego_speed,
             "gap": ego_gap,
             "accel_raw": accel_raw,

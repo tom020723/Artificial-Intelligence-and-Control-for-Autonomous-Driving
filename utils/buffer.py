@@ -36,6 +36,8 @@ class RolloutBuffer:
         log_prob : 그 행동을 뽑을 당시의 log π_old(a|s).
                    PPO의 확률비 r(θ) 계산에 필요해서 함께 저장한다.
         value    : 그 상태의 V(s) 추정치. GAE 계산에 필요.
+        done     : GAE를 끊을 에피소드 경계 (terminated OR truncated).
+                   시간 초과의 마지막 상태 가치는 수집 시 reward에 미리 반영한다.
     """
 
     def __init__(self):
@@ -79,7 +81,7 @@ class RolloutBuffer:
         gae = 0.0
         for t in reversed(range(T)):
             next_value = last_value if t == T - 1 else values[t + 1]
-            nonterminal = 1.0 - dones[t]     # 종료 상태면 미래가치 차단
+            nonterminal = 1.0 - dones[t]     # 리셋 이후 에피소드로 GAE가 이어지지 않게 차단
             delta = rewards[t] + gamma * next_value * nonterminal - values[t]
             gae = delta + gamma * gae_lambda * nonterminal * gae
             advantages[t] = gae

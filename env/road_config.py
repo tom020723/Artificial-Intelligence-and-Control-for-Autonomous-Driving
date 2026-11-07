@@ -14,7 +14,9 @@ road_builder.py가 SUMO 도로 파일(.net.xml 등)을 자동으로 다시 만�
 #    현재는 "직선 편도 도로" 하나만 생성한다.
 #    (교차로, 합류부 등 복잡한 도로는 road_builder.py를 확장해야 함)
 # ──────────────────────────────────────────────────────────────
-ROUTE_ONLY_EXPERIMENT = True  # False로 바꾸면 원래 신호/배경 교통 설정 복원
+ROUTE_ONLY_EXPERIMENT = False  # 실험 1: 전체 녹색, 배경 차량 OFF
+
+SIGNAL_EXPERIMENT = True  # 실험 2: 신호 주기 ON, 배경 차량 OFF (둘 다 False면 기본 환경)
 
 ROAD = {
     # ── 도로 종류 ──
@@ -350,9 +352,9 @@ TRAFFIC = {
     },
 }
 
-# 경로 추종 기초 실험: 도로와 ego 경로는 유지하고 교통 요소만 제거.
-if ROUTE_ONLY_EXPERIMENT:
-    NOHYEONG["all_signals_green"] = True
+# 기초 실험: 도로/ego 경로 유지. 실험 2에서는 신호 주기만 복원.
+if ROUTE_ONLY_EXPERIMENT or SIGNAL_EXPERIMENT:
+    NOHYEONG["all_signals_green"] = not SIGNAL_EXPERIMENT
     NOHYEONG["warmup_seconds"] = 0
     TRAFFIC["background_enabled"] = False
     TRAFFIC["vehs_per_hour"] = 0

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-11-06T10:33:48.402999+09:00 by Eclipse SUMO netconvert 1.28.0
+<!-- generated on 2026-11-07T14:24:10.016470+09:00 by Eclipse SUMO netconvert 1.28.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
@@ -452,9 +452,39 @@
     </edge>
 
     <tlLogic id="nC" type="static" programID="0" offset="0">
-    <phase duration="100000" state="GGGGGGGGGGGGGGGGGGGGGGG" /></tlLogic>
+    <phase duration="20" state="rrrrrrrrrrrrrGGGGgrrrrr" name="A1_green" />
+    <phase duration="3" state="rrrrrrrrrrrrryyyyyrrrrr" name="A1_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A1_clearance" />
+    <phase duration="20" state="GGGGrrrrrrrrrrrrrrrrrrr" name="A2_green" />
+    <phase duration="3" state="yyyyrrrrrrrrrrrrrrrrrrr" name="A2_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A2_clearance" />
+    <phase duration="20" state="rrrrrrrGGGGGGrrrrrrrrrr" name="A3_green" />
+    <phase duration="3" state="rrrrrrryyyyyyrrrrrrrrrr" name="A3_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A3_clearance" />
+    <phase duration="20" state="rrrrrrrrrrrrrrrrrrGGGGG" name="A4_green" />
+    <phase duration="3" state="rrrrrrrrrrrrrrrrrryyyyy" name="A4_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A4_clearance" />
+    <phase duration="20" state="rrrrGGGrrrrrrrrrrrrrrrr" name="A5_green" />
+    <phase duration="3" state="rrrryyyrrrrrrrrrrrrrrrr" name="A5_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrr" name="A5_clearance" />
+</tlLogic>
     <tlLogic id="nM_A3_0" type="static" programID="0" offset="0">
-    <phase duration="100000" state="GGGGGGGGGG" /></tlLogic>
+    <phase duration="20" state="GGGGGrGGGG" name="A1_green" />
+    <phase duration="3" state="GGGGGrGGGG" name="A1_yellow" />
+    <phase duration="2" state="GGGGGrGGGG" name="A1_clearance" />
+    <phase duration="20" state="GGGGGrGGGG" name="A2_green" />
+    <phase duration="3" state="GGGGGrGGGG" name="A2_yellow" />
+    <phase duration="2" state="GGGGGrGGGG" name="A2_clearance" />
+    <phase duration="20" state="GGGGGgGGGG" name="A3_green" />
+    <phase duration="3" state="GGGGGyGGGG" name="A3_yellow" />
+    <phase duration="2" state="GGGGGrGGGG" name="A3_clearance" />
+    <phase duration="20" state="GGGGGrGGGG" name="A4_green" />
+    <phase duration="3" state="GGGGGrGGGG" name="A4_yellow" />
+    <phase duration="2" state="GGGGGrGGGG" name="A4_clearance" />
+    <phase duration="20" state="GGGGGrGGGG" name="A5_green" />
+    <phase duration="3" state="GGGGGrGGGG" name="A5_yellow" />
+    <phase duration="2" state="GGGGGrGGGG" name="A5_clearance" />
+</tlLogic>
 
     <junction id="nC" type="traffic_light" x="0.00" y="0.00" incLanes="A2_in_0 A2_in_1 A2_in_2 A2_in_3 A5_in_0 A5_in_1 A5_in_2 A3_in_0 A3_in_1 A3_in_2 A3_in_3 A3_in_4 A1_in_0 A1_in_1 A1_in_2 A1_in_3 A1_in_4 A4_in_0 A4_in_1 A4_in_2" intLanes=":nC_0_0 :nC_0_1 :nC_0_2 :nC_23_0 :nC_4_0 :nC_4_1 :nC_6_0 :nC_7_0 :nC_8_0 :nC_8_1 :nC_10_0 :nC_10_1 :nC_12_0 :nC_13_0 :nC_13_1 :nC_13_2 :nC_24_0 :nC_25_0 :nC_18_0 :nC_18_1 :nC_20_0 :nC_20_1 :nC_22_0" shape="44.46,40.45 57.26,18.28 57.76,16.77 60.10,-2.29 21.99,-18.66 -5.69,-26.59 -6.68,-24.69 -7.37,-24.23 -8.19,-24.09 -9.14,-24.29 -10.22,-24.81 -23.41,-2.87 -21.18,-1.41 -19.54,-0.05 -18.48,1.22 -18.00,2.38 -18.11,3.44 -18.79,4.39 -7.88,16.10">
         <request index="0"  response="00000000000000000000000" foes="11111110001110000110000" cont="0"/>

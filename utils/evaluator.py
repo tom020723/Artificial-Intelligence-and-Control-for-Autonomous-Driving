@@ -22,6 +22,7 @@ class DrivingMetrics:
     success_rate: float     # 도로 끝까지 완주한 비율 (0~1, 높을수록 좋음)
     timeout_rate: float     # 실제 시간 제한으로 끝난 비율
     wrong_lane_rate: float  # 경로에 맞지 않는 차선으로 종료된 비율
+    red_light_violation_rate: float  # 신호 위반으로 종료된 비율
     mean_speed: float       # 전 스텝 평균 주행속도 (m/s)
     mean_gap: float         # 선행차 감지 스텝에서의 평균 차간거리 (m)
     min_gap: float          # 관측된 최소 차간거리 (m) — 위험 운전 지표
@@ -38,6 +39,7 @@ class DrivingMetrics:
         """콘솔 한 줄 출력용 문자열."""
         return (f"충돌률={self.collision_rate:.0%}  "
                 f"완주율={self.success_rate:.0%}  "
+                f"신호위반={self.red_light_violation_rate:.0%}  "
                 f"차선실패={self.wrong_lane_rate:.0%}  "
                 f"시간초과={self.timeout_rate:.0%}  "
                 f"평균속도={self.mean_speed:.1f}m/s  "
@@ -63,6 +65,7 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         관측(obs) 벡터의 구성과 무관하므로, 관측을 바꿔도 이 코드는 안 깨진다.
     """
     n_collide, n_arrive, n_timeout, n_wrong_lane = 0, 0, 0, 0
+    n_red_light = 0
     speeds, gaps, returns, lengths, lane_changes = [], [], [], [], []
 
     for _ in range(n_episodes):
@@ -82,7 +85,9 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
             if info.get("lane_change", 0) != 0 and info.get("lane_change_applied"):
                 ep_lc += 1
 
-            if info.get("collided"):
+            if info.get("red_light_violation"):
+                ended_by = "red_light"
+            elif info.get("collided"):
                 ended_by = "collision"
             elif info.get("arrived"):
                 ended_by = "arrival"
@@ -99,7 +104,9 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
             if info.get("gap") is not None:
                 gaps.append(float(info["gap"]))
 
-        if ended_by == "collision":
+        if ended_by == "red_light":
+            n_red_light += 1
+        elif ended_by == "collision":
             n_collide += 1
         elif ended_by == "arrival":
             n_arrive += 1
@@ -113,6 +120,7 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         lane_changes.append(ep_lc)
 
     return DrivingMetrics(
+        red_light_violation_rate=n_red_light / n_episodes,
         collision_rate=n_collide / n_episodes,
         success_rate=n_arrive / n_episodes,
         timeout_rate=n_timeout / n_episodes,

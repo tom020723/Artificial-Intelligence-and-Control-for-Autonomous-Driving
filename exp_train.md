@@ -124,8 +124,9 @@ history는 현재 프레임 1개만 사용 -> observation에 이미 속도가 �
 경로를 이어갈 수 있는 차선을 선택해서 목적지에 도착하는 능력을 배울 수 있는지 확인하기 위해서 신호등 끄고, 배경 차량 없애고 학습해봄.
 
 - 학습 설정: 위의 기본 설정과 동일
+- 학습 시간: 49분 48초
 - 실험 실행 스크립트: `scripts/train_route_only.sh`
-- 실험결과: `results/route_only_20261106_011540`
+- 실험 결과: `results/route_only_20261106_011540`
 - play 명령:
   ```bash
   python test.py results/route_only_20261106_011540/model.pt
@@ -134,3 +135,56 @@ history는 현재 프레임 1개만 사용 -> observation에 이미 속도가 �
   ```bash
   tensorboard --logdir results
   ```
+
+### 실험 2: 신호등 실험
+- observation 추가
+  - ego가 진행할 연결 도로의 신호 상태 (one-hot vector, index: 31~34)
+    - 신호등 관측 가능한 범위는 일단 100m (주변 차량 관측 가능 범위는 앞뒤 50m)
+    - [안보임, green, yellow, red]
+  - ego에서 해당 신호의 정지선까지의 거리 (index: 35)
+    - clip(거리/관측범위, 0, 1)로 정규화
+    - 신호 안보임일 때는 거리 1 고정
+
+- reward 추가
+  - 신호 위반 시 penalty
+    - 적신호 시 정지선 통과하면 -10점 감점, 즉시 종료
+  - 적신호 대기 시 reward (일단 적용 x)
+  - 적신호 관측될 시 막힘 penalty 면제
+  - 적신호 + 저속 시에 앞차 접근 penalty 면제
+
+- 실험 실행 스크립트: `bash scripts/train_signal.sh`
+- 실험 결과: `results/signal_20261107_000801`
+- play 명령:
+  ```bash
+  python test.py results/signal_20261107_000801/model.pt --episodes 5
+  ```
+
+- 관측된 문제점
+  - 정지선까지 가서 정지하지 않는 경우가 있음
+  - 의미없는 차선 변경을 반복하는 경우가 있음
+    - 현재 차선 변경 감점 및 불가능한 변경 명령 감점이 꺼져있고 차선 entropy 계수만 있어서 그런듯
+  - 빨간색에서 초록불로 변해도 차가 다시 출발하지 않음
+  - 기존 주어진 코드의 algorithms/ppo.py와 utils/buffer.py에 GAE 관련 오류 있음??
+
+### 실험 3: GAE 오류 수정
+- GAE 오류 수정
+
+- play 명령:
+  ```bash
+  python test.py results/signal_gae_fixed_20261107_135006/model.pt --episodes 5
+  ```
+- 완료하고 개선이 있으면 한번 commit하기
+
+### 실험 4: 신호등 2
+- reward 수정
+  - 신호 위반 시 penalty
+    - 적신호 시 정지선 통과하면 -5점 감점으로 수정, 즉시 종료 동일하게 유지
+      (충돌 penalty와 동일하게 설정)
+  - 차선 변경 -0.1점 penalty, 불가능한 변경 명령 감점 -0.2점 penalty
+  - 적신호 시 정차 관련 penalty 추가
+    - 앞차 쪽 여유 = max(앞차 간격 − 유지할 안전거리, 0)
+    - 정지선 쪽 여유 = max(정지선 거리 − 정차 여유거리, 0)
+    - 페널티 = c × clip(min(두 여유) / 기준거리, 0, 1)
+  - 청신호 시 교차로 정상 통과하면 reward +10 추가
+
+- GAE 관련 오류 수정

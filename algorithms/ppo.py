@@ -226,8 +226,11 @@ class PPO:
             if truncated and not terminated:
                 stored_reward += self.gamma * self.get_value(next_obs)
 
+            # 시간 초과의 bootstrap은 위에서 이미 보상에 반영했다.
+            # GAE는 리셋 경계에서 끊어 다음 에피소드의 가치/보상이 섞이지 않게 한다.
+            episode_end = terminated or truncated
             self.buffer.add(obs, action, log_prob, stored_reward, value,
-                            terminated)
+                            episode_end)
 
             if terminated or truncated:
                 finished_returns.append(ep_stats[0])

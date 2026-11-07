@@ -119,6 +119,8 @@ if __name__ == "__main__":
         env.close()
 
     print(f"\n─── 주행 지표 ({args.episodes} 에피소드 평균) ───")
+    print(f"  신호위반율   : {metrics.red_light_violation_rate:.0%}")
+    print(f"  차선실패율   : {metrics.wrong_lane_rate:.0%}")
     print(f"  충돌률       : {metrics.collision_rate:.0%}")
     print(f"  완주율       : {metrics.success_rate:.0%}")
     print(f"  시간초과율   : {metrics.timeout_rate:.0%}")
