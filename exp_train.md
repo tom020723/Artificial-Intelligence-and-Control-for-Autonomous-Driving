@@ -230,18 +230,7 @@ history는 현재 프레임 1개만 사용 -> observation에 이미 속도가 �
   
   ```
 
-## 실험 6: multi-phase learning
 
-- 변경 고려해야할 것들
-  - 갈수있는 도로 조합이 25개로 정해져 있음 -> 이걸 uniform하게 하나씩? 차선만 random하게?
-  - network 크기가 너무 작은거 같기도 함
-  - A1_in_4 좌회전 및 유턴 차선인데 유턴 차선으로만 되어 있음
-  - A3_in, A3_in1 사이 신호등 삭제, A3_in_4을 좌회전 및 유턴 차선으로 변경
-
-- 바로 차선 주행, 신호등을 학습하는 것은 무리인가? 다음 구조로 학습 진행?
-  - phase 1: 차선 주행
-  - phase 2: 신호등
-  - phase 3: 배경 차량 curriculum
 
 # 지금까지 한 것 정리
 
@@ -314,3 +303,61 @@ history는 현재 프레임 1개만 사용 -> observation에 이미 속도가 �
   - A5와 동일한 신호를 사용
 - A1_in_3는 직좌차선이 아닌 직진차선
 - 참고: A2→A5, A4→A4, A5→A4는 실제 도로에서도 연결되어있지 않은 경로임
+
+# 실험 7
+도로환경이 많이 변했기 때문에 정상적으로 수정이 완료 됐는지 확인하기 위해 신호등 모두 청신호, 배경 차량 없음 으로 설정하고 기본 주행만 잘 학습할 수 있는지 학습 진행.
+
+reward 및 observation은 수정하지 않고 실험 한다.
+
+추가학습까지 해도 A2 도로에서 계속 문제 발생. A2 도로 구조 설계가 이상하고 현실과 많이 달라서 학습이 안 될 수 밖에 없다고 판단
+
+다음 실험에서 A2 도로 대규모 수정
+
+# 실험 8
+## A2 도로 수정
+기본 도로 구조 변경
+- A2_in2, A2_out2 이름 -> A2_in1, A2_out1으로
+- A2_in1, A2_out1이름 -> A2_in, A2_out으로
+- A2_in, A2_out은 차선 변경 금지 구간 (실선 구간)
+- A2_out, A2_out1 3차선으로
+- junction nM_A2_1 이름 -> junction nM_A2
+- 기존의 A2_in, A2_out 삭제, 삭제 한 위치에는 junction nC가 대신하여 위치
+- 기존의 junction nM_A2_0 삭제, 삭제한 위치에는 junction nC가 대신하여 위치
+
+도로 구조 변경으로 인한 도로 연결성 수정
+- 새로운 A2_in_0 -> RING_A2_A4_0
+- 새로운 A2_in_1 -> junction nC -> A1_out_0
+- 새로운 A2_in_2 -> junction nC -> A1_out_1
+- 새로운 A2_in_3 -> junction nC -> A1_out_2
+- 새로운 A2_in_4 -> junction nC -> A3_out_3
+
+- 새로운 A2_in1_0 -> junction nM_A2 -> 새로운 A2_in_0 & 새로운 A2_in_1
+- 새로운 A2_in1_1 -> junction nM_A2 -> 새로운 A2_in_2
+- 새로운 A2_in1_2 -> junction nM_A2 -> 새로운 A2_in_3
+- 새로운 A2_in1_3 -> junction nM_A2 -> 새로운 A2_in_4 & 새로운 A2_out1_0
+
+- RING_A5_A2 -> junction nM_A2 -> 새로운 A2_out1_0
+
+- A1_in_0 -> nC -> A3_out_0
+- A1_in_3 -> nC -> 새로운 A2_out_2
+- A1_in_2 -> nC -> 새로운 A2_out_1
+- A1_in_1 -> nC -> 새로운 A2_out_0
+- A3_in_1 -> nC -> 새로운 A2_out_0
+- A3_in_2 -> nC -> 새로운 A2_out_2
+- A4_in_2 -> nC -> 새로운 A2_out_2
+
+
+
+
+# 실험 ?: multi-phase learning
+
+- 변경 고려해야할 것들
+  - 갈수있는 도로 조합이 25개로 정해져 있음 -> 이걸 uniform하게 하나씩? 차선만 random하게?
+  - network 크기가 너무 작은거 같기도 함
+  - A1_in_4 좌회전 및 유턴 차선인데 유턴 차선으로만 되어 있음
+  - A3_in, A3_in1 사이 신호등 삭제, A3_in_4을 좌회전 및 유턴 차선으로 변경
+
+- 바로 차선 주행, 신호등을 학습하는 것은 무리인가? 다음 구조로 학습 진행?
+  - phase 1: 차선 주행
+  - phase 2: 신호등
+  - phase 3: 배경 차량 curriculum

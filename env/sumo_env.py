@@ -163,6 +163,16 @@ class SumoHighwayEnv(gym.Env):
         self.visibility = float(mdp_obs["visibility"])   # 관측 거리 W
         # 밀도 정규화용 "차량 1대가 점유하는 길이" (차체 + 최소 간격)
         self.density_veh_len = float(mdp_obs.get("density_veh_length", 7.5))
+        self.connectivity_half_width = int(mdp_obs.get("connectivity_half_width", 2))
+        if self.connectivity_half_width < 0:
+            raise ValueError("connectivity_half_width must be nonnegative")
+        self.connectivity_offsets = tuple(range(self.connectivity_half_width,
+                                                 -self.connectivity_half_width - 1, -1))
+        self.destination_enabled = bool(mdp_obs.get("destination_enabled", False))
+        self.destination_arms = tuple(mdp_obs.get("destination_arms", ("A1", "A2", "A3", "A4", "A5")))
+        if self.destination_enabled and (not self.destination_arms
+                                        or len(set(self.destination_arms)) != len(self.destination_arms)):
+            raise ValueError("destination_arms must contain unique destination arms")
         self.signal_enabled = bool(mdp_obs.get("signal_enabled", False))
         self.signal_visibility = float(mdp_obs.get("signal_visibility", 100.0))
         self.signal_count = int(mdp_obs.get("signal_count", 1))
@@ -218,13 +228,13 @@ class SumoHighwayEnv(gym.Env):
         # 차선변경 명령은 info["lane_change"]에 정확한 -1/0/+1로 반환한다.
         self.action_space = spaces.Box(low=-1.0, high=1.0,
                                        shape=(self.act_dim,), dtype=np.float32)
-        # 기본 관측 31차원 + 신호별 5차원.
-        #   시야 차선: 좌2, 좌1, 현재, 우1, 우2 (5개) — 3차선 도로에서
-        #   맨 왼쪽에 있어도 오프셋 -2로 맨 오른쪽 차선까지 보인다.
+        # 차량/밀도는 ±2차선, 연결성 폭과 목적지 입력은 개별 설정한다.
+        # 새 키가 없는 저장 설정은 기존 31차원 + 신호별 5차원을 유지한다.
         self.obs_offsets = (+2, +1, 0, -1, -2)
         n_lanes_view = len(self.obs_offsets)
-        self.obs_dim = 1 + n_lanes_view * 4 + n_lanes_view + n_lanes_view
+        self.obs_dim = 1 + n_lanes_view * 4 + len(self.connectivity_offsets) + n_lanes_view
         self.obs_dim += 5 * self.signal_count if self.signal_enabled else 0
+        self.obs_dim += len(self.destination_arms) if self.destination_enabled else 0
         self.observation_space = spaces.Box(-1.0, 1.0, shape=(self.obs_dim,),
                                             dtype=np.float32)
 
@@ -666,6 +676,14 @@ class SumoHighwayEnv(gym.Env):
             raise ValueError("red_stop_distance_scale must be positive")
         return coef * float(np.clip(min(front_room, stop_room) / scale, 0.0, 1.0))
 
+    def _destination_observation(self):
+        """경로의 마지막 edge에서 목적지를 읽어 설정 순서의 one-hot을 반환한다."""
+        final_edge = traci.vehicle.getRoute(self.ego_id)[-1]
+        arm, separator, suffix = final_edge.partition("_out")
+        if not separator or (suffix and not suffix.isdigit()) or arm not in self.destination_arms:
+            raise ValueError(f"Unknown destination edge for destination observation: {final_edge}")
+        return [float(arm == destination) for destination in self.destination_arms]
+
     def _get_obs(self):
         # ego가 이미 사라졌다면(충돌/도착) 0벡터 반환 — 종료 직전 마지막 관측용
         if self.ego_id not in traci.vehicle.getIDList():
@@ -692,8 +710,8 @@ class SumoHighwayEnv(gym.Env):
                 obs += [-gap / self.visibility,    # 후행은 음수 부호
                         float(np.clip((fv - v) / self.vmax, -1.0, 1.0))]
 
-        # ----- 5개 차선의 연결성 (같은 순서) -----
-        for offset in self.obs_offsets:
+        # ----- 경로 기준 차선 연결성: 실험 8은 좌4→현재→우4 -----
+        for offset in self.connectivity_offsets:
             obs.append(self._lane_connectivity(offset))
 
         # ----- 5개 차선의 전방 차량 밀도 (같은 순서) -----
@@ -704,6 +722,8 @@ class SumoHighwayEnv(gym.Env):
             signals = self._upcoming_signals()
             for i in range(self.signal_count):
                 obs.extend(self._signal_observation(signals[i] if i < len(signals) else None))
+        if self.destination_enabled:
+            obs.extend(self._destination_observation())
         return np.clip(np.array(obs, dtype=np.float32), -1.0, 1.0)
 
     # ==================================================================

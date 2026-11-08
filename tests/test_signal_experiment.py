@@ -26,6 +26,7 @@ class SignalExperimentTests(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory(prefix="sumo-signal-test-")
         # Retain regression coverage for saved experiments with upstream U-turns.
         legacy = copy.deepcopy(NOHYEONG)
+        legacy["all_signals_green"] = False
         legacy["inbound_end_offsets"] = {}
         legacy["stop_offsets"] = {"A1": 8.0, "A3": 8.0, "A4": 8.0}
         legacy["upstream_uturns"] = {"A3": {"radius": 48.0, "from_lane": 4,
@@ -46,7 +47,8 @@ class SignalExperimentTests(unittest.TestCase):
 
     def setUp(self):
         self.env = SumoHighwayEnv(self.cfg, ROAD, EGO, SIMULATION,
-                                  {**OBSERVATION, "signal_enabled": True, "signal_count": 1},
+                                  {**OBSERVATION, "signal_enabled": True, "signal_count": 1,
+                                   "connectivity_half_width": 2, "destination_enabled": False},
                                   ACTION, {**REWARD, "red_light_penalty": 10.0,
                                            "green_pass_bonus": 0.0,
                                            "red_stop_penalty_coef": 0.0,
@@ -194,7 +196,8 @@ class SignalExperimentTests(unittest.TestCase):
         reward = self.env.rw.copy()
         self.env.close()
         self.env = SumoHighwayEnv(self.cfg, ROAD, EGO, SIMULATION,
-                                  {**OBSERVATION, "signal_enabled": True, "signal_count": 2},
+                                  {**OBSERVATION, "signal_enabled": True, "signal_count": 2,
+                                   "connectivity_half_width": 2, "destination_enabled": False},
                                   ACTION, reward, traffic=TRAFFIC)
         with patch.object(self.env, "_choose_ego_route", return_value=route):
             self.env.reset(seed=0)
