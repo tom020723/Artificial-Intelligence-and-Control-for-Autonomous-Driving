@@ -88,18 +88,16 @@ NOHYEONG = {
                3: [("A3", 3)]},
         "A3": {0: [("A5", 0)], 1: [("A2", 0)],
                2: [("A4", 0), ("A2", 1)], 3: [("A4", 1)],
-               4: [("A1", 2)]},
+               4: [("A1", 2), ("A3", 0)]},
         "A4": {0: [("A3", 0)], 1: [("A5", 0), ("A3", 1)],
                2: [("A2", 3), ("A5", 1)]},
         "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
     },
-    # 유턴 분기는 중앙 정지선 앞에 유지한다. 같은 왼쪽 차선으로 계속 가면 좌회전.
-    # 유턴만 중앙 A3 신호로 제어하고, 이 분기점의 직진은 신호 제어에서 제외한다.
-    "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0,
-                                  "signal_control": "central"}},
+    # A3 1차선의 좌회전과 U턴은 중앙 교차로의 같은 정지선에서 출발한다.
+    "upstream_uturns": {},
     # Segment indices run from the central junction outward.
     #   8시 방향(A1): 교차로로 들어오는 쪽 5차선 (나가는 쪽 3차선은 아래 도로 목록의 lanes)
-    "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
+    "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 4}},
     # 나가는 방향 차선 수 (구간 번호 k: 0 = 교차로에 붙은 구간). 없으면 도로 기본 차선 수.
     #   월랑로(A4): 교차로~첫 갈림점은 2차선, 그 바깥은 3차선. 늘어난 가장 바깥 차선(0번)은
     #   노형로 북동쪽에서 오는 우회전 길이 이어받는다 (실제 도로처럼 차선이 하나 늘어나는 합류).
@@ -109,8 +107,7 @@ NOHYEONG = {
         2: [(0, 1), (1, 2), (2, 3), (3, 4)],
         1: [(1, 0), (2, 1), (3, 2), (4, 3)],
     }, "A3": {
-        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
-        1: [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)],
+        1: [(0, 1), (1, 2), (2, 3), (3, 4)],
     }},
     "crosswalk_width": 4.0,    # 횡단보도 폭 (m)
 
@@ -177,8 +174,9 @@ NOHYEONG = {
     # center: at the central junction mouth; behind_block: outside last split.
     "crosswalks": {"A1": "center", "A2": {"segment": 1}, "A3": "center",
                    "A4": "center", "A5": {"segment": 0}},
-    # Move the physical red-light waiting position upstream of the zebra.
-    "stop_offsets": {"A1": 8.0, "A3": 8.0, "A4": 8.0},
+    # End incoming lanes before the zebra; the lane end is the signal stop line.
+    "stop_offsets": {},
+    "inbound_end_offsets": {"A1": 8.0, "A3": 8.0, "A4": 8.0},
     "crosswalk_block_offset": 6.0,  # last split boundary -> crossing edge (m)
     "ring_crosswalks": False,  # avoid duplicated stripes at every split node
 

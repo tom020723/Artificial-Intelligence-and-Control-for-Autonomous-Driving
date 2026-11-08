@@ -24,7 +24,21 @@ class SignalExperimentTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.tmp = tempfile.TemporaryDirectory(prefix="sumo-signal-test-")
-        cls.cfg = build(ROAD, EGO, TRAFFIC, cls.tmp.name)
+        # Retain regression coverage for saved experiments with upstream U-turns.
+        legacy = copy.deepcopy(NOHYEONG)
+        legacy["inbound_end_offsets"] = {}
+        legacy["stop_offsets"] = {"A1": 8.0, "A3": 8.0, "A4": 8.0}
+        legacy["upstream_uturns"] = {"A3": {"radius": 48.0, "from_lane": 4,
+                                             "to_lane": 0, "signal_control": "central"}}
+        legacy["inbound_lanes"]["A3"] = {0: 5, 1: 5, 2: 4}
+        legacy["inbound_lane_links"]["A3"] = {
+            2: [(0, 1), (1, 2), (2, 3), (3, 4)],
+            1: [(i, i) for i in range(5)],
+        }
+        legacy["central_lane_movements"]["A3"][4] = [("A1", 2)]
+        cls.legacy = legacy
+        with patch("env.road_builder.NOHYEONG", legacy):
+            cls.cfg = build(ROAD, EGO, TRAFFIC, cls.tmp.name)
 
     @classmethod
     def tearDownClass(cls):
@@ -267,7 +281,7 @@ class SignalExperimentTests(unittest.TestCase):
         self.assertEqual(reward, -10.)
 
     def test_legacy_config_keeps_separate_upstream_controller(self):
-        legacy = copy.deepcopy(NOHYEONG)
+        legacy = copy.deepcopy(self.legacy)
         legacy["upstream_uturns"]["A3"].pop("signal_control")
         with tempfile.TemporaryDirectory(prefix="sumo-legacy-uturn-") as folder:
             with patch("env.road_builder.NOHYEONG", legacy):

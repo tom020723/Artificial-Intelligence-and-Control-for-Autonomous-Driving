@@ -484,8 +484,12 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             if not math.isfinite(stop_offset) or stop_offset < 0:
                 raise ValueError(f"Invalid stop offset for {aid}")
             stop_child = f'<stopOffset value="{stop_offset:g}"/>' if stop_offset else ""
+            end_offset = float(cfg.get("inbound_end_offsets", {}).get(aid, 0)) if k == 0 else 0
+            if not math.isfinite(end_offset) or end_offset < 0:
+                raise ValueError(f"Invalid inbound end offset for {aid}")
+            end_attr = f' endOffset="{end_offset:g}"' if end_offset else ""
             edges.append(f'    <edge id="{in_edge(aid, k)}" from="{outer}" to="{inner}" '
-                         f'numLanes="{inbound_lanes(aid, k)}" speed="{S}" priority="3">{stop_child}</edge>')
+                         f'numLanes="{inbound_lanes(aid, k)}" speed="{S}" priority="3"{end_attr}>{stop_child}</edge>')
             edges.append(f'    <edge id="{out_edge(aid, k)}" from="{inner}" to="{outer}" '
                          f'numLanes="{outbound_lanes(aid, k)}" speed="{S}" priority="3"/>')
             ins.append(in_edge(aid, k)); outs.append(out_edge(aid, k))
@@ -1038,7 +1042,11 @@ def _write_nohyeong_scenery(out_dir, cfg, arms, splits):
             for direction in ("in", "out"):
                 for lane in net.getEdge(f"{aid}_{direction}{suffix}").getLanes():
                     radii = [x*ux + y*uy for x, y in lane.getShape()]
-                    extents.append((min(radii), max(radii)))
+                    # Keep the crossing at the original junction mouth while
+                    # the incoming lane ends earlier, before the zebra.
+                    end_offset = (float(cfg.get("inbound_end_offsets", {}).get(aid, 0))
+                                  if direction == "in" and k == 0 else 0)
+                    extents.append((min(radii) - end_offset, max(radii)))
                     offsets = [-x*uy + y*ux for x, y in lane.getShape()]
                     sideways.append((min(offsets)-lane.getWidth()/2, max(offsets)+lane.getWidth()/2))
             lateral_bounds = (min(lo for lo, _ in sideways), max(hi for _, hi in sideways))
@@ -1053,7 +1061,7 @@ def _write_nohyeong_scenery(out_dir, cfg, arms, splits):
         if r is not None:
             stripes(f"cw_{aid}", r, a["angle"], half_w, lateral_bounds)
         stop_offset = float(cfg.get("stop_offsets", {}).get(aid, 0))
-        if stop_offset:
+        if stop_offset or cfg.get("inbound_end_offsets", {}).get(aid, 0):
             angle = math.radians(a["angle"])
             ux, uy = math.cos(angle), math.sin(angle)
             nx, ny = -uy, ux

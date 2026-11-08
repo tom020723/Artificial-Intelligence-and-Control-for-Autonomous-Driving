@@ -1,0 +1,6 @@
+도로 생성 완료: C:\Users\ME\Desktop\Artificial-Intelligence-and-Control-for-Autonomous-Driving\env\sumo\highway.sumocfg
+  길이 600m, 4차선, 교통량 0대/시간
+결과 폴더: C:\Users\ME\Desktop\Artificial-Intelligence-and-Control-for-Autonomous-Driving\results\signal_stopline_20261108_072349
+obs_dim=41, act_dim=2, device=cpu
+[update    1] steps=   2048  ep_rew_mean=-4.226  std=0.607  policy_loss=-0.01866  value_loss=0.3131  entropy=1.938  approx_kl=0.01328  clip_frac=0.1835  p_lane_change=0.4557
+[update    2] steps=   4096  ep_rew_mean=-4.12  std=0.6004  policy_loss=-0.01329  value_loss=0.3772  entropy=1.857  approx_kl=0.009517  clip_frac=0.1171  p_lane_change=0.3877

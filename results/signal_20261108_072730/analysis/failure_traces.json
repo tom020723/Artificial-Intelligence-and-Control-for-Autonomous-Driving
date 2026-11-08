@@ -1,0 +1,3239 @@
+[
+  {
+    "seed": 0,
+    "route": "ego_d_A3_A2",
+    "steps": [
+      {
+        "step": 0,
+        "lane": "A3_in1_2",
+        "speed": 10.0,
+        "remaining": 226.06,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            287.99,
+            "r"
+          ]
+        ],
+        "action": [
+          0.17448972165584564,
+          0.0
+        ],
+        "reward": 0.07538604930504524,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 1,
+        "lane": "A3_in1_2",
+        "speed": 10.471122248470783,
+        "remaining": 220.8244388757646,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            282.7544388757646,
+            "r"
+          ]
+        ],
+        "action": [
+          0.1681838035583496,
+          0.0
+        ],
+        "reward": 0.07865528090769133,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 2,
+        "lane": "A3_in1_2",
+        "speed": 10.925218518078326,
+        "remaining": 215.36182961672546,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            277.29182961672547,
+            "r"
+          ]
+        ],
+        "action": [
+          0.16213476657867432,
+          0.0
+        ],
+        "reward": 0.08180692863816233,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 3,
+        "lane": "A3_in1_2",
+        "speed": 11.362982387840747,
+        "remaining": 209.68033842280508,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            271.61033842280506,
+            "r"
+          ]
+        ],
+        "action": [
+          0.15630804002285004,
+          0.0
+        ],
+        "reward": 0.08484531386538835,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 4,
+        "lane": "A3_in1_2",
+        "speed": 11.785014095902442,
+        "remaining": 203.78783137485385,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            265.71783137485386,
+            "r"
+          ]
+        ],
+        "action": [
+          0.15068036317825317,
+          0.0
+        ],
+        "reward": 0.08777430580621833,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 5,
+        "lane": "A3_in1_2",
+        "speed": 12.191851076483726,
+        "remaining": 197.691905836612,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            259.621905836612,
+            "r"
+          ]
+        ],
+        "action": [
+          0.145834818482399,
+          0.0
+        ],
+        "reward": 0.09060910789334918,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 6,
+        "lane": "A3_in1_2",
+        "speed": 12.585605086386202,
+        "remaining": 191.39910329341888,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            253.32910329341888,
+            "r"
+          ]
+        ],
+        "action": [
+          0.1422663927078247,
+          0.0
+        ],
+        "reward": 0.09337454533259418,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 7,
+        "lane": "A3_in1_2",
+        "speed": 12.96972434669733,
+        "remaining": 184.91424112007022,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            246.84424112007022,
+            "r"
+          ]
+        ],
+        "action": [
+          0.1389923393726349,
+          0.0
+        ],
+        "reward": 0.09607634026640349,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 8,
+        "lane": "A3_in1_2",
+        "speed": 13.345003663003444,
+        "remaining": 178.2417392885685,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            240.17173928856852,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13622227311134338,
+          0.0
+        ],
+        "reward": 0.09872428941975574,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 9,
+        "lane": "A3_in1_2",
+        "speed": 13.712803800404071,
+        "remaining": 171.38533738836645,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            233.31533738836646,
+            "r"
+          ]
+        ],
+        "action": [
+          0.133566215634346,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 10,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 164.44033738836646,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            226.37033738836647,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 11,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 157.49533738836647,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            219.42533738836647,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 12,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 150.55033738836647,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            212.48033738836648,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 13,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 143.60533738836648,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            205.5353373883665,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 14,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 136.6603373883665,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            198.5903373883665,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 15,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 129.7153373883665,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            191.6453373883665,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 16,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 122.7703373883665,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            184.7003373883665,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 17,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 115.8253373883665,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            177.7553373883665,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 18,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 108.88033738836651,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            170.81033738836652,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 19,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 101.93533738836652,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            163.86533738836653,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 20,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 94.99033738836653,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            156.92033738836653,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 21,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 88.04533738836653,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            149.97533738836654,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 22,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 81.10033738836654,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            143.03033738836655,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 23,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 74.15533738836655,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            136.08533738836655,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 24,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 67.21033738836655,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            129.14033738836656,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 25,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 60.26533738836656,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            122.19533738836657,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 26,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 53.32033738836657,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            115.25033738836657,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 27,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 46.375337388366574,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            108.30533738836658,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 28,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 39.43033738836658,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            101.36033738836659,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.05429233130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 29,
+        "lane": "A3_in1_2",
+        "speed": 13.89,
+        "remaining": 32.48533738836659,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            94.4153373883666,
+            "r"
+          ]
+        ],
+        "action": [
+          0.7682551741600037,
+          -1.0
+        ],
+        "reward": -0.04223516869418329,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 30,
+        "lane": "A3_in1_1",
+        "speed": 13.89,
+        "remaining": 25.540337388366595,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            9,
+            87.4703373883666,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9789842367172241,
+          -1.0
+        ],
+        "reward": -0.038762668694183294,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 31,
+        "lane": "A3_in1_0",
+        "speed": 13.89,
+        "remaining": 18.5953373883666,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            80.52533738836661,
+            "r"
+          ]
+        ],
+        "action": [
+          0.996606707572937,
+          0.0
+        ],
+        "reward": 0.0647098313058167,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 32,
+        "lane": "A3_in1_0",
+        "speed": 13.89,
+        "remaining": 11.650337388366609,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            73.58033738836662,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9967426657676697,
+          0.0
+        ],
+        "reward": 0.06818233130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 33,
+        "lane": "A3_in1_0",
+        "speed": 13.89,
+        "remaining": 4.705337388366615,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            66.63533738836662,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9968764781951904,
+          0.0
+        ],
+        "reward": 0.07165483130581671,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 34,
+        "lane": ":nM_A3_0_1_0",
+        "speed": 13.89,
+        "remaining": 15.450337388366624,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            59.69033738836663,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9752634763717651,
+          0.0
+        ],
+        "reward": 0.07512733130581671,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 35,
+        "lane": ":nM_A3_0_1_0",
+        "speed": 13.89,
+        "remaining": 8.505337388366623,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            52.74533738836662,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9766010642051697,
+          0.0
+        ],
+        "reward": 0.0785998313058167,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 36,
+        "lane": ":nM_A3_0_1_0",
+        "speed": 13.89,
+        "remaining": 1.560337388366623,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            45.80033738836663,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9778808355331421,
+          0.0
+        ],
+        "reward": 0.0820723313058167,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 37,
+        "lane": "A3_in_1",
+        "speed": 13.89,
+        "remaining": 38.85533738836662,
+        "connectivity": [
+          0.777106761932373,
+          1.0,
+          1.0,
+          0.777106761932373,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            38.85533738836662,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9846089482307434,
+          -1.0
+        ],
+        "reward": -0.014455168694183299,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 38,
+        "lane": "A3_in_0",
+        "speed": 13.89,
+        "remaining": 31.910337388366624,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.6382067203521729,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            31.910337388366624,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9976059794425964,
+          0.0
+        ],
+        "reward": 0.08901733130581671,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 39,
+        "lane": "A3_in_0",
+        "speed": 13.89,
+        "remaining": 24.965337388366624,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.49930673837661743,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            24.965337388366624,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9977374076843262,
+          0.0
+        ],
+        "reward": 0.09248983130581671,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 40,
+        "lane": "A3_in_0",
+        "speed": 13.89,
+        "remaining": 18.020337388366624,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.360406756401062,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            18.020337388366624,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9978726506233215,
+          0.0
+        ],
+        "reward": 0.0959623313058167,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 41,
+        "lane": "A3_in_0",
+        "speed": 13.89,
+        "remaining": 11.075337388366627,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.2215067446231842,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            11.075337388366627,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9980168342590332,
+          0.0
+        ],
+        "reward": 0.0994348313058167,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 42,
+        "lane": "A3_in_0",
+        "speed": 13.89,
+        "remaining": 4.130337388366627,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.08260674774646759,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            8,
+            4.130337388366627,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9981548190116882,
+          0.0
+        ],
+        "reward": -2.0,
+        "wrong_lane": true,
+        "red_violation": false,
+        "lane_applied": true
+      }
+    ]
+  },
+  {
+    "seed": 1,
+    "route": "ego_d_A4_A2",
+    "steps": [
+      {
+        "step": 0,
+        "lane": "A4_in2_1",
+        "speed": 10.0,
+        "remaining": 141.81,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            235.26000000000002,
+            "r"
+          ]
+        ],
+        "action": [
+          0.6105422973632812,
+          0.0
+        ],
+        "reward": 0.08386223328207962,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 1,
+        "lane": "A4_in2_1",
+        "speed": 11.64846420288086,
+        "remaining": 135.98576789855957,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            229.4357678985596,
+            "r"
+          ]
+        ],
+        "action": [
+          0.6047251224517822,
+          0.0
+        ],
+        "reward": 0.09561714926926329,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 2,
+        "lane": "A4_in2_1",
+        "speed": 13.281222033500672,
+        "remaining": 129.34515688180923,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            222.79515688180925,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5989270210266113,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 3,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 122.40015688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            215.85015688180926,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 4,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 115.45515688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            208.90515688180926,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 5,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 108.51015688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            201.96015688180927,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 6,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 101.56515688180923,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            195.01515688180925,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 7,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 94.62015688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            188.07015688180925,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 8,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 87.67515688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            181.12515688180926,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 9,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 80.73015688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            174.18015688180927,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 10,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 73.78515688180923,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            167.23515688180925,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 11,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 66.84015688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            160.29015688180925,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 12,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 59.89515688180924,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            153.34515688180926,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 13,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 52.95015688180925,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            146.40015688180927,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 14,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 46.005156881809256,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            139.45515688180927,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 15,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 39.06015688180926,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            132.51015688180928,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 16,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 32.11515688180927,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            125.56515688180927,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 17,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 25.170156881809277,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            118.62015688180928,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 18,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 18.225156881809284,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            111.67515688180929,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 19,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 11.28015688180929,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            104.7301568818093,
+            "r"
+          ]
+        ],
+        "action": [
+          0.5968547463417053,
+          0.0
+        ],
+        "reward": 0.05260742155909537,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 20,
+        "lane": "A4_in2_1",
+        "speed": 13.89,
+        "remaining": 4.335156881809297,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            97.7851568818093,
+            "r"
+          ]
+        ],
+        "action": [
+          0.8932870626449585,
+          -1.0
+        ],
+        "reward": -0.04392007844090464,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 21,
+        "lane": ":nM_A4_1_8_0",
+        "speed": 13.89,
+        "remaining": 12.960156881809304,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            90.8401568818093,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9687314033508301,
+          0.0
+        ],
+        "reward": 0.05955242155909536,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 22,
+        "lane": ":nM_A4_1_8_0",
+        "speed": 13.89,
+        "remaining": 6.015156881809304,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            83.8951568818093,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9703203439712524,
+          0.0
+        ],
+        "reward": 0.06302492155909536,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 23,
+        "lane": "A4_in1_0",
+        "speed": 13.89,
+        "remaining": 40.09015688180931,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.8018031120300293,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            76.9501568818093,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9968329071998596,
+          0.0
+        ],
+        "reward": 0.06649742155909535,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 24,
+        "lane": "A4_in1_0",
+        "speed": 13.89,
+        "remaining": 33.14515688180931,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.6629031300544739,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            70.00515688180931,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9970520734786987,
+          0.0
+        ],
+        "reward": 0.06996992155909537,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 25,
+        "lane": "A4_in1_0",
+        "speed": 13.89,
+        "remaining": 26.200156881809306,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.5240031480789185,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            63.060156881809306,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9972388744354248,
+          0.0
+        ],
+        "reward": 0.07344242155909536,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 26,
+        "lane": "A4_in1_0",
+        "speed": 13.89,
+        "remaining": 19.255156881809306,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.38510313630104065,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            56.115156881809305,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9974176287651062,
+          0.0
+        ],
+        "reward": 0.07691492155909536,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 27,
+        "lane": "A4_in1_0",
+        "speed": 13.89,
+        "remaining": 12.310156881809306,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.24620313942432404,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            49.170156881809305,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9975855946540833,
+          0.0
+        ],
+        "reward": 0.08038742155909537,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 28,
+        "lane": "A4_in1_0",
+        "speed": 13.89,
+        "remaining": 5.365156881809305,
+        "connectivity": [
+          1.0,
+          1.0,
+          0.10730313509702682,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            23,
+            42.225156881809305,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9977585077285767,
+          0.0
+        ],
+        "reward": -2.01693,
+        "wrong_lane": true,
+        "red_violation": false,
+        "lane_applied": true
+      }
+    ]
+  },
+  {
+    "seed": 8,
+    "route": "ego_d_A2_A1",
+    "steps": [
+      {
+        "step": 0,
+        "lane": "A2_in2_2",
+        "speed": 10.0,
+        "remaining": 210.91,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            261.28,
+            "r"
+          ]
+        ],
+        "action": [
+          0.17448972165584564,
+          0.0
+        ],
+        "reward": 0.07538604930504524,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 1,
+        "lane": "A2_in2_2",
+        "speed": 10.471122248470783,
+        "remaining": 205.6744388757646,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            256.04443887576457,
+            "r"
+          ]
+        ],
+        "action": [
+          0.1681838035583496,
+          0.0
+        ],
+        "reward": 0.07865528090769133,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 2,
+        "lane": "A2_in2_2",
+        "speed": 10.925218518078326,
+        "remaining": 200.21182961672545,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            250.58182961672543,
+            "r"
+          ]
+        ],
+        "action": [
+          0.16213476657867432,
+          0.0
+        ],
+        "reward": 0.08180692863816233,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 3,
+        "lane": "A2_in2_2",
+        "speed": 11.362982387840747,
+        "remaining": 194.53033842280507,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            244.90033842280505,
+            "r"
+          ]
+        ],
+        "action": [
+          0.15630804002285004,
+          0.0
+        ],
+        "reward": 0.08484531386538835,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 4,
+        "lane": "A2_in2_2",
+        "speed": 11.785014095902442,
+        "remaining": 188.63783137485385,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            239.00783137485382,
+            "r"
+          ]
+        ],
+        "action": [
+          0.15068036317825317,
+          0.0
+        ],
+        "reward": 0.08777430580621833,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 5,
+        "lane": "A2_in2_2",
+        "speed": 12.191851076483726,
+        "remaining": 182.541905836612,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            232.91190583661196,
+            "r"
+          ]
+        ],
+        "action": [
+          0.145834818482399,
+          0.0
+        ],
+        "reward": 0.09060910789334918,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 6,
+        "lane": "A2_in2_2",
+        "speed": 12.585605086386202,
+        "remaining": 176.2491032934189,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            226.61910329341887,
+            "r"
+          ]
+        ],
+        "action": [
+          0.1422663927078247,
+          0.0
+        ],
+        "reward": 0.09337454533259418,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 7,
+        "lane": "A2_in2_2",
+        "speed": 12.96972434669733,
+        "remaining": 169.7642411200702,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            220.1342411200702,
+            "r"
+          ]
+        ],
+        "action": [
+          0.1389923393726349,
+          0.0
+        ],
+        "reward": 0.09607634026640349,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 8,
+        "lane": "A2_in2_2",
+        "speed": 13.345003663003444,
+        "remaining": 163.0917392885685,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            213.46173928856848,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13622227311134338,
+          0.0
+        ],
+        "reward": 0.09872428941975574,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 9,
+        "lane": "A2_in2_2",
+        "speed": 13.712803800404071,
+        "remaining": 156.23533738836647,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            206.60533738836645,
+            "r"
+          ]
+        ],
+        "action": [
+          0.133566215634346,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 10,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 149.29033738836645,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            199.66033738836643,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 11,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 142.34533738836646,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            192.71533738836644,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 12,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 135.40033738836647,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            185.77033738836644,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 13,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 128.45533738836647,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            178.82533738836645,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 14,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 121.51033738836648,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            171.88033738836646,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 15,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 114.56533738836649,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            164.93533738836646,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 16,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 107.6203373883665,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            157.99033738836647,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 17,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 100.6753373883665,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            151.04533738836648,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 18,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 93.73033738836651,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            144.10033738836648,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 19,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 86.78533738836651,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            137.1553373883665,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 20,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 79.84033738836652,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            130.21033738836653,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 21,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 72.89533738836653,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            123.26533738836653,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 22,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 65.95033738836653,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            116.32033738836654,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 23,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 59.00533738836654,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            109.37533738836655,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.10000000000000002,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 24,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 52.06033738836655,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            102.43033738836655,
+            "r"
+          ]
+        ],
+        "action": [
+          0.13233667612075806,
+          0.0
+        ],
+        "reward": 0.05375733130581674,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 25,
+        "lane": "A2_in2_2",
+        "speed": 13.89,
+        "remaining": 45.115337388366555,
+        "connectivity": [
+          -1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            2,
+            95.48533738836656,
+            "r"
+          ]
+        ],
+        "action": [
+          0.7664133310317993,
+          -1.0
+        ],
+        "reward": -0.04277016869418328,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 26,
+        "lane": "A2_in2_1",
+        "speed": 13.89,
+        "remaining": 38.17033738836656,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            1,
+            88.54033738836657,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9788352251052856,
+          -1.0
+        ],
+        "reward": -0.039297668694183274,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 27,
+        "lane": "A2_in2_0",
+        "speed": 13.89,
+        "remaining": 31.22533738836657,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            81.59533738836657,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9965853095054626,
+          0.0
+        ],
+        "reward": 0.06417483130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 28,
+        "lane": "A2_in2_0",
+        "speed": 13.89,
+        "remaining": 24.280337388366576,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            74.65033738836658,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9967221021652222,
+          0.0
+        ],
+        "reward": 0.06764733130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 29,
+        "lane": "A2_in2_0",
+        "speed": 13.89,
+        "remaining": 17.335337388366582,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            67.70533738836659,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9968557953834534,
+          0.0
+        ],
+        "reward": 0.07111983130581673,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 30,
+        "lane": "A2_in2_0",
+        "speed": 13.89,
+        "remaining": 10.39033738836659,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            60.76033738836659,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9969874620437622,
+          0.0
+        ],
+        "reward": 0.07459233130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 31,
+        "lane": "A2_in2_0",
+        "speed": 13.89,
+        "remaining": 3.445337388366596,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          -1.0,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            53.81533738836659,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9971691966056824,
+          0.0
+        ],
+        "reward": 0.07806483130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 32,
+        "lane": ":nM_A2_1_1_0",
+        "speed": 13.89,
+        "remaining": 15.790337388366602,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            46.8703373883666,
+            "r"
+          ]
+        ],
+        "action": [
+          0.977688193321228,
+          0.0
+        ],
+        "reward": 0.08153733130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 33,
+        "lane": ":nM_A2_1_1_0",
+        "speed": 13.89,
+        "remaining": 8.845337388366602,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            39.9253373883666,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9789120554924011,
+          0.0
+        ],
+        "reward": 0.08500983130581671,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 34,
+        "lane": ":nM_A2_1_1_0",
+        "speed": 13.89,
+        "remaining": 1.9003373883666015,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            32.9803373883666,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9800729751586914,
+          0.0
+        ],
+        "reward": 0.08848233130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": false
+      },
+      {
+        "step": 35,
+        "lane": "A2_in1_1",
+        "speed": 13.89,
+        "remaining": 17.965337388366603,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          0.3593067526817322,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            26.035337388366603,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9902241230010986,
+          0.0
+        ],
+        "reward": 0.09195483130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 36,
+        "lane": "A2_in1_1",
+        "speed": 13.89,
+        "remaining": 11.020337388366602,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          0.22040674090385437,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            19.090337388366603,
+            "r"
+          ]
+        ],
+        "action": [
+          0.991794228553772,
+          0.0
+        ],
+        "reward": 0.09542733130581672,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 37,
+        "lane": "A2_in1_1",
+        "speed": 13.89,
+        "remaining": 4.075337388366602,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          0.08150675147771835,
+          -1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            12.1453373883666,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9932071566581726,
+          0.0
+        ],
+        "reward": 0.09889983130581671,
+        "wrong_lane": false,
+        "red_violation": false,
+        "lane_applied": true
+      },
+      {
+        "step": 38,
+        "lane": ":nM_A2_0_1_0",
+        "speed": 13.89,
+        "remaining": 4.330337388366602,
+        "connectivity": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "signals": [
+          [
+            "nC",
+            0,
+            5.200337388366602,
+            "r"
+          ]
+        ],
+        "action": [
+          0.9845048189163208,
+          0.0
+        ],
+        "reward": -5.0,
+        "wrong_lane": false,
+        "red_violation": true,
+        "lane_applied": false
+      }
+    ]
+  }
+]
