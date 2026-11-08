@@ -82,8 +82,11 @@ NOHYEONG = {
     # SUMO lane index 0 = rightmost; A1 road lane 1 = index 3.
     # Each tuple is (destination arm, destination lane index).
     "central_lane_movements": {
-        "A1": {0: [("A2", 0)], 1: [("A2", 1)], 2: [("A2", 2)],
-               3: [("A4", 1)], 4: [("A1", 0)]},          # 8시 방향: 직진 3, 좌회전 1, 가장 왼쪽은 유턴 전용
+        "A1": {0: [("A2", 0), ("A5", 0)],
+               1: [("A2", 1), ("A5", 1)],
+               2: [("A2", 2), ("A5", 2)],
+               3: [("A2", 3), ("A5", 2)],
+               4: [("A4", 1), ("A1", 0)]},  # 직진 4차선(A2/A5), 가장 왼쪽은 좌회전·유턴
         "A2": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A1", 2)],
                3: [("A3", 3)]},
         "A3": {0: [("A5", 0)], 1: [("A2", 0)],
@@ -93,8 +96,12 @@ NOHYEONG = {
                2: [("A2", 3), ("A5", 1)]},
         "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
     },
-    # A3 1차선의 좌회전과 U턴은 중앙 교차로의 같은 정지선에서 출발한다.
-    "upstream_uturns": {},
+    # A2_in2_3 / A5_in1_2에서 유턴. 각 접근로의 중앙 신호와 동일한 현시 사용.
+    # A2의 100m 분기점은 split_radius_overrides에서 76m를 이동한 위치다.
+    "upstream_uturns": {
+        "A2": {"radius": 100.0, "from_lane": 3, "to_lane": 0, "signal_control": "central"},
+        "A5": {"radius": 90.0, "from_lane": 2, "to_lane": 0, "signal_control": "central"},
+    },
     # Segment indices run from the central junction outward.
     #   8시 방향(A1): 교차로로 들어오는 쪽 5차선 (나가는 쪽 3차선은 아래 도로 목록의 lanes)
     "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 4}},
@@ -146,29 +153,22 @@ NOHYEONG = {
          "via": [(32.4, 33.1), (29.9, 31.9), (26.6, 30.4), (22.2, 28.9), (17.7, 27.4), (13.4, 26.1), (8.8, 24.9), (4.3, 24.0), (-0.5, 23.7), (-4.2, 23.7), (-8.1, 24.3), (-25.0, 30.6), (-31.5, 37.1), (-36.1, 42.9)]},   # 북쪽 녹지와 가운데 교차로 사이 → 월랑로 나가는 방향의 새 바깥 차선 자리를 따라 합류
         {"id": "RING_A4_A1", "from": "A4", "from_r": 60, "to": "A1", "to_r": 69, "lanes": 1, "vph": 40,
          "via": [(-44, 24), (-44, 4), (-47, -14), (-54, -27)]},                        # 서쪽 녹지 안쪽
-        {"id": "RING_A1_A3", "from": "A1", "from_r": 89, "to": "A3", "to_r": 77, "vph": 80,
+        {"id": "RING_A1_A3", "from": "A1", "from_r": 89, "to": "A3", "to_r": 77, "right_exit_only": True, "vph": 80,
          "via": [(-70, -56), (-58, -68), (-42, -78), (-22, -84), (-3, -84), (12, -80)]}, # 남쪽 녹지 바깥 (아래쪽 원형도로)
-        {"id": "RING_A3_A5", "from": "A3", "from_r": 77, "to": "A5", "to_r": 90, "vph": 80,
+        {"id": "RING_A3_A5", "from": "A3", "from_r": 77, "to": "A5", "to_r": 90, "right_exit_only": True, "vph": 80,
          "via": [(40, -75), (58, -68), (73, -57), (83, -43), (89, -27), (91, -8)]},    # 동남 녹지 바깥 (아래쪽 원형도로)
         {"id": "RING_A5_A2", "from": "A5", "from_r": 90, "to": "A2", "to_r": 76,
          "lanes": 1, "right_exit_only": True, "vph": 60,
          "via": [(83, 21), (76, 29), (70, 35)]},                                        # 삼각 섬 바깥
-        # ── 주차장 길 (위쪽 원형도로, 1차선) ──
-        {"id": "OUTER_N", "from": "A2", "from_r": 76, "to": "A4", "to_r": 72, "lanes": 2, "vph": 60,
+        # ── 주차장: 형상은 남기고 모든 차량의 통행 및 진출입 연결을 차단 ──
+        {"id": "OUTER_N", "from": "A2", "from_r": 76, "to": "A4", "to_r": 72, "lanes": 2, "closed": True, "vph": 0,
          "via": [(52, 56), (38, 68), (20, 78), (0, 83), (-20, 82), (-36, 74), (-47, 62)]},   # 북쪽 녹지 바깥
-        {"id": "OUTER_W", "from": "A4", "from_r": 72, "to": "A1", "to_r": 89, "lanes": 2, "vph": 40,
+        {"id": "OUTER_W", "from": "A4", "from_r": 72, "to": "A1", "to_r": 89, "lanes": 2, "closed": True, "vph": 0,
          "via": [(-66, 46), (-80, 36), (-90, 18), (-93, -2), (-90, -22), (-84, -38)]},      # 서쪽 녹지 바깥
     ],
 
-    # 원형도로를 여러 개 이어서 지나가는 일반 차량 (출발 도로 → 지나갈 원형도로들 → 도착 도로)
-    #   일반 차량은 보통 "가장 빠른 길"로만 다녀서, 돌아가는 길인 원형도로는 잘 안 탄다.
-    #   그래서 원형도로에도 차가 다니도록 이렇게 직접 지정한다.
-    #   via 에는 위 원형도로의 id 를 지나갈 순서대로 적는다. vph = 시간당 대수.
-    "loop_routes": [
-        {"from": "A2", "to": "A1", "via": ["OUTER_N", "OUTER_W"], "vph": 40},                 # 위쪽 원형도로 전체
-        {"from": "A2", "to": "A3", "via": ["OUTER_N", "OUTER_W", "RING_A1_A3"], "vph": 30},   # 위쪽 → 아래쪽
-        {"from": "A1", "to": "A5", "via": ["RING_A1_A3", "RING_A3_A5"], "vph": 40},           # 아래쪽 원형도로 전체
-    ],
+    # 주차장 경유 및 우회전 도로 사이 직진을 요구하던 기존 순환 경로는 사용하지 않는다.
+    "loop_routes": [],
 
     # Visual crossings anchored to actual road lanes, not island coordinates.
     # center: at the central junction mouth; behind_block: outside last split.

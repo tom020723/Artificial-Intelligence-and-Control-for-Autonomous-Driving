@@ -506,9 +506,10 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         suffix = "" if seg_count[key] == 1 else f"_{seg_count[key]}"     # 같은 도로 쌍을 잇는 길이 두 개면 _2
         sg["_eid"] = sg.get("id") or f'RING_{sg["from"]}_{sg["to"]}{suffix}'
         sg["edge_id"] = sg["_eid"]
+        permissions = ' disallow="all"' if sg.get("closed", False) else ""
         edges.append(f'    <edge id="{sg["_eid"]}" from="{node_at(sg["from"], sg["from_r"])}" '
                      f'to="{node_at(sg["to"], sg["to_r"])}" numLanes="{int(sg.get("lanes", Lr))}" '
-                     f'speed="{float(sg.get("speed", Sr))}" priority="1"{shp}/>')
+                     f'speed="{float(sg.get("speed", Sr))}" priority="1"{permissions}{shp}/>')
     with open(os.path.join(out_dir, "highway.edg.xml"), "w") as f:
         f.write("<edges>\n" + "\n".join(edges) + "\n</edges>\n")
 
@@ -527,11 +528,14 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                 is_uturn = aid in upstream_uturns and splits[aid][k] == float(upstream_uturns[aid]["radius"])
                 if not is_uturn:
                     cons.append(f'    <delete from="{in_edge(aid, k + 1)}" to="{out_edge(aid, k + 1)}"/>')
+    reserved_right_turn_sources = set()
     if traffic.get("right_turn_only_lane", False):
         # Reserve the rightmost lane at each primary slip-road entrance.
         # Through traffic must change lanes before reaching the split.
         seen = set()
         for sg in segs:
+            if sg.get("closed", False):
+                continue
             aid = sg["from"]
             if aid in seen:
                 continue
@@ -540,6 +544,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             source = in_edge(aid, k + 1)
             configured_links = cfg.get("inbound_lane_links", {}).get(aid, {}).get(k + 1)
             if configured_links is None:
+                reserved_right_turn_sources.add(source)
                 for target_lane in range(inbound_lanes(aid, k)):
                     cons.append(f'    <delete from="{source}" to="{in_edge(aid, k)}" fromLane="0" toLane="{target_lane}"/>')
             for lane in range(1, inbound_lanes(aid, k + 1)):
@@ -554,7 +559,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                     uncontrolled = ' uncontrolled="true"' if tag == "connection" and central_splits.get(aid) == k else ""
                     cons.append(f'    <{tag} from="{in_edge(aid,k)}" to="{in_edge(aid,k-1)}" fromLane="{src}" toLane="{dst}"{uncontrolled}/>')
         for sg in segs:
-            if sg["from"] == aid:
+            if sg["from"] == aid and not sg.get("closed", False):
                 k = splits[aid].index(float(sg["from_r"])) + 1
                 cons.append(f'    <connection from="{in_edge(aid,k)}" to="{sg["edge_id"]}" fromLane="0" toLane="0"/>')
     # 나가는 방향 차선 늘리기 (실제 도로처럼 원형도로가 "늘어나는 가장 바깥 차선"으로 합류)
@@ -569,7 +574,8 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                     cons.append(f'    <{tag} from="{out_edge(aid,k)}" to="{out_edge(aid,k+1)}" fromLane="{src}" toLane="{dst}"/>')
             free = [d for d in range(outbound_lanes(aid, k + 1)) if d not in {d for _, d in links}]
             for sg in segs:
-                if sg["to"] == aid and splits[aid].index(float(sg["to_r"])) == k:
+                if (not sg.get("closed", False) and sg["to"] == aid
+                        and splits[aid].index(float(sg["to_r"])) == k):
                     for src in range(int(sg.get("lanes", Lr))):
                         for dst in range(outbound_lanes(aid, k + 1)):
                             tag = "connection" if (src < len(free) and dst == free[src]) else "delete"
@@ -579,18 +585,20 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         cons.append(f'    <connection from="{in_edge(aid,k)}" to="{out_edge(aid,k)}" '
                     f'fromLane="{turn["from_lane"]}" toLane="{turn["to_lane"]}" '
                     f'speed="{cfg.get("uturn_speed", 3.0)}"/>')
-        if aid in central_uturns:
-            # Through vehicles see only the main stop line, never a dummy green.
-            if cfg.get("inbound_lane_links", {}).get(aid, {}).get(k) is None:
-                for lane in range(min(inbound_lanes(aid, k), inbound_lanes(aid, k - 1))):
-                    cons.append(f'    <connection from="{in_edge(aid,k)}" to="{in_edge(aid,k-1)}" '
-                                f'fromLane="{lane}" toLane="{lane}" uncontrolled="true"/>')
-            links = cfg.get("outbound_lane_links", {}).get(aid, {}).get(k - 1)
-            if links is None:
-                links = [(lane, lane) for lane in range(min(outbound_lanes(aid, k - 1), outbound_lanes(aid, k)))]
-            for src, dst in links:
-                cons.append(f'    <connection from="{out_edge(aid,k-1)}" to="{out_edge(aid,k)}" '
-                            f'fromLane="{src}" toLane="{dst}" uncontrolled="true"/>')
+        if aid in central_uturns and cfg.get("inbound_lane_links", {}).get(aid, {}).get(k) is None:
+            # Adding an explicit U-turn suppresses inferred connections on this
+            # source edge. Retain its legal through lanes and slip-road exit.
+            source = in_edge(aid, k)
+            for lane in range(min(inbound_lanes(aid, k), inbound_lanes(aid, k - 1))):
+                if lane == 0 and source in reserved_right_turn_sources:
+                    continue
+                cons.append(f'    <connection from="{source}" to="{in_edge(aid,k-1)}" '
+                            f'fromLane="{lane}" toLane="{lane}" uncontrolled="true"/>')
+            for sg in segs:
+                if (not sg.get("closed", False) and sg["from"] == aid
+                        and splits[aid].index(float(sg["from_r"])) == k - 1):
+                    cons.append(f'    <connection from="{source}" to="{sg["_eid"]}" '
+                                'fromLane="0" toLane="0" uncontrolled="true"/>')
     # 원형도로는 올바른 방향으로만 드나들게 한다:
     #   · 갈라지는 갈림점: 교차로로 "들어오는" 차만 원형도로로 빠질 수 있다.
     #                     교차로에서 "나가던" 차가 다시 꺾어 들어가는 연결은 지운다.
@@ -608,6 +616,20 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                 if (following["from"] == sg["to"]
                         and float(following["from_r"]) == float(sg["to_r"])):
                     cons.append(f'    <delete from="{sg["_eid"]}" to="{following["_eid"]}"/>')
+    # Keep parking-area geometry while disconnecting every entrance and exit.
+    closed_edges = {sg["_eid"] for sg in segs if sg.get("closed", False)}
+    cons = [line for line in cons if not (
+        (element := ET.fromstring(line)).tag == "connection"
+        and (element.get("from") in closed_edges or element.get("to") in closed_edges))]
+    edge_nodes = {edge.get("id"): (edge.get("from"), edge.get("to"))
+                  for line in edges for edge in [ET.fromstring(line)]}
+    for closed in closed_edges:
+        start, end = edge_nodes[closed]
+        for edge, (source, target) in edge_nodes.items():
+            if target == start:
+                cons.append(f'    <delete from="{edge}" to="{closed}"/>')
+            if source == end:
+                cons.append(f'    <delete from="{closed}" to="{edge}"/>')
     with open(os.path.join(out_dir, "highway.con.xml"), "w") as f:
         f.write("<connections>\n" + "\n".join(cons) + "\n</connections>\n")
 
@@ -723,7 +745,24 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             raise ValueError("uturn_target_lane must exist on every approach")
         if not math.isfinite(speed) or speed <= 0:
             raise ValueError("uturn_speed must be finite and positive")
+        joined_turn_nodes = {node_at(aid, turn["radius"]) for aid, turn in central_uturns.items()}
+        joined_turn_links = {
+            (in_edge(aid, k), out_edge(aid, k), str(turn["from_lane"]), str(turn["to_lane"]))
+            for aid, turn in central_uturns.items() for k in [central_splits[aid]]}
         for c in net.findall("connection"):
+            # Only U-turn movements at these upstream junctions use the central
+            # signal. Preserve inferred legal through/merge links, including
+            # slip-road exits, without restoring any explicitly deleted links.
+            if edge_nodes.get(c.get("from"), (None, None))[1] in joined_turn_nodes:
+                key = tuple(c.get(name) for name in ("from", "to", "fromLane", "toLane"))
+                if c.get("dir") == "t" and key not in joined_turn_links:
+                    attrs = dict(zip(("from", "to", "fromLane", "toLane"), key))
+                    cons.append("    " + ET.tostring(ET.Element("delete", attrs), encoding="unicode"))
+                elif key not in joined_turn_links:
+                    attrs = dict(zip(("from", "to", "fromLane", "toLane"), key))
+                    attrs["uncontrolled"] = "true"
+                    cons.append("    " + ET.tostring(ET.Element("connection", attrs), encoding="unicode"))
+                continue
             if c.get("tl") != "nC":
                 continue
             attrs = {key: c.get(key) for key in ("from", "to", "fromLane", "toLane")}
@@ -890,13 +929,19 @@ def _write_approach_signals(net_path, cfg):
     program = ET.Element("tlLogic", id="nC", type="static", programID="0", offset="0")
     for arm in order:
         state = ["r"] * count
+        protected_targets = set()
         for c in connections:
             upstream_turn = (arm in upstream_arms
                              and c.get("from", "").startswith(f"{arm}_in")
                              and c.get("to", "").startswith(f"{arm}_out"))
             if c.get("from") == f"{arm}_in" or upstream_turn:
-                # U-turns yield to other movements from the same approach.
-                state[int(c.get("linkIndex"))] = "g" if c.get("dir") == "t" else "G"
+                # U-turns and a second stream merging into the same target lane
+                # yield rather than receiving conflicting protected greens.
+                target_lane = (c.get("to"), c.get("toLane"))
+                yields = c.get("dir") == "t" or target_lane in protected_targets
+                state[int(c.get("linkIndex"))] = "g" if yields else "G"
+                if not yields:
+                    protected_targets.add(target_lane)
         if not any(s in "Gg" for s in state):
             raise ValueError(f"No signal connections found for {arm}")
         ET.SubElement(program, "phase", duration=f"{durations[arm]:g}",
@@ -928,9 +973,12 @@ def _write_ego_routes(out_dir, cfg, arms, segs, entry_edge, exit_edge):
     net = sumolib.net.readNet(os.path.join(out_dir, "highway.net.xml"))
     er = cfg.get("ego_routes", {})
     uturn = bool(er.get("uturn", True))
+    closed_edges = {sg["_eid"] for sg in segs if sg.get("closed", False)}
 
     def path(edge_ids):
         """edge_ids 를 순서대로 지나는 최단 경로의 엣지 목록 (불가능하면 None)."""
+        if closed_edges.intersection(edge_ids):
+            return None
         full = []
         for a, b in zip(edge_ids[:-1], edge_ids[1:]):
             p, _ = net.getShortestPath(net.getEdge(a), net.getEdge(b), vClass="passenger")
@@ -949,7 +997,8 @@ def _write_ego_routes(out_dir, cfg, arms, segs, entry_edge, exit_edge):
             if r:
                 routes[f'ego_d_{a["id"]}_{b["id"]}'] = r
     # 2) 원형도로를 거치는 경로: 원형도로 하나(또는 loop_routes 묶음)를 지난 뒤 아무 도로로나 나간다
-    ring_groups = [([sg["_eid"]], sg["from"], sg["_eid"]) for sg in segs]
+    ring_groups = [([sg["_eid"]], sg["from"], sg["_eid"]) for sg in segs
+                   if not sg.get("closed", False)]
     ids = {sg.get("id"): sg["_eid"] for sg in segs if sg.get("id")}
     for i, lr in enumerate(cfg.get("loop_routes", [])):
         ring_groups.append(([ids.get(v, v) for v in lr["via"]], lr["from"], f"loop{i}"))
@@ -974,9 +1023,10 @@ def _loop_flows(cfg, segs, entry_edge, exit_edge, flow_type, traffic):
     """
     if not traffic.get("background_enabled", True):
         return []
+    closed_edges = {sg["_eid"] for sg in segs if sg.get("closed", False)}
 
     def flow(fid, fa, ta, via, vph):
-        if not vph or float(vph) <= 0:
+        if not vph or float(vph) <= 0 or closed_edges.intersection(via):
             return None
         return (f'    <flow id="{fid}" type="{flow_type}" from="{entry_edge[fa]}" to="{exit_edge[ta]}" '
                 f'via="{" ".join(via)}" begin="0" end="100000" period="{3600.0 / float(vph):.2f}" '
