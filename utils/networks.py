@@ -230,15 +230,14 @@ class HybridActorCritic(nn.Module):
 
     # ---- 알고리즘이 쓰는 표준 인터페이스 ----------------------------
     def sample(self, obs):
-        """행동 샘플. Returns (action[2], log_prob, value) — 배치 없는 단일 관측용."""
+        """관측 배치에 대한 (action, log_prob, value)를 샘플링한다."""
         mu, std, logits, value = self.forward(obs)
         nd = Normal(mu, std)
         accel = nd.sample()
         lane_idx = Categorical(logits=logits).sample()
         log_prob = (nd.log_prob(accel).sum(-1)
                     + Categorical(logits=logits).log_prob(lane_idx))
-        lane_cmd = torch.as_tensor(
-            [self.LANE_CMDS[int(i)] for i in lane_idx], device=accel.device)
+        lane_cmd = torch.as_tensor(self.LANE_CMDS, device=accel.device)[lane_idx]
         action = torch.cat([accel, lane_cmd.unsqueeze(-1)], dim=-1)
         return action, log_prob, value
 
@@ -246,8 +245,7 @@ class HybridActorCritic(nn.Module):
         """결정적 행동: 가감속=μ, 차선=argmax. 학습됐다면 여기서 변경이 나온다."""
         mu, _, logits, _ = self.forward(obs)
         lane_idx = torch.argmax(logits, dim=-1)
-        lane_cmd = torch.as_tensor(
-            [self.LANE_CMDS[int(i)] for i in lane_idx], device=mu.device)
+        lane_cmd = torch.as_tensor(self.LANE_CMDS, device=mu.device)[lane_idx]
         return torch.cat([mu, lane_cmd.unsqueeze(-1)], dim=-1)
 
     def evaluate_actions(self, obs, actions):

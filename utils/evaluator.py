@@ -10,7 +10,8 @@ PPO든 SAC든, 심지어 규칙 기반 컨트롤러든 똑같이 평가할 수 �
     그래서 주기적으로 노이즈 없는(deterministic) 정책으로 주행시켜
     충돌률 / 완주율 / 평균속도 / 차간거리를 따로 측정한다.
 """
-from dataclasses import dataclass, asdict
+from collections import Counter
+from dataclasses import asdict, dataclass, field
 
 import numpy as np
 
@@ -52,6 +53,65 @@ class DrivingMetrics:
                 f"보상={self.ep_return:.1f}")
 
 
+@dataclass
+class _EpisodeStats:
+    reward: float = 0.0
+    length: int = 0
+    lane_changes: int = 0
+    green_passes: int = 0
+    red_stop_cost: float = 0.0
+    outcome: str | None = None
+    speeds: list[float] = field(default_factory=list)
+    gaps: list[float] = field(default_factory=list)
+
+
+class _DrivingStats:
+    def __init__(self, n_episodes):
+        self.episodes = [_EpisodeStats() for _ in range(n_episodes)]
+
+    def record(self, episode, reward, truncated, info):
+        stats = self.episodes[episode]
+        stats.reward += reward
+        stats.length += 1
+        stats.lane_changes += int(info.get("lane_change", 0) != 0 and bool(info.get("lane_change_applied")))
+        stats.green_passes += int(info.get("green_pass_count", info.get("green_pass_reward", 0.0) > 0))
+        stats.red_stop_cost += float(info.get("red_stop_penalty", 0.0))
+
+        for outcome in ("red_light_violation", "collided", "arrived", "wrong_lane"):
+            if info.get(outcome):
+                stats.outcome = outcome
+                break
+        else:
+            if truncated:
+                stats.outcome = "timeout"
+
+        if info.get("speed") is not None:
+            stats.speeds.append(float(info["speed"]))
+        if info.get("gap") is not None:
+            stats.gaps.append(float(info["gap"]))
+
+    def metrics(self, visibility, episodes=None):
+        episodes = self.episodes if episodes is None else episodes
+        outcomes = Counter(episode.outcome for episode in episodes)
+        speeds = [speed for episode in episodes for speed in episode.speeds]
+        gaps = [gap for episode in episodes for gap in episode.gaps]
+        return DrivingMetrics(
+            collision_rate=outcomes["collided"] / len(episodes),
+            success_rate=outcomes["arrived"] / len(episodes),
+            timeout_rate=outcomes["timeout"] / len(episodes),
+            wrong_lane_rate=outcomes["wrong_lane"] / len(episodes),
+            red_light_violation_rate=outcomes["red_light_violation"] / len(episodes),
+            mean_speed=float(np.mean(speeds)) if speeds else 0.0,
+            mean_gap=float(np.mean(gaps)) if gaps else float(visibility),
+            min_gap=float(np.min(gaps)) if gaps else float(visibility),
+            ep_return=float(np.mean([episode.reward for episode in episodes])),
+            ep_length=float(np.mean([episode.length for episode in episodes])),
+            lane_changes=float(np.mean([episode.lane_changes for episode in episodes])),
+            green_passes=float(np.mean([episode.green_passes for episode in episodes])),
+            red_stop_cost=float(np.mean([episode.red_stop_cost for episode in episodes])),
+        )
+
+
 def evaluate_policy(policy, env, n_episodes: int = 5,
                     deterministic: bool = True,
                     seed: int | None = None) -> DrivingMetrics:
@@ -69,11 +129,7 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
         모든 지표는 env.step()의 info(collided/arrived/speed/gap)에서 읽는다.
         관측(obs) 벡터의 구성과 무관하므로, 관측을 바꿔도 이 코드는 안 깨진다.
     """
-    n_collide, n_arrive, n_timeout, n_wrong_lane = 0, 0, 0, 0
-    n_red_light = 0
-    speeds, gaps, returns, lengths, lane_changes = [], [], [], [], []
-    green_passes, red_stop_costs = [], []
-
+    stats = _DrivingStats(n_episodes)
     for episode in range(n_episodes):
         if seed is None:
             obs, _ = env.reset()
@@ -82,72 +138,55 @@ def evaluate_policy(policy, env, n_episodes: int = 5,
             # SUMO 시작 시 전역 NumPy에서 뽑는 seed도 에피소드별로 고정한다.
             np.random.seed(episode_seed)
             obs, _ = env.reset(seed=episode_seed)
-        done, ep_ret, ep_len = False, 0.0, 0
-        ep_lc = 0
-        ep_green, ep_red_stop_cost = 0, 0.0
-        ended_by = None
 
+        done = False
         while not done:
             action = policy.predict(obs, deterministic=deterministic)
             obs, reward, terminated, truncated, info = env.step(action)
-            ep_ret += reward
-            ep_len += 1
+            stats.record(episode, reward, truncated, info)
             done = terminated or truncated
-            ep_green += int(info.get("green_pass_count", info.get("green_pass_reward", 0.0) > 0))
-            ep_red_stop_cost += float(info.get("red_stop_penalty", 0.0))
+    return stats.metrics(env.visibility)
 
-            # 실행된 차선변경 집계 (유지 명령의 changeLane 핀 동작은 제외)
-            if info.get("lane_change", 0) != 0 and info.get("lane_change_applied"):
-                ep_lc += 1
 
-            if info.get("red_light_violation"):
-                ended_by = "red_light"
-            elif info.get("collided"):
-                ended_by = "collision"
-            elif info.get("arrived"):
-                ended_by = "arrival"
-            elif info.get("wrong_lane"):
-                ended_by = "wrong_lane"
-            elif truncated:
-                ended_by = "timeout"
+def evaluate_parallel_policy(policy, env, device):
+    """Run one deterministic episode per road and summarize the batch."""
+    return _run_parallel_episodes(policy, env, device).metrics(env.prototype.visibility)
 
-            # 속도/차간거리는 env가 info로 넘겨주는 원시값(m/s, m)을 쓴다.
-            # 관측(obs) 레이아웃이 바뀌어도 평가 코드는 영향받지 않는다.
-            # 종료 스텝은 None (ego가 이미 제거됨) → 통계에서 제외.
-            if info.get("speed") is not None:
-                speeds.append(float(info["speed"]))
-            if info.get("gap") is not None:
-                gaps.append(float(info["gap"]))
 
-        if ended_by == "red_light":
-            n_red_light += 1
-        elif ended_by == "collision":
-            n_collide += 1
-        elif ended_by == "arrival":
-            n_arrive += 1
-        elif ended_by == "wrong_lane":
-            n_wrong_lane += 1
-        elif ended_by == "timeout":
-            n_timeout += 1
+def evaluate_parallel_routes(policy, env, device, routes):
+    """Run one episode for each explicit route and return results in route order."""
+    stats = _run_parallel_episodes(policy, env, device, routes)
+    statuses = {"arrived": "arrival", "collided": "collision", "red_light_violation": "red_light"}
+    return [
+        {"status": statuses.get(episode.outcome, episode.outcome or "unknown"),
+         **stats.metrics(env.prototype.visibility, [episode]).as_dict()}
+        for episode in stats.episodes
+    ]
 
-        returns.append(ep_ret)
-        lengths.append(ep_len)
-        lane_changes.append(ep_lc)
-        green_passes.append(ep_green)
-        red_stop_costs.append(ep_red_stop_cost)
 
-    return DrivingMetrics(
-        red_light_violation_rate=n_red_light / n_episodes,
-        collision_rate=n_collide / n_episodes,
-        success_rate=n_arrive / n_episodes,
-        timeout_rate=n_timeout / n_episodes,
-        wrong_lane_rate=n_wrong_lane / n_episodes,
-        mean_speed=float(np.mean(speeds)) if speeds else 0.0,
-        mean_gap=float(np.mean(gaps)) if gaps else float(env.visibility),
-        min_gap=float(np.min(gaps)) if gaps else float(env.visibility),
-        ep_return=float(np.mean(returns)),
-        ep_length=float(np.mean(lengths)),
-        lane_changes=float(np.mean(lane_changes)),
-        green_passes=float(np.mean(green_passes)),
-        red_stop_cost=float(np.mean(red_stop_costs)),
-    )
+def _run_parallel_episodes(policy, env, device, routes=None):
+    import torch
+
+    policy.to(device).eval()
+    stats = _DrivingStats(env.num_envs)
+    active = list(range(env.num_envs))
+    try:
+        obs = env.reset() if routes is None else env.reset(routes=routes)
+        with torch.inference_mode():
+            while active:
+                obs_batch = torch.as_tensor(obs, dtype=torch.float32, device=device)
+                actions = policy.det_action(obs_batch) if hasattr(policy, "det_action") else policy(obs_batch)[0]
+                pending, next_observations = [], []
+                for index, transition in zip(
+                        active, env.step_evaluation(active, actions.cpu().numpy()), strict=True):
+                    next_obs, reward, terminated, truncated, info = transition
+                    stats.record(index, reward, truncated, info)
+                    if not (terminated or truncated):
+                        pending.append(index)
+                        next_observations.append(next_obs)
+                active = pending
+                if active:
+                    obs = np.stack(next_observations)
+    finally:
+        env.close()
+    return stats

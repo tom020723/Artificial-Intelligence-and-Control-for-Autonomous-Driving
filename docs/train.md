@@ -104,16 +104,16 @@
 - 충돌하지 않고 경로를 성공하는 것
 
 위 목적을 달성하는지 모델을 평가하기 위해 다음과 같이 모델 평가 스크립트를 제작했다.
-- 모델 평가 스크립트: [scripts/evaluate_variant.py](../scripts/evaluate_variant.py) (Phase 1 전체 청신호·배경 차량 없음 조건)
+- 모델 평가 스크립트는 [scripts/evaluate.py](../scripts/evaluate.py)다. 모델 한 개의 저장 설정으로 Phase 1 평가를 실행한다.
 - 평가 경로: 가능한 모든 출발지-목적지 조합 (22개) + 중복 우회 경로 (5개)
   - 중복 우회 경로는 22개의 경로에 이미 포함된 출발지-목적지 조합
-- 평가 횟수: 27개 경로 x seed 5개 = 135회
+- 평가 횟수: 27개 경로 × seed 0~4 = 135회. 각 seed에서 27개 경로를 동시에 주행한다.
 
-프로젝트 루트에서 실행 (모델의 저장 설정·가중치를 불러오며, 결과는 해당 실험 폴더의 `analysis/`에 저장):
+프로젝트 루트에서 실행한다. 해당 실험의 `analysis/learning_curve.png`에서 학습 곡선과 최종 경로별 완주·실패를 함께 확인할 수 있다.
 
 ```bash
 conda activate sumo
-python scripts/evaluate_variant.py results/phase1_observation_ablation_20261110_014915_324450/runs/04_lookahead_nogoal_tls1
+python scripts/evaluate.py results/parallel_1_YYYYMMDD_HHMMSS_ffffff
 ```
 
 - **TODO**

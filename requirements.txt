@@ -4,3 +4,4 @@ gymnasium
 traci
 sumolib
 tensorboard
+matplotlib

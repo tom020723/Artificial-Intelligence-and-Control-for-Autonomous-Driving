@@ -1,0 +1,215 @@
+<connections>
+    <delete from="A1_out" to="A1_in"/>
+    <delete from="A1_in1" to="A1_out1"/>
+    <delete from="A1_out1" to="A1_in1"/>
+    <delete from="A1_in2" to="A1_out2"/>
+    <delete from="A1_out2" to="A1_in2"/>
+    <delete from="A2_out" to="A2_in"/>
+    <delete from="A2_out1" to="A2_in1"/>
+    <delete from="A3_out" to="A3_in"/>
+    <delete from="A3_in1" to="A3_out1"/>
+    <delete from="A3_out1" to="A3_in1"/>
+    <delete from="A4_out" to="A4_in"/>
+    <delete from="A4_in1" to="A4_out1"/>
+    <delete from="A4_out1" to="A4_in1"/>
+    <delete from="A4_in2" to="A4_out2"/>
+    <delete from="A4_out2" to="A4_in2"/>
+    <delete from="A5_out" to="A5_in"/>
+    <delete from="A5_out1" to="A5_in1"/>
+    <delete from="A4_in1" to="A4_in" fromLane="0" toLane="0"/>
+    <delete from="A4_in1" to="A4_in" fromLane="0" toLane="1"/>
+    <delete from="A4_in1" to="A4_in" fromLane="0" toLane="2"/>
+    <delete from="A4_in1" to="RING_A4_A1" fromLane="1" toLane="0"/>
+    <delete from="A4_in1" to="RING_A4_A1" fromLane="2" toLane="0"/>
+    <delete from="A1_in2" to="A1_in1" fromLane="0" toLane="0"/>
+    <delete from="A1_in2" to="A1_in1" fromLane="0" toLane="1"/>
+    <delete from="A1_in2" to="A1_in1" fromLane="0" toLane="2"/>
+    <delete from="A1_in2" to="A1_in1" fromLane="0" toLane="3"/>
+    <delete from="A1_in2" to="A1_in1" fromLane="0" toLane="4"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="1" toLane="0"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="1" toLane="1"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="2" toLane="0"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="2" toLane="1"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="3" toLane="0"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="3" toLane="1"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="4" toLane="0"/>
+    <delete from="A1_in2" to="RING_A1_A3" fromLane="4" toLane="1"/>
+    <delete from="A3_in1" to="RING_A3_A5" fromLane="1" toLane="0"/>
+    <delete from="A3_in1" to="RING_A3_A5" fromLane="1" toLane="1"/>
+    <delete from="A3_in1" to="RING_A3_A5" fromLane="2" toLane="0"/>
+    <delete from="A3_in1" to="RING_A3_A5" fromLane="2" toLane="1"/>
+    <delete from="A3_in1" to="RING_A3_A5" fromLane="3" toLane="0"/>
+    <delete from="A3_in1" to="RING_A3_A5" fromLane="3" toLane="1"/>
+    <delete from="A5_in1" to="A5_in" fromLane="0" toLane="0"/>
+    <delete from="A5_in1" to="A5_in" fromLane="0" toLane="1"/>
+    <delete from="A5_in1" to="A5_in" fromLane="0" toLane="2"/>
+    <delete from="A5_in1" to="RING_A5_A2" fromLane="1" toLane="0"/>
+    <delete from="A5_in1" to="RING_A5_A2" fromLane="2" toLane="0"/>
+    <connection from="A2_in1" to="A2_in" fromLane="0" toLane="0" uncontrolled="true"/>
+    <connection from="A2_in1" to="A2_in" fromLane="0" toLane="1" uncontrolled="true"/>
+    <delete from="A2_in1" to="A2_in" fromLane="0" toLane="2"/>
+    <delete from="A2_in1" to="A2_in" fromLane="0" toLane="3"/>
+    <delete from="A2_in1" to="A2_in" fromLane="0" toLane="4"/>
+    <delete from="A2_in1" to="A2_in" fromLane="1" toLane="0"/>
+    <delete from="A2_in1" to="A2_in" fromLane="1" toLane="1"/>
+    <connection from="A2_in1" to="A2_in" fromLane="1" toLane="2" uncontrolled="true"/>
+    <delete from="A2_in1" to="A2_in" fromLane="1" toLane="3"/>
+    <delete from="A2_in1" to="A2_in" fromLane="1" toLane="4"/>
+    <delete from="A2_in1" to="A2_in" fromLane="2" toLane="0"/>
+    <delete from="A2_in1" to="A2_in" fromLane="2" toLane="1"/>
+    <delete from="A2_in1" to="A2_in" fromLane="2" toLane="2"/>
+    <connection from="A2_in1" to="A2_in" fromLane="2" toLane="3" uncontrolled="true"/>
+    <delete from="A2_in1" to="A2_in" fromLane="2" toLane="4"/>
+    <delete from="A2_in1" to="A2_in" fromLane="3" toLane="0"/>
+    <delete from="A2_in1" to="A2_in" fromLane="3" toLane="1"/>
+    <delete from="A2_in1" to="A2_in" fromLane="3" toLane="2"/>
+    <delete from="A2_in1" to="A2_in" fromLane="3" toLane="3"/>
+    <connection from="A2_in1" to="A2_in" fromLane="3" toLane="4" uncontrolled="true"/>
+    <connection from="A2_in" to="RING_A2_A4" fromLane="0" toLane="0" uncontrolled="true"/>
+    <delete from="A2_in" to="RING_A2_A4" fromLane="1" toLane="0"/>
+    <delete from="A2_in" to="RING_A2_A4" fromLane="2" toLane="0"/>
+    <delete from="A2_in" to="RING_A2_A4" fromLane="3" toLane="0"/>
+    <delete from="A2_in" to="RING_A2_A4" fromLane="4" toLane="0"/>
+    <delete from="A3_in1" to="A3_in" fromLane="0" toLane="0"/>
+    <connection from="A3_in1" to="A3_in" fromLane="0" toLane="1"/>
+    <delete from="A3_in1" to="A3_in" fromLane="0" toLane="2"/>
+    <delete from="A3_in1" to="A3_in" fromLane="0" toLane="3"/>
+    <delete from="A3_in1" to="A3_in" fromLane="0" toLane="4"/>
+    <delete from="A3_in1" to="A3_in" fromLane="1" toLane="0"/>
+    <delete from="A3_in1" to="A3_in" fromLane="1" toLane="1"/>
+    <connection from="A3_in1" to="A3_in" fromLane="1" toLane="2"/>
+    <delete from="A3_in1" to="A3_in" fromLane="1" toLane="3"/>
+    <delete from="A3_in1" to="A3_in" fromLane="1" toLane="4"/>
+    <delete from="A3_in1" to="A3_in" fromLane="2" toLane="0"/>
+    <delete from="A3_in1" to="A3_in" fromLane="2" toLane="1"/>
+    <delete from="A3_in1" to="A3_in" fromLane="2" toLane="2"/>
+    <connection from="A3_in1" to="A3_in" fromLane="2" toLane="3"/>
+    <delete from="A3_in1" to="A3_in" fromLane="2" toLane="4"/>
+    <delete from="A3_in1" to="A3_in" fromLane="3" toLane="0"/>
+    <delete from="A3_in1" to="A3_in" fromLane="3" toLane="1"/>
+    <delete from="A3_in1" to="A3_in" fromLane="3" toLane="2"/>
+    <delete from="A3_in1" to="A3_in" fromLane="3" toLane="3"/>
+    <connection from="A3_in1" to="A3_in" fromLane="3" toLane="4"/>
+    <connection from="A3_in1" to="RING_A3_A5" fromLane="0" toLane="0"/>
+    <connection from="A2_out" to="A2_out1" fromLane="0" toLane="0"/>
+    <delete from="A2_out" to="A2_out1" fromLane="0" toLane="1"/>
+    <delete from="A2_out" to="A2_out1" fromLane="0" toLane="2"/>
+    <delete from="A2_out" to="A2_out1" fromLane="1" toLane="0"/>
+    <connection from="A2_out" to="A2_out1" fromLane="1" toLane="1"/>
+    <delete from="A2_out" to="A2_out1" fromLane="1" toLane="2"/>
+    <delete from="A2_out" to="A2_out1" fromLane="2" toLane="0"/>
+    <delete from="A2_out" to="A2_out1" fromLane="2" toLane="1"/>
+    <connection from="A2_out" to="A2_out1" fromLane="2" toLane="2"/>
+    <connection from="RING_A5_A2" to="A2_out1" fromLane="0" toLane="0"/>
+    <delete from="RING_A5_A2" to="A2_out1" fromLane="0" toLane="1"/>
+    <delete from="RING_A5_A2" to="A2_out1" fromLane="0" toLane="2"/>
+    <delete from="A4_out" to="A4_out1" fromLane="0" toLane="0"/>
+    <connection from="A4_out" to="A4_out1" fromLane="0" toLane="1"/>
+    <delete from="A4_out" to="A4_out1" fromLane="0" toLane="2"/>
+    <delete from="A4_out" to="A4_out1" fromLane="1" toLane="0"/>
+    <delete from="A4_out" to="A4_out1" fromLane="1" toLane="1"/>
+    <connection from="A4_out" to="A4_out1" fromLane="1" toLane="2"/>
+    <connection from="RING_A2_A4" to="A4_out1" fromLane="0" toLane="0"/>
+    <delete from="RING_A2_A4" to="A4_out1" fromLane="0" toLane="1"/>
+    <delete from="RING_A2_A4" to="A4_out1" fromLane="0" toLane="2"/>
+    <connection from="A2_in1" to="A2_out1" fromLane="3" toLane="0" speed="3.0"/>
+    <connection from="A5_in1" to="A5_out1" fromLane="2" toLane="0" speed="3.0"/>
+    <connection from="A5_in1" to="A5_in" fromLane="1" toLane="1" uncontrolled="true"/>
+    <connection from="A5_in1" to="A5_in" fromLane="2" toLane="2" uncontrolled="true"/>
+    <connection from="A5_in1" to="RING_A5_A2" fromLane="0" toLane="0" uncontrolled="true"/>
+    <delete from="RING_A2_A4" to="A4_in"/>
+    <delete from="A4_out" to="RING_A4_A1"/>
+    <delete from="RING_A4_A1" to="A1_in"/>
+    <delete from="A1_out1" to="RING_A1_A3"/>
+    <delete from="RING_A1_A3" to="A3_in"/>
+    <delete from="RING_A1_A3" to="RING_A3_A5"/>
+    <delete from="A3_out" to="RING_A3_A5"/>
+    <delete from="RING_A3_A5" to="A5_in"/>
+    <delete from="RING_A3_A5" to="RING_A5_A2"/>
+    <delete from="A5_out" to="RING_A5_A2"/>
+    <delete from="RING_A5_A2" to="A2_in"/>
+    <delete from="RING_A5_A2" to="OUTER_N"/>
+    <delete from="A2_out" to="OUTER_N"/>
+    <delete from="OUTER_N" to="A4_in1"/>
+    <delete from="A4_out1" to="OUTER_W"/>
+    <delete from="OUTER_W" to="A1_in1"/>
+    <delete from="OUTER_W" to="A1_in1"/>
+    <delete from="OUTER_W" to="A1_out2"/>
+    <delete from="A4_out1" to="OUTER_W"/>
+    <delete from="A4_in2" to="OUTER_W"/>
+    <delete from="OUTER_W" to="RING_A1_A3"/>
+    <delete from="OUTER_N" to="OUTER_W"/>
+    <delete from="A2_out" to="OUTER_N"/>
+    <delete from="A2_in1" to="OUTER_N"/>
+    <delete from="OUTER_N" to="A4_in1"/>
+    <delete from="OUTER_N" to="A4_out2"/>
+    <delete from="RING_A5_A2" to="OUTER_N"/>
+    <delete from="OUTER_N" to="OUTER_W"/>
+    <delete from="A1_in" to="A5_out" fromLane="0" toLane="1" />
+    <delete from="A1_in" to="RING_A2_A4" fromLane="3" toLane="0" />
+    <delete from="A1_in" to="A1_out" fromLane="4" toLane="2" />
+    <connection from="A2_in1" to="A2_in" fromLane="0" toLane="0" uncontrolled="true" />
+    <connection from="A2_in1" to="A2_in" fromLane="0" toLane="1" uncontrolled="true" />
+    <connection from="A2_in1" to="A2_in" fromLane="1" toLane="2" uncontrolled="true" />
+    <connection from="A2_in1" to="A2_in" fromLane="2" toLane="3" uncontrolled="true" />
+    <connection from="A2_in1" to="A2_in" fromLane="3" toLane="4" uncontrolled="true" />
+    <delete from="A2_in1" to="A2_out1" fromLane="3" toLane="2" />
+    <connection from="A2_out" to="A2_out1" fromLane="0" toLane="0" uncontrolled="true" />
+    <connection from="A2_out" to="A2_out1" fromLane="1" toLane="1" uncontrolled="true" />
+    <connection from="A2_out" to="A2_out1" fromLane="2" toLane="2" uncontrolled="true" />
+    <delete from="A3_in" to="A2_out" fromLane="0" toLane="1" />
+    <delete from="A3_in" to="RING_A2_A4" fromLane="1" toLane="0" />
+    <delete from="A3_in" to="A3_out" fromLane="4" toLane="3" />
+    <delete from="A4_in" to="A1_out" fromLane="0" toLane="0" />
+    <delete from="A4_in" to="A3_out" fromLane="0" toLane="1" />
+    <delete from="A4_in" to="A3_out" fromLane="1" toLane="2" />
+    <delete from="A4_in" to="A3_out" fromLane="1" toLane="3" />
+    <delete from="A4_in" to="A5_out" fromLane="1" toLane="2" />
+    <delete from="A4_in" to="RING_A2_A4" fromLane="2" toLane="0" />
+    <delete from="A4_in" to="A4_out" fromLane="2" toLane="1" />
+    <delete from="A5_in" to="A2_out" fromLane="0" toLane="0" />
+    <delete from="A5_in" to="RING_A2_A4" fromLane="0" toLane="0" />
+    <delete from="A5_in" to="A4_out" fromLane="1" toLane="0" />
+    <delete from="A5_in" to="A1_out" fromLane="2" toLane="0" />
+    <delete from="A5_in" to="A1_out" fromLane="2" toLane="1" />
+    <delete from="A5_in" to="A1_out" fromLane="2" toLane="2" />
+    <delete from="A5_in" to="A5_out" fromLane="2" toLane="2" />
+    <connection from="A5_in1" to="RING_A5_A2" fromLane="0" toLane="0" uncontrolled="true" />
+    <connection from="A5_in1" to="A5_in" fromLane="1" toLane="1" uncontrolled="true" />
+    <connection from="A5_in1" to="A5_in" fromLane="2" toLane="2" uncontrolled="true" />
+    <delete from="A5_in1" to="A5_out1" fromLane="2" toLane="2" />
+    <connection from="A5_out" to="A5_out1" fromLane="0" toLane="0" uncontrolled="true" />
+    <connection from="A5_out" to="A5_out1" fromLane="1" toLane="1" uncontrolled="true" />
+    <connection from="A5_out" to="A5_out1" fromLane="2" toLane="2" uncontrolled="true" />
+    <connection from="RING_A3_A5" to="A5_out1" fromLane="0" toLane="0" uncontrolled="true" />
+    <connection from="RING_A3_A5" to="A5_out1" fromLane="1" toLane="1" uncontrolled="true" />
+    <connection from="RING_A5_A2" to="A2_out1" fromLane="0" toLane="0" uncontrolled="true" />
+    <connection from="A1_in" to="A3_out" fromLane="0" toLane="0" />
+    <connection from="A1_in" to="A2_out" fromLane="1" toLane="0" />
+    <connection from="A1_in" to="A5_out" fromLane="1" toLane="1" />
+    <connection from="A1_in" to="A2_out" fromLane="2" toLane="1" />
+    <connection from="A1_in" to="A5_out" fromLane="2" toLane="2" />
+    <connection from="A1_in" to="A2_out" fromLane="3" toLane="2" />
+    <connection from="A1_in" to="A5_out" fromLane="3" toLane="2" />
+    <connection from="A1_in" to="A4_out" fromLane="4" toLane="1" />
+    <connection from="A1_in" to="A1_out" fromLane="4" toLane="0" speed="3.0" />
+    <connection from="A2_in" to="A1_out" fromLane="1" toLane="0" />
+    <connection from="A2_in" to="A1_out" fromLane="2" toLane="1" />
+    <connection from="A2_in" to="A1_out" fromLane="3" toLane="2" />
+    <connection from="A2_in" to="A3_out" fromLane="4" toLane="3" />
+    <connection from="A3_in" to="A5_out" fromLane="0" toLane="0" />
+    <connection from="A3_in" to="A2_out" fromLane="1" toLane="0" />
+    <connection from="A3_in" to="A4_out" fromLane="2" toLane="0" />
+    <connection from="A3_in" to="A2_out" fromLane="2" toLane="2" />
+    <connection from="A3_in" to="A4_out" fromLane="3" toLane="1" />
+    <connection from="A3_in" to="A1_out" fromLane="4" toLane="2" />
+    <connection from="A3_in" to="A3_out" fromLane="4" toLane="0" speed="3.0" />
+    <connection from="A4_in" to="A3_out" fromLane="0" toLane="0" />
+    <connection from="A4_in" to="A5_out" fromLane="1" toLane="0" />
+    <connection from="A4_in" to="A3_out" fromLane="1" toLane="1" />
+    <connection from="A4_in" to="A2_out" fromLane="2" toLane="2" />
+    <connection from="A4_in" to="A5_out" fromLane="2" toLane="1" />
+    <connection from="A5_in" to="A1_out" fromLane="0" toLane="0" />
+    <connection from="A5_in" to="A1_out" fromLane="1" toLane="1" />
+    <connection from="A5_in" to="A3_out" fromLane="2" toLane="3" />
+</connections>

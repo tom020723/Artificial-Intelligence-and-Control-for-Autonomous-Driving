@@ -17,3 +17,4 @@ conda-meta/
 
 # Local experiment outputs; the already tracked Phase 1 baseline remains tracked.
 /results/
+/test/

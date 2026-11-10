@@ -1,0 +1,12 @@
+{
+  "phase": 1,
+  "num_envs": 1024,
+  "steps_per_env": 32,
+  "rollout_steps": 32768,
+  "iterations": 100,
+  "total_timesteps": 3276800,
+  "minibatch_size": 2048,
+  "epochs": 10,
+  "seed": 0,
+  "initialization": "random"
+}
