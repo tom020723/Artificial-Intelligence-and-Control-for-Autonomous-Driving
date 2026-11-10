@@ -19,6 +19,7 @@ class DestinationObservationTests(unittest.TestCase):
         cls.tmp = tempfile.TemporaryDirectory(prefix="sumo-destination-test-")
         cls.cfg = build(ROAD, EGO, TRAFFIC, cls.tmp.name)
         cls.observation = {**OBSERVATION, "signal_enabled": True, "signal_count": 2,
+                           "lookahead_connectivity_enabled": False,
                            "connectivity_half_width": 4, "destination_enabled": True,
                            "destination_arms": ("A1", "A2", "A3", "A4", "A5")}
 

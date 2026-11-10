@@ -1,35 +1,33 @@
 <edges>
     <edge id="A1_in" from="nM_A1_0" to="nC" numLanes="5" speed="13.89" priority="3" endOffset="8"></edge>
-    <edge id="A1_out" from="nC" to="nM_A1_0" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A1_out" from="nC" to="nM_A1_0" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A1_in1" from="nM_A1_1" to="nM_A1_0" numLanes="5" speed="13.89" priority="3"></edge>
-    <edge id="A1_out1" from="nM_A1_0" to="nM_A1_1" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A1_out1" from="nM_A1_0" to="nM_A1_1" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A1_in2" from="nE_A1" to="nM_A1_1" numLanes="5" speed="13.89" priority="3"></edge>
-    <edge id="A1_out2" from="nM_A1_1" to="nE_A1" numLanes="3" speed="13.89" priority="3"/>
-    <edge id="A2_in" from="nM_A2_0" to="nC" numLanes="4" speed="13.89" priority="3"></edge>
-    <edge id="A2_out" from="nC" to="nM_A2_0" numLanes="4" speed="13.89" priority="3"/>
-    <edge id="A2_in1" from="nM_A2_1" to="nM_A2_0" numLanes="5" speed="13.89" priority="3"></edge>
-    <edge id="A2_out1" from="nM_A2_0" to="nM_A2_1" numLanes="4" speed="13.89" priority="3"/>
-    <edge id="A2_in2" from="nE_A2" to="nM_A2_1" numLanes="4" speed="13.89" priority="3"></edge>
-    <edge id="A2_out2" from="nM_A2_1" to="nE_A2" numLanes="4" speed="13.89" priority="3"/>
+    <edge id="A1_out2" from="nM_A1_1" to="nE_A1" numLanes="3" speed="13.89" priority="3"></edge>
+    <edge id="A2_in" from="nM_A2" to="nC" numLanes="5" speed="13.89" priority="3"></edge>
+    <edge id="A2_out" from="nC" to="nM_A2" numLanes="3" speed="13.89" priority="3"></edge>
+    <edge id="A2_in1" from="nE_A2" to="nM_A2" numLanes="4" speed="13.89" priority="3"></edge>
+    <edge id="A2_out1" from="nM_A2" to="nE_A2" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A3_in" from="nM_A3_0" to="nC" numLanes="5" speed="13.89" priority="3" endOffset="8"></edge>
-    <edge id="A3_out" from="nC" to="nM_A3_0" numLanes="4" speed="13.89" priority="3"/>
+    <edge id="A3_out" from="nC" to="nM_A3_0" numLanes="4" speed="13.89" priority="3"></edge>
     <edge id="A3_in1" from="nE_A3" to="nM_A3_0" numLanes="4" speed="13.89" priority="3"></edge>
-    <edge id="A3_out1" from="nM_A3_0" to="nE_A3" numLanes="4" speed="13.89" priority="3"/>
+    <edge id="A3_out1" from="nM_A3_0" to="nE_A3" numLanes="4" speed="13.89" priority="3"></edge>
     <edge id="A4_in" from="nM_A4_0" to="nC" numLanes="3" speed="13.89" priority="3" endOffset="8"></edge>
-    <edge id="A4_out" from="nC" to="nM_A4_0" numLanes="2" speed="13.89" priority="3"/>
+    <edge id="A4_out" from="nC" to="nM_A4_0" numLanes="2" speed="13.89" priority="3"></edge>
     <edge id="A4_in1" from="nM_A4_1" to="nM_A4_0" numLanes="3" speed="13.89" priority="3"></edge>
-    <edge id="A4_out1" from="nM_A4_0" to="nM_A4_1" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A4_out1" from="nM_A4_0" to="nM_A4_1" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A4_in2" from="nE_A4" to="nM_A4_1" numLanes="3" speed="13.89" priority="3"></edge>
-    <edge id="A4_out2" from="nM_A4_1" to="nE_A4" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A4_out2" from="nM_A4_1" to="nE_A4" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A5_in" from="nM_A5_0" to="nC" numLanes="3" speed="13.89" priority="3"></edge>
-    <edge id="A5_out" from="nC" to="nM_A5_0" numLanes="3" speed="13.89" priority="3"/>
+    <edge id="A5_out" from="nC" to="nM_A5_0" numLanes="3" speed="13.89" priority="3"></edge>
     <edge id="A5_in1" from="nE_A5" to="nM_A5_0" numLanes="3" speed="13.89" priority="3"></edge>
-    <edge id="A5_out1" from="nM_A5_0" to="nE_A5" numLanes="3" speed="13.89" priority="3"/>
-    <edge id="RING_A2_A4" from="nM_A2_0" to="nM_A4_0" numLanes="1" speed="8.33" priority="1" shape="47.51,42.19 43.67,40.59 39.03,38.68 33.29,36.78 27.45,34.87 21.81,33.16 15.87,31.56 10.03,30.25 3.89,29.55 -1.15,29.14 -6.39,29.33 -24.63,35.23 -32.48,41.32 -38.42,46.72"/>
+    <edge id="A5_out1" from="nM_A5_0" to="nE_A5" numLanes="3" speed="13.89" priority="3"></edge>
+    <edge id="RING_A2_A4" from="nC" to="nM_A4_0" numLanes="1" speed="8.33" priority="1" shape="47.51,42.19 43.67,40.59 39.03,38.68 33.29,36.78 27.45,34.87 21.81,33.16 15.87,31.56 10.03,30.25 3.89,29.55 -1.15,29.14 -6.39,29.33 -24.63,35.23 -32.48,41.32 -38.42,46.72"/>
     <edge id="RING_A4_A1" from="nM_A4_0" to="nM_A1_0" numLanes="1" speed="8.33" priority="1" shape="-46.93,26.73 -46.19,6.05 -48.46,-12.64 -54.73,-26.32"/>
     <edge id="RING_A1_A3" from="nM_A1_1" to="nM_A3_0" numLanes="2" speed="8.33" priority="1" shape="-70.00,-56.00 -58.00,-68.00 -42.00,-78.00 -22.00,-84.00 -3.00,-84.00 12.00,-80.00"/>
     <edge id="RING_A3_A5" from="nM_A3_0" to="nM_A5_0" numLanes="2" speed="8.33" priority="1" shape="40.00,-75.00 58.00,-68.00 73.00,-57.00 83.00,-43.00 89.00,-27.00 91.00,-8.00"/>
-    <edge id="RING_A5_A2" from="nM_A5_0" to="nM_A2_1" numLanes="1" speed="8.33" priority="1" shape="88.20,24.00 86.39,35.00 85.59,44.00"/>
-    <edge id="OUTER_N" from="nM_A2_1" to="nM_A4_1" numLanes="2" speed="8.33" priority="1" disallow="all" shape="67.17,69.31 47.55,82.63 23.94,93.94 -1.68,100.25 -27.29,100.57 -48.90,93.88 -65.52,83.19"/>
+    <edge id="RING_A5_A2" from="nM_A5_0" to="nM_A2" numLanes="1" speed="8.33" priority="1" shape="88.20,24.00 86.39,35.00 85.59,44.00"/>
+    <edge id="OUTER_N" from="nM_A2" to="nM_A4_1" numLanes="2" speed="8.33" priority="1" disallow="all" shape="67.17,69.31 47.55,82.63 23.94,93.94 -1.68,100.25 -27.29,100.57 -48.90,93.88 -65.52,83.19"/>
     <edge id="OUTER_W" from="nM_A4_1" to="nM_A1_1" numLanes="2" speed="8.33" priority="1" disallow="all" shape="-86.69,65.29 -97.24,52.08 -103.79,30.86 -103.34,7.65 -96.90,-15.57 -87.45,-34.78"/>
 </edges>

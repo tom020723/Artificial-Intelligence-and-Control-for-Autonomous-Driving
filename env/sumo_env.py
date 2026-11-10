@@ -123,12 +123,14 @@ class SumoHighwayEnv(gym.Env):
         #     · ego 경로를 에피소드마다 무작위로 뽑음 (원형도로는 ring_prob 확률로만)
         self.road_type = str(road.get("type", "straight"))
         self.ego_route_random, self.ego_ring_prob, self.warmup_seconds = False, 0.0, 0.0
+        self.no_lane_change_edges = set()
         if self.road_type == "nohyeong":
             from env.road_config import NOHYEONG
             er = NOHYEONG.get("ego_routes", {})
             self.ego_route_random = bool(er.get("random", False))
             self.ego_ring_prob = float(er.get("ring_prob", 0.0))
             self.warmup_seconds = float(NOHYEONG.get("warmup_seconds", 90))
+            self.no_lane_change_edges = set(NOHYEONG.get("no_lane_change_edges", []))
         self.ego_route_id = "r0"     # 이번 에피소드에 ego 가 타는 경로 (reset 에서 정해짐)
         self._ego_depart_lane_cfg = str(ego["depart_lane"])
         self.traffic_max_speed = float(self.traffic.get("max_speed", self.vmax))
@@ -168,6 +170,10 @@ class SumoHighwayEnv(gym.Env):
             raise ValueError("connectivity_half_width must be nonnegative")
         self.connectivity_offsets = tuple(range(self.connectivity_half_width,
                                                  -self.connectivity_half_width - 1, -1))
+        # 누락된 키는 False: 기존 저장 모델의 관측 레이아웃을 유지한다.
+        self.lookahead_connectivity_enabled = bool(mdp_obs.get("lookahead_connectivity_enabled", False))
+        # 연결 차선 ID는 정적 정보다. 신호색/진입 가능 시점은 캐시하지 않는다.
+        self._lane_successors_cache = {}
         self.destination_enabled = bool(mdp_obs.get("destination_enabled", False))
         self.destination_arms = tuple(mdp_obs.get("destination_arms", ("A1", "A2", "A3", "A4", "A5")))
         if self.destination_enabled and (not self.destination_arms
@@ -234,6 +240,7 @@ class SumoHighwayEnv(gym.Env):
         n_lanes_view = len(self.obs_offsets)
         self.obs_dim = 1 + n_lanes_view * 4 + len(self.connectivity_offsets) + n_lanes_view
         self.obs_dim += 5 * self.signal_count if self.signal_enabled else 0
+        self.obs_dim += len(self.connectivity_offsets) if self.lookahead_connectivity_enabled else 0
         self.obs_dim += len(self.destination_arms) if self.destination_enabled else 0
         self.observation_space = spaces.Box(-1.0, 1.0, shape=(self.obs_dim,),
                                             dtype=np.float32)
@@ -531,6 +538,60 @@ class SumoHighwayEnv(gym.Env):
         except traci.TraCIException:
             return 1.0                        # 조회 실패 시 중립값
 
+    def _route_successor_lanes(self, lane_id, target_edge):
+        """내부 차선을 건너 target_edge에 도달하는 연결 차선들을 반환한다.
+
+        외부 차선의 getLinks는 보통 다음 일반 차선을 바로 반환하지만,
+        내부 junction이 여러 edge로 나뉜 경우도 실제 링크를 따라간다.
+        목표와 다른 일반 도로로 나가는 연결은 탐색하지 않는다.
+        """
+        pending, visited, result = [lane_id], set(), set()
+        while pending:
+            current = pending.pop()
+            if current in visited:
+                continue
+            visited.add(current)
+            if current not in self._lane_successors_cache:
+                self._lane_successors_cache[current] = tuple(
+                    (link[0], traci.lane.getEdgeID(link[0]))
+                    for link in traci.lane.getLinks(current))
+            for next_lane, edge in self._lane_successors_cache[current]:
+                if edge == target_edge:
+                    result.add(next_lane)
+                elif edge.startswith(":"):
+                    pending.append(next_lane)
+        return result
+
+    def _lookahead_connectivity_observation(self):
+        """각 후보 차선에서 다음 두 route edge까지 무변경 연결: -1/0/1.
+
+        거리/신호 상태와 독립적인 차선 선택 안내다. 0이어도 중간 도로에서
+        차선을 바꿔 진행할 수 있으므로 잘못된 차선 종료 판정에는 사용하지 않는다.
+        route의 끝이 가까우면 남아 있는 edge만 확인하고 마지막 edge에서는 1.
+        junction 내부의 route index도 직전 일반 edge를 가리키므로 같은 경로
+        suffix를 사용하되 현재 내부 차선의 실제 진출 연결부터 조회한다.
+        """
+        edge = traci.vehicle.getRoadID(self.ego_id)
+        current_index = traci.vehicle.getLaneIndex(self.ego_id)
+        lane_count = traci.edge.getLaneNumber(edge)
+        route = traci.vehicle.getRoute(self.ego_id)
+        route_index = traci.vehicle.getRouteIndex(self.ego_id)
+        next_edges = route[route_index + 1:route_index + 3]
+        values = []
+        for offset in self.connectivity_offsets:
+            index = current_index + offset
+            if not 0 <= index < lane_count:
+                values.append(-1.0)
+                continue
+            reachable = {f"{edge}_{index}"}
+            for next_edge in next_edges:
+                reachable = {target for lane in reachable
+                             for target in self._route_successor_lanes(lane, next_edge)}
+                if not reachable:
+                    break
+            values.append(float(bool(reachable)))
+        return values
+
     def _lane_density(self, offset: int) -> float:
         """오프셋 차선의 '전방 차량 밀도'를 0~1로 반환.
 
@@ -722,6 +783,8 @@ class SumoHighwayEnv(gym.Env):
             signals = self._upcoming_signals()
             for i in range(self.signal_count):
                 obs.extend(self._signal_observation(signals[i] if i < len(signals) else None))
+        if self.lookahead_connectivity_enabled:
+            obs.extend(self._lookahead_connectivity_observation())
         if self.destination_enabled:
             obs.extend(self._destination_observation())
         return np.clip(np.array(obs, dtype=np.float32), -1.0, 1.0)
@@ -839,6 +902,8 @@ class SumoHighwayEnv(gym.Env):
         try:
             edge = traci.vehicle.getRoadID(self.ego_id)
             if edge.startswith(":"):
+                return False
+            if lane_change != 0 and edge in self.no_lane_change_edges:
                 return False
             current = traci.vehicle.getLaneIndex(self.ego_id)
             n_lanes = traci.edge.getLaneNumber(edge)

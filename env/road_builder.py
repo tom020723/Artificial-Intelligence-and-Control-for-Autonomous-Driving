@@ -420,9 +420,14 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     # ── 0) 도로마다 갈림점 위치(교차로 중심에서의 거리) 모으기 ──
     #   원형도로가 갈라지는 곳(from_r)과 합류하는 곳(to_r). 같은 거리는 하나의 갈림점으로 합친다.
     radii = {a["id"]: set() for a in arms}
+    central_endpoints = set()
     for sg in segs:
-        radii[sg["from"]].add(float(sg["from_r"]))
-        radii[sg["to"]].add(float(sg["to_r"]))
+        for side in ("from", "to"):
+            point = (sg[side], float(sg[f"{side}_r"]))
+            if sg.get(f"{side}_center", False):
+                central_endpoints.add(point)
+            else:
+                radii[point[0]].add(point[1])
     for a in arms:
         if a.get("split_at"):
             radii[a["id"]].add(float(a["split_at"]))
@@ -433,7 +438,13 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
 
     def node_at(aid, r):
         """도로 aid 위, 교차로 중심에서 r 떨어진 갈림점의 노드 이름."""
-        return f"nM_{aid}_{splits[aid].index(float(r))}"
+        if (aid, float(r)) in central_endpoints:
+            return "nC"
+        return cfg.get("split_node_ids", {}).get(aid, {}).get(
+            float(r), f"nM_{aid}_{splits[aid].index(float(r))}")
+
+    def ring_split(sg, side):
+        return -1 if sg.get(f"{side}_center", False) else splits[sg[side]].index(float(sg[f"{side}_r"]))
 
     # 도로 구간(엣지) 이름: k=0 이 교차로에 바로 붙는 구간
     def in_edge(aid, k):  return f"{aid}_in" if k == 0 else f"{aid}_in{k}"
@@ -443,6 +454,13 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     def outbound_lanes(aid, k):
         """나가는 방향 k번 구간의 차선 수 (outbound_lanes 설정, 없으면 도로 기본 차선 수)."""
         return int(cfg.get("outbound_lanes", {}).get(aid, {}).get(k, by_id[aid]["lanes"]))
+
+    def lane_rules(eid, count):
+        if eid not in cfg.get("no_lane_change_edges", []):
+            return ""
+        # Passenger traffic cannot cross the solid line. Emergency vehicles
+        # retain the standard legal exception in the native SUMO controller.
+        return "".join(f'<lane index="{i}" changeLeft="emergency" changeRight="emergency"/>' for i in range(count))
 
     central_uturns = {aid: turn for aid, turn in upstream_uturns.items()
                      if turn.get("signal_control") == "central"}
@@ -463,7 +481,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             is_uturn = aid in upstream_uturns and r == float(upstream_uturns[aid]["radius"])
             node_type = "traffic_light" if is_uturn else "priority"
             controller = ' tl="nC"' if is_uturn and aid in central_uturns else ""
-            nodes.append(f'    <node id="nM_{aid}_{k}" x="{x:.2f}" y="{y:.2f}" type="{node_type}"{controller}/>')
+            nodes.append(f'    <node id="{node_at(aid, r)}" x="{x:.2f}" y="{y:.2f}" type="{node_type}"{controller}/>')
     with open(os.path.join(out_dir, "highway.nod.xml"), "w") as f:
         f.write("<nodes>\n" + "\n".join(nodes) + "\n</nodes>\n")
 
@@ -475,7 +493,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         aid, L, S = a["id"], int(a["lanes"]), arm_speed
         K = len(splits[aid])
         # 교차로에서부터 노드 나열: nC, 갈림점 0, 갈림점 1, …, 도로 끝
-        pts = ["nC"] + [f"nM_{aid}_{k}" for k in range(K)] + [f"nE_{aid}"]
+        pts = ["nC"] + [node_at(aid, r) for r in splits[aid]] + [f"nE_{aid}"]
         ins, outs = [], []
         for k in range(K + 1):
             inner, outer = pts[k], pts[k + 1]
@@ -489,9 +507,11 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                 raise ValueError(f"Invalid inbound end offset for {aid}")
             end_attr = f' endOffset="{end_offset:g}"' if end_offset else ""
             edges.append(f'    <edge id="{in_edge(aid, k)}" from="{outer}" to="{inner}" '
-                         f'numLanes="{inbound_lanes(aid, k)}" speed="{S}" priority="3"{end_attr}>{stop_child}</edge>')
+                         f'numLanes="{inbound_lanes(aid, k)}" speed="{S}" priority="3"{end_attr}>{stop_child}'
+                         f'{lane_rules(in_edge(aid,k), inbound_lanes(aid,k))}</edge>')
             edges.append(f'    <edge id="{out_edge(aid, k)}" from="{inner}" to="{outer}" '
-                         f'numLanes="{outbound_lanes(aid, k)}" speed="{S}" priority="3"/>')
+                         f'numLanes="{outbound_lanes(aid, k)}" speed="{S}" priority="3">'
+                         f'{lane_rules(out_edge(aid,k), outbound_lanes(aid,k))}</edge>')
             ins.append(in_edge(aid, k)); outs.append(out_edge(aid, k))
         chain_in[aid] = ins[::-1]          # 바깥 → 안 순서
         chain_out[aid] = outs              # 안 → 바깥 순서
@@ -534,13 +554,13 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
         # Through traffic must change lanes before reaching the split.
         seen = set()
         for sg in segs:
-            if sg.get("closed", False):
+            if sg.get("closed", False) or sg.get("from_center", False):
                 continue
             aid = sg["from"]
             if aid in seen:
                 continue
             seen.add(aid)
-            k = splits[aid].index(float(sg["from_r"]))
+            k = ring_split(sg, "from")
             source = in_edge(aid, k + 1)
             configured_links = cfg.get("inbound_lane_links", {}).get(aid, {}).get(k + 1)
             if configured_links is None:
@@ -560,8 +580,11 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                     cons.append(f'    <{tag} from="{in_edge(aid,k)}" to="{in_edge(aid,k-1)}" fromLane="{src}" toLane="{dst}"{uncontrolled}/>')
         for sg in segs:
             if sg["from"] == aid and not sg.get("closed", False):
-                k = splits[aid].index(float(sg["from_r"])) + 1
-                cons.append(f'    <connection from="{in_edge(aid,k)}" to="{sg["edge_id"]}" fromLane="0" toLane="0"/>')
+                k = ring_split(sg, "from") + 1
+                for lane in range(inbound_lanes(aid, k)) if sg.get("from_center", False) else [0]:
+                    tag = "connection" if lane == 0 else "delete"
+                    uncontrolled = ' uncontrolled="true"' if tag == "connection" and sg.get("from_center", False) else ""
+                    cons.append(f'    <{tag} from="{in_edge(aid,k)}" to="{sg["edge_id"]}" fromLane="{lane}" toLane="0"{uncontrolled}/>')
     # 나가는 방향 차선 늘리기 (실제 도로처럼 원형도로가 "늘어나는 가장 바깥 차선"으로 합류)
     #   outbound_lane_links[도로][k] = [(k번 구간 차선, k+1번 구간 차선), ...]
     #   k+1번 구간에서 위 목록에 없는 차선(= 새로 생긴 바깥 차선)은 이 갈림점으로 합류하는 원형도로가 이어받는다.
@@ -575,10 +598,11 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             free = [d for d in range(outbound_lanes(aid, k + 1)) if d not in {d for _, d in links}]
             for sg in segs:
                 if (not sg.get("closed", False) and sg["to"] == aid
-                        and splits[aid].index(float(sg["to_r"])) == k):
+                        and ring_split(sg, "to") == k):
                     for src in range(int(sg.get("lanes", Lr))):
                         for dst in range(outbound_lanes(aid, k + 1)):
-                            tag = "connection" if (src < len(free) and dst == free[src]) else "delete"
+                            allowed = (dst in sg["target_lanes"]) if "target_lanes" in sg else (src < len(free) and dst == free[src])
+                            tag = "connection" if allowed else "delete"
                             cons.append(f'    <{tag} from="{sg["edge_id"]}" to="{out_edge(aid,k+1)}" fromLane="{src}" toLane="{dst}"/>')
     for aid, turn in upstream_uturns.items():
         k = splits[aid].index(float(turn["radius"])) + 1
@@ -596,7 +620,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                             f'fromLane="{lane}" toLane="{lane}" uncontrolled="true"/>')
             for sg in segs:
                 if (not sg.get("closed", False) and sg["from"] == aid
-                        and splits[aid].index(float(sg["from_r"])) == k - 1):
+                        and ring_split(sg, "from") == k - 1):
                     cons.append(f'    <connection from="{source}" to="{sg["_eid"]}" '
                                 'fromLane="0" toLane="0" uncontrolled="true"/>')
     # 원형도로는 올바른 방향으로만 드나들게 한다:
@@ -606,9 +630,10 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     #                     교차로 쪽으로 되돌아 들어가는 연결은 지운다.
     #   (갈림점이 도로 한가운데 선 위에 있어서 netconvert 가 양방향 모두 이어 버리기 때문)
     for sg in segs:
-        k_from = splits[sg["from"]].index(float(sg["from_r"]))
-        k_to = splits[sg["to"]].index(float(sg["to_r"]))
-        cons.append(f'    <delete from="{out_edge(sg["from"], k_from)}" to="{sg["_eid"]}"/>')
+        k_from = ring_split(sg, "from")
+        k_to = ring_split(sg, "to")
+        if k_from >= 0:
+            cons.append(f'    <delete from="{out_edge(sg["from"], k_from)}" to="{sg["_eid"]}"/>')
         cons.append(f'    <delete from="{sg["_eid"]}" to="{in_edge(sg["to"], k_to)}"/>')
         if sg.get("right_exit_only", False):
             # End this slip road at the outbound arm, not the next ring segment.
@@ -735,6 +760,33 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     if result.returncode != 0:
         raise RuntimeError("netconvert 실패:\n" + result.stderr)
 
+    # Absorbing a real branch into nC also expands its physical footprint.
+    # Keep every other approach boundary and extend only this angular sector.
+    if cfg.get("central_extensions"):
+        net = ET.parse(os.path.join(out_dir, "highway.net.xml")).getroot()
+        shape = [tuple(map(float, p.split(",")))
+                 for p in net.find("junction[@id='nC']").get("shape").split()]
+        for aid, radius in cfg["central_extensions"].items():
+            angle = math.radians(float(by_id[aid]["angle"]))
+            ux, uy = math.cos(angle), math.sin(angle)
+            nx, ny = -uy, ux
+            front = float(radius) + 1.0
+            left = inbound_lanes(aid, 0) * 3.2 + 1.6
+            right = outbound_lanes(aid, 0) * 3.2 + 1.6
+            corners = [(front*ux + left*nx, front*uy + left*ny),
+                       (front*ux - right*nx, front*uy - right*ny)]
+            deltas = [math.atan2(math.sin(math.atan2(y, x)-angle),
+                                 math.cos(math.atan2(y, x)-angle)) for x, y in shape]
+            sector = next(i for i in range(len(shape))
+                          if deltas[i] >= 0 >= deltas[(i+1) % len(shape)]
+                          and deltas[i]-deltas[(i+1) % len(shape)] < math.pi)
+            shape[sector+1:sector+1] = corners
+        node_path = os.path.join(out_dir, "highway.nod.xml")
+        node_tree = ET.parse(node_path)
+        node_tree.getroot().find("node[@id='nC']").set("shape", _fmt_shape(shape))
+        ET.indent(node_tree, space="    ")
+        node_tree.write(node_path, encoding="utf-8", xml_declaration=True)
+
     if cfg.get("uturn", True) or movement_rules:
         # Preserve every generated central lane connection, changing only the
         # U-turn destination. netconvert then recomputes geometry and conflicts.
@@ -786,7 +838,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
                 for dest, dst_lane in moves:
                     if dest == aid and not cfg.get("uturn", True):
                         continue
-                    if not 0 <= lane < inbound_lanes(aid, 0) or not 0 <= dst_lane < by_id[dest]["lanes"]:
+                    if not 0 <= lane < inbound_lanes(aid, 0) or not 0 <= dst_lane < outbound_lanes(dest, 0):
                         raise ValueError(f"Invalid central lane movement: {aid} -> {dest}")
                     attrs = {"from": f"{aid}_in", "to": f"{dest}_out",
                              "fromLane": str(lane), "toLane": str(dst_lane)}

@@ -37,6 +37,7 @@ class SignalExperimentTests(unittest.TestCase):
             1: [(i, i) for i in range(5)],
         }
         legacy["central_lane_movements"]["A3"][4] = [("A1", 2)]
+        legacy["central_lane_movements"]["A1"][0] = [("A2", 0), ("A5", 0)]
         cls.legacy = legacy
         with patch("env.road_builder.NOHYEONG", legacy):
             cls.cfg = build(ROAD, EGO, TRAFFIC, cls.tmp.name)
@@ -47,7 +48,8 @@ class SignalExperimentTests(unittest.TestCase):
 
     def setUp(self):
         self.env = SumoHighwayEnv(self.cfg, ROAD, EGO, SIMULATION,
-                                  {**OBSERVATION, "signal_enabled": True, "signal_count": 1,
+                                  {**OBSERVATION, "lookahead_connectivity_enabled": False,
+                                   "signal_enabled": True, "signal_count": 1,
                                    "connectivity_half_width": 2, "destination_enabled": False},
                                   ACTION, {**REWARD, "red_light_penalty": 10.0,
                                            "green_pass_bonus": 0.0,
@@ -196,7 +198,8 @@ class SignalExperimentTests(unittest.TestCase):
         reward = self.env.rw.copy()
         self.env.close()
         self.env = SumoHighwayEnv(self.cfg, ROAD, EGO, SIMULATION,
-                                  {**OBSERVATION, "signal_enabled": True, "signal_count": 2,
+                                  {**OBSERVATION, "lookahead_connectivity_enabled": False,
+                                   "signal_enabled": True, "signal_count": 2,
                                    "connectivity_half_width": 2, "destination_enabled": False},
                                   ACTION, reward, traffic=TRAFFIC)
         with patch.object(self.env, "_choose_ego_route", return_value=route):

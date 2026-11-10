@@ -49,7 +49,7 @@ class RoadRestrictionTests(unittest.TestCase):
     def test_three_slip_roads_exit_only_to_the_outbound_arm(self):
         for source, target in (("RING_A1_A3", "A3_out1"),
                                ("RING_A3_A5", "A5_out1"),
-                               ("RING_A5_A2", "A2_out2")):
+                               ("RING_A5_A2", "A2_out1")):
             with self.subTest(edge=source):
                 targets = {c.get("to") for c in self.connections if c.get("from") == source}
                 self.assertEqual(targets, {target})
@@ -69,12 +69,14 @@ class RoadRestrictionTests(unittest.TestCase):
         self.assertFalse(any(f.get("id").startswith("lr_") for f in self.traffic.findall("flow")))
         self.assertEqual(len([f for f in self.traffic.findall("flow") if f.get("id").startswith("lf_")]), 5)
 
-    def test_A1_straight_lanes_reach_A2_and_A5_without_lane3_left_turn(self):
-        for lane in range(4):
+    def test_A1_lane_map_preserves_order_into_three_lane_A2_exit(self):
+        for lane in range(1, 4):
             links = [c for c in self.connections if c.get("from") == "A1_in"
                      and c.get("fromLane") == str(lane)]
             self.assertEqual({(c.get("to"), int(c.get("toLane"))) for c in links},
-                             {("A2_out", lane), ("A5_out", min(lane, 2))})
+                             {("A2_out", lane-1), ("A5_out", min(lane, 2))})
+        right = [c for c in self.connections if c.get("from") == "A1_in" and c.get("fromLane") == "0"]
+        self.assertEqual({(c.get("to"), c.get("toLane")) for c in right}, {("A3_out", "0")})
         left = [c for c in self.connections if c.get("from") == "A1_in" and c.get("fromLane") == "4"]
         self.assertEqual({(c.get("to"), c.get("toLane")) for c in left},
                          {("A4_out", "1"), ("A1_out", "0")})
@@ -88,7 +90,7 @@ class RoadRestrictionTests(unittest.TestCase):
                  if e.get("function") != "internal"}
         program = self.net.find("tlLogic[@id='nC']")
         self.assertEqual([t.get("id") for t in self.net.findall("tlLogic")], ["nC"])
-        for arm, source, lane, target in (("A2", "A2_in2", "3", "A2_out2"),
+        for arm, source, lane, target in (("A2", "A2_in1", "3", "A2_out1"),
                                           ("A5", "A5_in1", "2", "A5_out1")):
             with self.subTest(arm=arm):
                 turns = [c for c in self.connections if c.get("from") == source and c.get("to") == target]

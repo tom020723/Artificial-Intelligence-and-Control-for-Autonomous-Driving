@@ -7,5 +7,5 @@
         <vType id="car_eidm" probability="0.2000" carFollowModel="EIDM" accel="2.0" decel="4.0" tau="1.1" minGap="2.0" maxSpeed="16.5" speedDev="0.1" color="1,0.6,0" vClass="passenger" guiShape="passenger/sedan" lcSpeedGain="0.0" lcKeepRight="0.0" />
         <vType id="car_acc" probability="0.1500" carFollowModel="ACC" accel="2.0" decel="4.0" tau="1.5" minGap="2.0" maxSpeed="19.0" speedDev="0.05" color="1,0,1" vClass="passenger" guiShape="passenger/sedan" lcSpeedGain="0.0" lcKeepRight="0.0" />
     </vTypeDistribution>
-    <route id="r0" edges="A1_in2 A1_in1 A1_in A2_out A2_out1 A2_out2" />
+    <route id="r0" edges="A1_in2 A1_in1 A1_in A2_out A2_out1" />
 </routes>

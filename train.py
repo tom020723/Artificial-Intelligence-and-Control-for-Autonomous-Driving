@@ -37,7 +37,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 # ══════════════════════════════════════════════════════════════════
 #  하이퍼파라미터 — 실험은 여기서
 # ══════════════════════════════════════════════════════════════════
-TOTAL_TIMESTEPS = 200_000   # 총 학습 스텝 수
+TOTAL_TIMESTEPS = 300_000   # 이번 실행에서 수집할 스텝 수 (--init-model이면 추가 학습량)
 
 # ══════════════════════════════════════════════════════════════════
 #  보상 튜닝 — env/mdp_config.py 의 기본값을 여기서 덮어쓴다.
@@ -60,7 +60,7 @@ REWARD_OVERRIDES = dict(
     blocked_penalty=0.05,      # "느린 앞차에 막힘" 스텝당 감점 (추월 학습 핵심)
     blocked_gap=20.0,          #   막힘 판정: 앞차 이 거리 이내
     blocked_speed_frac=0.7,    #   그리고 내 속도 < vmax × 이 값
-    lane_change_penalty=0.1,   # 실험 4: 수락된 차선변경 명령당 감점
+    lane_change_penalty=0.02,  # Phase 1 재학습: 수락된 변경 명령당 감점
     invalid_action_penalty=0.2,# 실험 4: 거절된 차선변경 명령당 감점
 )
 REWARD = {**REWARD_DEFAULTS, **REWARD_OVERRIDES}
@@ -230,6 +230,8 @@ if __name__ == "__main__":
                            "step_counter": "local to this additional training run"}, f, indent=2)
             print(f"초기 가중치 로드: {args.init_model}")
             print(f"기존 run {parent_steps} step + 추가 목표 {TOTAL_TIMESTEPS} step (optimizer 새로 생성)")
+        else:
+            print("처음부터 학습: 무작위 초기 가중치 사용, 기존 모델 로드 없음")
         agent.learn(env,
                     total_timesteps=TOTAL_TIMESTEPS,
                     logger=logger,
