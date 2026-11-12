@@ -88,11 +88,11 @@ SIMULATION = {
 OBSERVATION = {
     "connectivity_half_width": 4,  # 연결성만 ±4차선; 차량/밀도는 기존 ±2차선 유지
     "lookahead_connectivity_enabled": True,
-    "destination_enabled": True,
+    "destination_enabled": False,
     "destination_arms": ("A1", "A2", "A3", "A4", "A5"),
     "signal_enabled": SIGNAL_EXPERIMENT,
     "signal_visibility": 100.0,
-    "signal_count": 2,
+    "signal_count": 1,
     "visibility": 50.0,          # 관측 가능 거리 W (m). 앞뒤 차량 감지와
                                  # 상대거리/연결성/밀도 정규화의 기준.
     "density_veh_length": 7.5,   # 밀도 계산 시 차량 1대의 점유 길이 (m)
@@ -192,6 +192,12 @@ REWARD = {
     "blocked_gap": 20.0,         # 앞차가 이 거리(m) 이내면 "막힘" 후보
     "blocked_speed_frac": 0.7,   # 그리고 내 속도 < vmax×이 값일 때만
                                  # (앞이 가까워도 빠르게 흐르면 막힘 아님)
+
+    # ---- 경로 밖 차선 페널티 ----
+    # 경로로 이어지지 않는 차선에 있고 그 차선 끝이 시야(visibility) 안일 때
+    # 매 스텝 감점. 차선을 바꾸는 즉시 감점이 멈춘다. 0이면 비활성.
+    # Phase 2 병렬 학습에서는 --set reward.off_route_lane_penalty=0.05 로 켠다.
+    "off_route_lane_penalty": 0.0,
 
     # ---- 차선변경 관련 (원본 Flow 코드의 lc_penalty / rl_action_penalty 대응) ----
     # ★ 커리큘럼: 두 페널티 모두 초기 학습에서는 0으로 둔다.

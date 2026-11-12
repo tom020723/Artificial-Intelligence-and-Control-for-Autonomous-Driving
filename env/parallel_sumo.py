@@ -17,13 +17,22 @@ def _replica_id(index, name):
     return f":{prefix}{name[1:]}" if name.startswith(":") else prefix + name
 
 
-def _write_network(source, destination, count):
+def _write_network(source, destination, count, seed=0, green_range=None):
     net = ET.parse(source).getroot()
     groups = ("edge", "tlLogic", "junction", "connection")
     if {node.tag for node in net} - {*groups, "location"}:
         raise ValueError("Unsupported elements in Phase 1 network")
-    if any(set(phase.get("state")) - {"G", "g"} for phase in net.iter("phase")):
-        raise ValueError("Replicas require permanently green traffic lights")
+    # Phase 2: every replica starts its signal cycle at a different point, so one
+    # rollout sees every part of the cycle. Lights inside one replica stay in sync.
+    cycles = {float(sum(float(phase.get("duration")) for phase in logic.findall("phase")))
+              for logic in net.iter("tlLogic")}
+    signals_change = any(set(phase.get("state")) - {"G", "g"} for phase in net.iter("phase"))
+    if signals_change and len(cycles) != 1:
+        raise ValueError("Replica signal offsets require one common cycle length")
+    rng = np.random.default_rng(seed)
+    offsets = rng.uniform(0.0, cycles.pop(), count) if signals_change else np.zeros(count)
+    if green_range is not None and not signals_change:
+        raise ValueError("green_range requires changing signals")
     location = net.find("location")
     xmin, ymin, xmax, ymax = map(float, location.get("convBoundary").split(","))
     stride_x, stride_y = xmax - xmin + 100, ymax - ymin + 100
@@ -41,6 +50,20 @@ def _write_network(source, destination, count):
                 dx, dy = index % width * stride_x, index // width * stride_y
                 for template in templates:
                     element = deepcopy(template)
+                    if tag == "tlLogic":
+                        element.set("offset", f"{offsets[index]:.1f}")
+                        if green_range is not None:
+                            # Training only: every road gets its own green lengths, so the
+                            # policy cannot memorise one timing and short waits also occur.
+                            # Same-named phases (central + synced U-turn lights) stay equal.
+                            greens = {}
+                            for phase in element.findall("phase"):
+                                name = phase.get("name", "")
+                                if name.endswith("_green"):
+                                    if name not in greens:
+                                        greens[name] = np.random.default_rng(
+                                            [seed, index, len(greens)]).uniform(*green_range)
+                                    phase.set("duration", f"{greens[name]:.1f}")
                     for node in element.iter():
                         for attr, value in node.attrib.items():
                             if attr in {"id", "from", "to", "tl"}:
@@ -59,7 +82,7 @@ def _write_network(source, destination, count):
         file.write(b"</net>\n")
 
 
-def _build_replicas(config, directory, count):
+def _build_replicas(config, directory, count, seed=0, green_range=None):
     config = Path(config)
     inputs = ET.parse(config).getroot().find("input")
     net = directory / "parallel.net.xml"
@@ -75,7 +98,7 @@ def _build_replicas(config, directory, count):
                 raise ValueError(f"Replicas require a road without background demand, got {node.tag}")
 
     directory.mkdir(parents=True, exist_ok=True)
-    _write_network(config.parent / inputs.find("net-file").get("value"), net, count)
+    _write_network(config.parent / inputs.find("net-file").get("value"), net, count, seed, green_range)
     route_xml = ET.Element("routes")
     route_xml.extend(types)
     for index in range(count):
@@ -111,7 +134,7 @@ class _ReplicaEgo(SumoHighwayEnv):
 
 
 class ParallelSumo:
-    def __init__(self, num_envs, env_kwargs, directory, seed):
+    def __init__(self, num_envs, env_kwargs, directory, seed, green_range=None):
         if num_envs < 1:
             raise ValueError("num_envs must be positive")
         self.num_envs = num_envs
@@ -120,7 +143,7 @@ class ParallelSumo:
         if (self.prototype.road_type != "nohyeong" or self.prototype.warmup_seconds
                 or self.prototype.prefill_enabled or self.prototype.gui):
             raise ValueError("ParallelSumo requires the headless, traffic-free Phase 1 road")
-        self.config, self.routes = _build_replicas(env_kwargs["cfg_path"], directory, num_envs)
+        self.config, self.routes = _build_replicas(env_kwargs["cfg_path"], directory, num_envs, seed, green_range)
         self.departures = {}
         self.egos = []
         self.started = False
@@ -128,6 +151,9 @@ class ParallelSumo:
     def _start(self, config):
         libsumo.start(["sumo", "-c", config, "--step-length", str(self.prototype.step_length),
                        "--seed", str(self.seed), "--collision.action", "remove",
+                       # 오래 멈춘 차를 SUMO가 순간이동시키지 않게 한다. 순간이동은 이동 거리를
+                       # 갑자기 늘려 신호 위반으로 잘못 집계된다. 갇힌 차는 시간 초과로 끝난다.
+                       "--time-to-teleport", "-1",
                        "--no-warnings", "true", "--no-step-log", "true"])
         self.started = True
 

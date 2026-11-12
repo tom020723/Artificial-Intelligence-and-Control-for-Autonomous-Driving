@@ -65,7 +65,8 @@ class ParallelPPO(PPO):
         return obs, np.concatenate(advantages), np.concatenate(returns), finished
 
     def learn_parallel(self, env, total_timesteps, logger=None, log_interval=1,
-                       evaluate=None, eval_interval=0):
+                       evaluate=None, eval_interval=0,
+                       checkpoint=None, checkpoint_interval=0):
         if self.n_steps < env.num_envs or self.n_steps % env.num_envs:
             raise ValueError("n_steps must be a positive multiple of num_envs")
         if eval_interval > 0 and evaluate is None:
@@ -89,6 +90,8 @@ class ParallelPPO(PPO):
                     **stats,
                 }
                 logger.log_train(self.num_timesteps, metrics, verbose=iteration % log_interval == 0)
+            if checkpoint is not None and checkpoint_interval > 0 and iteration % checkpoint_interval == 0:
+                checkpoint(iteration)
             if eval_interval > 0 and iteration % eval_interval == 0:
                 metrics = evaluate()
                 if logger is not None:
