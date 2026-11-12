@@ -1,4 +1,4 @@
-"""Evaluate one saved Phase 1 PPO run and generate a single learning-curve PNG."""
+"""Evaluate one saved Phase 1 or Phase 2 PPO run and generate a learning-curve PNG."""
 
 import argparse
 from collections import Counter
@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from algorithms.ppo import PPO
 from env import road_builder
 from env.parallel_sumo import ParallelSumo
+from env.parallel_traffic import TrafficCurriculum
 from test import load_saved_configs
 from utils.evaluator import evaluate_parallel_routes
 
@@ -76,11 +77,9 @@ def _summarize(rows):
     }
 
 
-def _plot(run, routes, rows, summary):
+def _plot_training_panels(fig, grid, run):
     training = _read_log(run / "training_log.csv")
     evaluation = _read_log(run / "eval_log.csv")
-    fig = plt.figure(figsize=(13, 16), layout="constrained")
-    grid = fig.add_gridspec(4, 2, height_ratios=(1, 1, 1, 1.9))
     panels = (
         (training, "ep_rew_mean", "Training return (10-iteration mean)", 10, "-"),
         (evaluation, "success_rate", "Periodic success (5-evaluation mean)", 5, "-"),
@@ -95,9 +94,16 @@ def _plot(run, routes, rows, summary):
         if panel[1] == "success_rate":
             axis.set_ylim(-.05, 1.05)
 
+
+def _plot(run, routes, rows, summary, out):
+    fig = plt.figure(figsize=(13, 16), layout="constrained")
+    grid = fig.add_gridspec(4, 2, height_ratios=(1, 1, 1, 1.9))
+    _plot_training_panels(fig, grid, run)
+
     left = grid[3, 0].subgridspec(2, 1, height_ratios=(3, 1))
     counts = fig.add_subplot(left[0])
-    values = [summary["statuses"].get(status, 0) for status in OUTCOMES]
+    metrics = summary["groups"]["all"]
+    values = [metrics["statuses"].get(status, 0) for status in OUTCOMES]
     bars = counts.barh([label for label, _, _ in OUTCOMES.values()], values,
                        color=[color for _, _, color in OUTCOMES.values()])
     counts.bar_label(bars, padding=4)
@@ -111,14 +117,15 @@ def _plot(run, routes, rows, summary):
     details = fig.add_subplot(left[1])
     details.axis("off")
     details.text(.03, .95, "\n".join((
-        f"Arrival rate: {summary['success_rate']:.1%}",
-        f"Mean episode return: {summary['ep_return']:.2f}",
-        f"Mean accepted lane changes: {summary['lane_changes']:.2f} / episode",
-        f"Mean speed: {summary['mean_speed']:.2f} m/s",
-        f"Mean episode length: {summary['ep_length']:.1f} steps",
+        f"Arrival rate: {metrics['success_rate']:.1%}",
+        f"Mean episode return: {metrics['ep_return']:.2f}",
+        f"Mean accepted lane changes: {metrics['lane_changes']:.2f} / episode",
+        f"Mean speed: {metrics['mean_speed']:.2f} m/s",
+        f"Mean episode length: {metrics['ep_length']:.1f} steps",
     )), transform=details.transAxes, va="top", linespacing=1.45)
 
-    outcomes = {(row["route"], row["seed"]): row["status"] for row in rows}
+    results = {(row["route"], row["seed"]): row for row in rows}
+    outcomes = {key: row["status"] for key, row in results.items()}
     codes = {status: index for index, status in enumerate(OUTCOMES)}
     matrix = [[codes[outcomes[route, seed]] for seed in SEEDS] for route in routes]
     route_grid = fig.add_subplot(grid[3, 1])
@@ -130,17 +137,28 @@ def _plot(run, routes, rows, summary):
     route_grid.axhline(21.5, color="white", linewidth=2)
     for y, route in enumerate(routes):
         for x, seed in enumerate(SEEDS):
-            route_grid.text(x, y, OUTCOMES[outcomes[route, seed]][1], ha="center", va="center", fontsize=7)
+            row = results[route, seed]
+            distance = row["last_stop_clearance_m"]
+            clearance = f"{distance:.1f}m" if distance is not None else "—"
+            label = f"{OUTCOMES[row['status']][1]} ({clearance})"
+            route_grid.text(x, y, label, ha="center", va="center", fontsize=7)
     route_grid.set_title("Final evaluation by route and seed")
+    route_grid.set_xlabel("Last stop clearance, metres (speed ≤ 0.5 m/s)\n"
+                          "Nearest stop line or queued vehicle; — = no measured stop")
 
-    fig.suptitle(f"Phase 1 PPO | {run.name}\nAll green · No background traffic · Deterministic final evaluation")
-    fig.savefig(run / "analysis/learning_curve.png", dpi=160)
+    signals = "All green" if summary["all_green"] else "Randomized signal starts"
+    traffic = (f"Central demand: {summary['traffic_vph']} veh/h"
+               if summary["background"] else "No background traffic")
+    fig.suptitle(f"Phase {summary['phase']} PPO | {run.name}\n"
+                 f"{signals} · {traffic} · Deterministic final evaluation")
+    fig.savefig(out / "learning_curve.png", dpi=160)
     plt.close(fig)
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run", type=Path, help="학습 결과 폴더 또는 해당 model.pt 경로")
+    parser.add_argument("--traffic-vph", type=int, help="Phase 2의 고정 중앙 교통량 (기본 800)")
     args = parser.parse_args()
     run = args.run.resolve()
     if run.is_file() and run.name == "model.pt":
@@ -150,8 +168,16 @@ def main():
         parser.error(f"저장된 모델을 찾을 수 없습니다. {model}")
 
     road, mdp, training = load_saved_configs(str(model))
-    if not road["NOHYEONG"]["all_signals_green"] or road["TRAFFIC"]["background_enabled"]:
-        parser.error("병렬 경로 평가는 청신호·무교통 Phase 1 모델을 지원합니다.")
+    all_green = road["NOHYEONG"]["all_signals_green"]
+    config_path = run / "parallel_config.json"
+    saved = json.loads(config_path.read_text()) if config_path.is_file() else {}
+    settings = saved.get("traffic_curriculum")
+    curriculum = TrafficCurriculum(**settings) if settings else None
+    if road["TRAFFIC"]["background_enabled"] and curriculum is None:
+        parser.error("배경 차량 평가에는 병렬 학습에서 저장한 교통량 설정이 필요합니다.")
+    vph = args.traffic_vph if args.traffic_vph is not None else (800 if curriculum else 0)
+    if not 0 <= vph <= (curriculum.max_vph if curriculum else 0):
+        parser.error("교통량은 저장된 환경이 지원하는 범위 안이어야 합니다.")
 
     rows = []
     with TemporaryDirectory(prefix="sumo-evaluation-") as directory:
@@ -161,11 +187,16 @@ def main():
         routes = sorted(route.get("id") for route in ET.parse(route_file).getroot().findall("route")
                         if route.get("id").startswith(("ego_d_", "ego_r_")))
         if len(routes) != 27 or sum(route.startswith("ego_d_") for route in routes) != 22:
-            parser.error("Phase 1 평가에는 직접 경로 22개와 링 경로 5개가 필요합니다.")
+            parser.error("경로 평가에는 직접 경로 22개와 링 경로 5개가 필요합니다.")
         kwargs = dict(cfg_path=config, road=road["ROAD"], ego=road["EGO"], mdp_sim=mdp["SIMULATION"],
                       mdp_obs=mdp["OBSERVATION"], action=mdp["ACTION"], reward=training["REWARD"],
                       traffic=road["TRAFFIC"])
-        env = ParallelSumo(len(routes), kwargs, root / "parallel", seed=SEEDS[0])
+        env = ParallelSumo(len(routes), kwargs, root / "parallel", seed=SEEDS[0],
+                           randomize_signals=not all_green,
+                           randomize_departures=saved.get("randomize_departures", False),
+                           independent_episode_rng=saved.get("independent_episode_rng", False),
+                           traffic_curriculum=curriculum,
+                           fixed_traffic_vph=vph if curriculum else None)
         agent = PPO(obs_dim=env.prototype.obs_dim, act_dim=env.prototype.act_dim, **training["HPARAMS"])
         agent.policy.load_state_dict(torch.load(model, map_location="cpu", weights_only=True))
         for seed in SEEDS:
@@ -178,7 +209,9 @@ def main():
 
     rows.sort(key=lambda row: (row["route"], row["seed"]))
     out = run / "analysis"
-    out.mkdir(exist_ok=True)
+    if args.traffic_vph is not None:
+        out /= f"traffic_{vph}"
+    out.mkdir(parents=True, exist_ok=True)
     with (out / "route_evaluation.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=list(rows[0]))
         writer.writeheader()
@@ -187,10 +220,19 @@ def main():
         "model": str(model),
         "model_sha256": hashlib.sha256(model.read_bytes()).hexdigest(),
         "observation_dim": env.prototype.obs_dim,
+        "phase": saved.get("phase", 1 if all_green else 2),
         "deterministic": True,
-        "all_green": True,
-        "background": False,
+        "all_green": all_green,
+        "randomize_signals": not all_green,
+        "background": vph > 0,
+        "traffic_vph": vph,
         "seeds": SEEDS,
+        "stop_clearance": {
+            "sample": "last stopped state in each episode",
+            "speed_threshold_m_s": 0.5,
+            "reference": "ego front bumper to nearest stop line or stopped leader rear bumper",
+            "missing": "no stop, or no reference ahead at the last stop",
+        },
         "groups": {
             "all": _summarize(rows),
             "direct_od": _summarize([row for row in rows if row["route"].startswith("ego_d_")]),
@@ -198,7 +240,7 @@ def main():
         },
     }
     (out / "evaluation_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-    _plot(run, routes, rows, summary["groups"]["all"])
+    _plot(run, routes, rows, summary, out)
     arrivals = summary["groups"]["all"]["statuses"].get("arrival", 0)
     print(f"최종 완주 {arrivals}/{len(rows)} | {out / 'learning_curve.png'}")
 

@@ -16,6 +16,7 @@
 관측/행동/보상의 구체적인 정의는 configs/mdp_config.py 에 있고,
 이 파일은 그 설정을 받아서 실행만 한다. (MDP를 바꿀 때 이 파일 수정 불필요)
 """
+from math import sqrt
 import os
 import sys
 import xml.etree.ElementTree as ET
@@ -233,6 +234,9 @@ class SumoHighwayEnv(gym.Env):
         self.step_count = 0
         self._started = False      # SUMO 프로세스가 떠 있는지 여부
         self._rewarded_green_signals = set()
+        self._green_stop_since = None
+        self._red_safe_zone_since = None
+        self._red_safe_zone_hold_paid = {}
 
         # Gymnasium 행동 공간:
         #   action[0] = 종방향 가감속 raw ∈ [-1,1]
@@ -389,6 +393,9 @@ class SumoHighwayEnv(gym.Env):
         self.ego_route_id = route_id
         self.step_count = 0
         self._rewarded_green_signals.clear()
+        self._green_stop_since = None
+        self._red_safe_zone_since = None
+        self._red_safe_zone_hold_paid = {}
         if depart_lane is None:
             start_edge = self._api.route.getEdges(route_id)[0]
             depart_lane = self._depart_lane_for(start_edge)
@@ -489,7 +496,7 @@ class SumoHighwayEnv(gym.Env):
                 return None
             vid, gap = min(pairs, key=lambda p: p[1])   # 가장 가까운 차량
 
-        if gap < 0 or gap > self.visibility:
+        if not vid or gap < 0 or gap > self.visibility:
             return None
         return float(gap), self._api.vehicle.getSpeed(vid)
 
@@ -716,6 +723,20 @@ class SumoHighwayEnv(gym.Env):
         signals = self._upcoming_signals()
         return signals[0] if signals else None
 
+    def get_stop_clearance(self):
+        """Front-bumper clearance at a stop, measured along the road."""
+        if not self._ego_is_present() or self._api.vehicle.getSpeed(self.ego_id) > 0.5:
+            return None
+        signals = self._upcoming_signals()
+        candidates = [(signals[0][2], "stop_line")] if signals else []
+        leader = self._api.vehicle.getLeader(self.ego_id, 1e6)
+        if leader and leader[0] and self._api.vehicle.getSpeed(leader[0]) <= 0.5:
+            # SUMO's leader gap excludes the ego's minGap.
+            distance = leader[1] + self._api.vehicle.getMinGap(self.ego_id)
+            candidates.append((distance, "queued_vehicle"))
+        distance, reference = min(candidates) if candidates else (None, None)
+        return {"stop_clearance_m": distance, "stop_reference": reference}
+
     def _observed_signals(self, signals):
         return [signal for signal in signals[:self.signal_count]
                 if signal[2] <= self.signal_visibility]
@@ -747,6 +768,151 @@ class SumoHighwayEnv(gym.Env):
         if scale <= 0:
             raise ValueError("red_stop_distance_scale must be positive")
         return coef * float(np.clip(min(front_room, stop_room) / scale, 0.0, 1.0))
+
+    def _red_stop_clearance_reward(self, signal, speed):
+        """Reward a safe, small gap to the next red stop line or a nearer leader."""
+        cap = float(self.rw.get("red_stop_clearance_reward", 0.0))
+        if (cap <= 0 or signal is None or signal[3].lower() != "r"
+                or signal[2] > self.signal_visibility
+                or speed > float(self.rw.get("red_stop_clearance_max_speed", 2.0))):
+            return 0.0
+
+        surplus = self._red_stop_surplus(signal)
+        if surplus < 0:
+            return 0.0
+        scale = float(self.rw.get("red_stop_clearance_reward_scale", 5.0))
+        return cap / (1.0 + surplus / scale)
+
+    def _red_stop_surplus(self, signal):
+        surplus = signal[2] - float(self.rw.get("red_stop_margin", 3.0))
+        gap = self._leader_gap_before_signal(signal)
+        if gap is not None:
+            surplus = min(surplus, gap - float(self.rw.get("red_stop_safe_gap", 3.0)))
+        return surplus
+
+    def _leader_gap_before_signal(self, signal):
+        leader = self._api.vehicle.getLeader(self.ego_id, signal[2])
+        if leader and leader[0]:
+            gap = leader[1] + self._api.vehicle.getMinGap(self.ego_id)
+            if gap <= signal[2]:
+                return gap
+        return None
+
+    def _red_stop_progress_reward(self, signal_before, signal_after, speed, traveled):
+        """Reward ego's forward movement towards a red signal it can still stop for."""
+        per_meter = float(self.rw.get("red_stop_progress_per_meter", 0.0))
+        if (per_meter <= 0 or traveled <= 0 or signal_before is None or signal_after is None
+                or signal_before[:2] != signal_after[:2]
+                or signal_before[3].lower() != "r" or signal_after[3].lower() != "r"
+                or max(signal_before[2], signal_after[2]) > self.signal_visibility):
+            return 0.0
+        # Use the current target for the stopping check, and the ego odometer
+        # for progress so a leader moving alone does not generate reward.
+        decel = float(self.rw.get("red_stop_progress_decel", 2.0))
+        if self._red_stop_surplus(signal_after) < speed ** 2 / (2.0 * decel):
+            return 0.0
+        return min(per_meter * traveled, float(self.rw.get("red_stop_progress_cap", 0.02)))
+
+    def _red_speed_tracking_reward(self, signal, speed):
+        """Reward matching a braking speed profile towards the current red stop target."""
+        cap = float(self.rw.get("red_speed_tracking_cap", 0.0))
+        if (cap <= 0 or signal is None or signal[3].lower() != "r"
+                or signal[2] > self.signal_visibility):
+            return 0.0
+
+        surplus = self._red_stop_surplus(signal)
+        if surplus < 0:
+            return 0.0
+        safe_decel = float(self.rw.get("red_speed_tracking_safe_decel", 2.5))
+        if speed ** 2 > 2.0 * safe_decel * surplus:
+            return 0.0
+        target_decel = float(self.rw.get("red_speed_tracking_target_decel", 1.5))
+        # Limit speed to the remaining metres per second near the target.
+        target_speed = min(self.vmax, sqrt(2.0 * target_decel * surplus), surplus)
+        tolerance = max(0.5, 0.5 * target_speed)
+        if speed < target_speed and self.rw.get("red_speed_tracking_linear_underspeed", False):
+            # Credit slow starts, while keeping the half-metre-per-second
+            # tolerance near a full stop to avoid a discontinuity.
+            tolerance = max(0.5, target_speed)
+        score = max(0.0, 1.0 - abs(speed - target_speed) / tolerance)
+        # Give a small reward for holding the target stop, below the moving cap.
+        weight = 0.25 + 0.75 * min(target_speed / 2.0, 1.0)
+        return cap * weight * score
+
+    def _red_stopped_brake_penalty(self, signal_before, signal_after, speed_before, accel):
+        """Discourage braking after stopping, when there is room to approach the red."""
+        coef = float(self.rw.get("red_stopped_brake_coef", 0.0))
+        if (coef <= 0 or accel >= 0 or speed_before is None
+                or speed_before > float(self.rw.get("red_stopped_brake_speed", 0.1))
+                or signal_before is None or signal_after is None
+                or signal_before[:2] != signal_after[:2]
+                or signal_before[3].lower() != "r" or signal_after[3].lower() != "r"
+                or max(signal_before[2], signal_after[2]) > self.signal_visibility):
+            return 0.0
+        if self._red_stop_surplus(signal_after) < float(self.rw.get("red_stopped_brake_min_room", 2.0)):
+            return 0.0
+        return coef * accel ** 2
+
+    def _red_safe_zone_rewards(self, signal, speed):
+        """Pay once for establishing a safe stop, then a capped holding reward."""
+        first_reward = float(self.rw.get("red_safe_zone_first_reward", 0.0))
+        if first_reward <= 0:
+            return 0.0, 0.0
+        if (signal is None or signal[3].lower() != "r" or signal[2] > self.signal_visibility
+                or speed > float(self.rw.get("red_safe_zone_max_speed", 0.1))):
+            self._red_safe_zone_since = None
+            return 0.0, 0.0
+
+        gap = self._leader_gap_before_signal(signal)
+        clearance = signal[2] if gap is None else gap
+        if not (float(self.rw.get("red_safe_zone_min_gap", 3.0)) <= clearance
+                <= float(self.rw.get("red_safe_zone_max_gap", 5.0))):
+            self._red_safe_zone_since = None
+            return 0.0, 0.0
+
+        # Share the payout across links of one signal to prevent repeated
+        # first rewards after switching lanes or waiting another signal cycle.
+        signal_id = signal[0]
+        paid = self._red_safe_zone_hold_paid
+        if signal_id in paid:
+            cap = float(self.rw.get("red_safe_zone_hold_cap", 0.2))
+            hold = min(float(self.rw.get("red_safe_zone_hold_reward", 0.005)),
+                       max(0.0, cap - paid[signal_id]))
+            paid[signal_id] += hold
+            return 0.0, hold
+
+        link = signal[:2]
+        if self._red_safe_zone_since is None or self._red_safe_zone_since[0] != link:
+            self._red_safe_zone_since = (link, self.step_count)
+        elapsed = (self.step_count - self._red_safe_zone_since[1]) * self.step_length
+        if elapsed < float(self.rw.get("red_safe_zone_dwell_seconds", 1.0)):
+            return 0.0, 0.0
+        paid[signal_id] = 0.0
+        return first_reward, 0.0
+
+    def _green_stop_penalty(self, signals, speed):
+        """Penalty for staying stopped at an observed green with room to move."""
+        coef = float(self.rw.get("green_stop_penalty", 0.0))
+        if coef <= 0:
+            return 0.0
+        observed = self._observed_signals(signals)
+        if (not observed or observed[0][3].lower() != "g"
+                or any(signal[3].lower() in ("r", "y") for signal in observed)
+                or speed > float(self.rw.get("green_stop_speed", 0.1))):
+            self._green_stop_since = None
+            return 0.0
+        clear_gap = float(self.rw.get("green_stop_clear_gap", 10.0))
+        leader = self._api.vehicle.getLeader(self.ego_id, clear_gap)
+        if (leader and leader[0]
+                and leader[1] + self._api.vehicle.getMinGap(self.ego_id) < clear_gap):
+            self._green_stop_since = None
+            return 0.0
+
+        signal = observed[0][:2]
+        if self._green_stop_since is None or self._green_stop_since[0] != signal:
+            self._green_stop_since = (signal, self.step_count)
+        elapsed = (self.step_count - self._green_stop_since[1]) * self.step_length
+        return coef if elapsed >= float(self.rw.get("green_stop_grace_seconds", 1.0)) else 0.0
 
     def _destination_observation(self):
         """경로의 마지막 edge에서 목적지를 읽어 설정 순서의 one-hot을 반환한다."""
@@ -995,17 +1161,18 @@ class SumoHighwayEnv(gym.Env):
         lane_change = self._quantize_lane_change(lane_raw)
         lane_change_applied = False
         lane_before = None
+        speed_before = None
 
         # ----- (1) 종방향 + 횡방향 행동 적용 -----
         if self._ego_is_present():
-            v = self._api.vehicle.getSpeed(self.ego_id)
+            speed_before = self._api.vehicle.getSpeed(self.ego_id)
             lane_before = int(self._api.vehicle.getLaneIndex(self.ego_id))
 
             accel_cmd = (accel_raw * self.max_accel
                          if accel_raw >= 0.0 else accel_raw * self.max_decel)
             dv = accel_cmd * self.step_length
             self._api.vehicle.setSpeed(
-                self.ego_id, float(np.clip(v + dv, 0.0, self.vmax)))
+                self.ego_id, float(np.clip(speed_before + dv, 0.0, self.vmax)))
 
             lane_change_applied = self._apply_lane_change(lane_change)
 
@@ -1015,11 +1182,11 @@ class SumoHighwayEnv(gym.Env):
                                   and self._lane_follows_route(self._api.vehicle.getLaneID(self.ego_id)))
         distance_before = (self._api.vehicle.getDistance(self.ego_id)
                            if signals_before else None)
-        return (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before,
+        return (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before, speed_before,
                 signals_before, route_connected_before, distance_before)
 
     def _finish_step(self, state, *, collided, arrived):
-        (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before,
+        (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before, speed_before,
          signals_before, route_connected_before, distance_before) = state
         self.step_count += 1
         alive = self._ego_is_present()
@@ -1027,6 +1194,7 @@ class SumoHighwayEnv(gym.Env):
 
         red_light_violation = False
         green_passed = set()
+        traveled = 0.0
         if signals_before and alive:
             traveled = self._api.vehicle.getDistance(self.ego_id) - distance_before
             for signal in signals_before:
@@ -1045,6 +1213,12 @@ class SumoHighwayEnv(gym.Env):
         terminated, truncated = False, False
         ego_speed, ego_gap = None, None
         red_stop_penalty = 0.0
+        red_stop_clearance_reward = 0.0
+        red_stop_progress_reward = 0.0
+        red_speed_tracking_reward = 0.0
+        red_stopped_brake_penalty = 0.0
+        red_safe_zone_first_reward = red_safe_zone_hold_reward = 0.0
+        green_stop_penalty = 0.0
         green_pass_reward = 0.0
 
         # ----- (4) 기존 보상 유지 -----
@@ -1072,6 +1246,21 @@ class SumoHighwayEnv(gym.Env):
             reward = float(self.rw["speed_weight"]) * ego_speed / self.vmax
             red_stop_penalty = self._red_stop_penalty(red_signal)
             reward -= red_stop_penalty
+            red_stop_clearance_reward = self._red_stop_clearance_reward(signal_after, ego_speed)
+            reward += red_stop_clearance_reward
+            red_stop_progress_reward = self._red_stop_progress_reward(
+                signals_before[0] if signals_before else None, signal_after, ego_speed, traveled)
+            reward += red_stop_progress_reward
+            red_speed_tracking_reward = self._red_speed_tracking_reward(signal_after, ego_speed)
+            reward += red_speed_tracking_reward
+            red_stopped_brake_penalty = self._red_stopped_brake_penalty(
+                signals_before[0] if signals_before else None, signal_after, speed_before, accel_raw)
+            reward -= red_stopped_brake_penalty
+            red_safe_zone_first_reward, red_safe_zone_hold_reward = self._red_safe_zone_rewards(
+                signal_after, ego_speed)
+            reward += red_safe_zone_first_reward + red_safe_zone_hold_reward
+            green_stop_penalty = self._green_stop_penalty(signals_after, ego_speed)
+            reward -= green_stop_penalty
             exempt_close = (red_visible and ego_speed <=
                             float(self.rw.get("signal_wait_speed", 0.5)))
             if (not exempt_close and ego_gap is not None and
@@ -1129,6 +1318,7 @@ class SumoHighwayEnv(gym.Env):
             "wrong_lane": wrong_lane,
             "red_light_violation": red_light_violation,
             "green_pass_reward": green_pass_reward,
+            "green_stop_penalty": green_stop_penalty,
             "green_pass_count": len(green_passed) if green_pass_reward > 0 else 0,
             "observed_signals": [
                 {"tls_id": sig[0], "link_index": sig[1], "state": sig[3],
@@ -1136,6 +1326,12 @@ class SumoHighwayEnv(gym.Env):
                 for sig in self._observed_signals(signals_after)],
             "red_signal_distance": red_signal[2] if red_signal is not None else None,
             "red_stop_penalty": red_stop_penalty,
+            "red_stop_clearance_reward": red_stop_clearance_reward,
+            "red_stop_progress_reward": red_stop_progress_reward,
+            "red_speed_tracking_reward": red_speed_tracking_reward,
+            "red_stopped_brake_penalty": red_stopped_brake_penalty,
+            "red_safe_zone_first_reward": red_safe_zone_first_reward,
+            "red_safe_zone_hold_reward": red_safe_zone_hold_reward,
             "signal_red_visible": red_visible,
             "signal_distance": signal_after[2] if signal_after is not None else None,
             "speed": ego_speed,

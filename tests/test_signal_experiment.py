@@ -106,6 +106,166 @@ class SignalExperimentTests(unittest.TestCase):
             _, _, _, _, info = self.env.step([1, 0])
             self.assertFalse(info["red_light_violation"])
 
+    def test_green_stop_penalty_waits_and_resets_for_signals_and_leaders(self):
+        self.env.rw.update(green_stop_penalty=0.02, green_stop_clear_gap=10.0)
+        self.place(10, "G")
+
+        def penalty(action=(0, 0)):
+            return self.env.step(action)[4]["green_stop_penalty"]
+
+        def check_grace_period():
+            self.assertEqual([penalty() for _ in range(3)], [0.0, 0.0, 0.02])
+
+        check_grace_period()
+        self.assertEqual(penalty(), 0.02)
+        for color in ("y", "r"):
+            self.place(10, color)
+            self.assertEqual(penalty(), 0.0)
+            self.place(10, "G")
+            check_grace_period()
+
+        get_speed = traci.vehicle.getSpeed
+        with (patch.object(traci.vehicle, "getLeader", return_value=("leader", 1.0)),
+              patch.object(traci.vehicle, "getSpeed",
+                           side_effect=lambda vid: 0.0 if vid == "leader" else get_speed(vid))):
+            self.assertEqual(penalty(), 0.0)
+        check_grace_period()
+        self.assertEqual(penalty((1, 0)), 0.0)
+        self.place(10, "G")
+        check_grace_period()
+
+    def test_red_clearance_reward_tracks_current_gap_and_respects_safety(self):
+        self.env.rw.update(red_stop_clearance_reward=0.02)
+        self.place(8, "r")
+        _, reward, _, _, info = self.env.step([0, 0])
+        self.assertAlmostEqual(reward, 0.01)
+        self.assertAlmostEqual(info["red_stop_clearance_reward"], 0.01)
+
+        self.place(30, "r")
+        signal = self.env._next_signal()
+        min_gap = traci.vehicle.getMinGap("ego")
+        with patch.object(traci.vehicle, "getLeader") as leader:
+            for gap, expected in ((3.0, 0.02), (8.0, 0.01), (3.0, 0.02), (2.0, 0.0)):
+                leader.return_value = ("leader", gap - min_gap)
+                self.assertAlmostEqual(self.env._red_stop_clearance_reward(signal, 0), expected)
+        self.assertEqual(self.env._red_stop_clearance_reward(signal, 3), 0.0)
+        self.assertEqual(self.env._red_stop_clearance_reward((*signal[:3], "y"), 0), 0.0)
+        self.assertEqual(self.env._red_stop_clearance_reward((*signal[:3], "G"), 0), 0.0)
+        self.place(2, "r")
+        self.assertEqual(self.env._red_stop_clearance_reward(self.env._next_signal(), 0), 0.0)
+
+    def test_red_progress_rewards_only_safe_ego_movement(self):
+        self.env.rw.update(red_stop_progress_per_meter=0.01)
+        self.place(78, "r", speed=2)
+        _, reward, _, _, info = self.env.step([0, 0])
+        self.assertAlmostEqual(info["red_stop_progress_reward"], 0.01)
+        self.assertAlmostEqual(reward, 0.1 * 2 / self.env.vmax + 0.01)
+
+        before = self.env._next_signal()
+        after = (*before[:2], before[2] - 3, "r")
+        progress = self.env._red_stop_progress_reward
+        self.assertEqual(progress(before, after, 6, 3), 0.02)
+        self.assertEqual(progress(before, after, 0, 0), 0.0)
+        self.assertEqual(progress(before, (*after[:3], "G"), 2, 1), 0.0)
+        self.assertEqual(progress(before, (*after[:2], 4, "r"), 3, 1), 0.0)
+        self.assertEqual(progress(before, (*after[:2], 2.9, "r"), 0.1, 1), 0.0)
+
+        min_gap = traci.vehicle.getMinGap("ego")
+        with patch.object(traci.vehicle, "getLeader") as leader:
+            leader.return_value = ("leader", 3.5 - min_gap)
+            self.assertEqual(progress(before, after, 2, 1), 0.0)
+            leader.return_value = ("leader", 6.0 - min_gap)
+            self.assertEqual(progress(before, after, 0, 0), 0.0)
+            self.assertEqual(progress(before, after, 2, 1), 0.01)
+
+    def test_red_speed_tracking_prefers_matching_speed_and_safe_stop(self):
+        self.env.rw.update(red_speed_tracking_cap=0.02)
+        self.place(18, "r", speed=6)
+        _, reward, _, _, info = self.env.step([0, 0])
+        self.assertAlmostEqual(info["red_speed_tracking_reward"], 0.02)
+        self.assertAlmostEqual(reward, 0.1 * 6 / self.env.vmax + 0.02)
+
+        signal = self.env._next_signal()
+        tracking = self.env._red_speed_tracking_reward
+        self.assertEqual(tracking(signal, 0), 0.0)
+        self.assertEqual(tracking(signal, 8), 0.0)
+        self.assertEqual(tracking((*signal[:3], "y"), 6), 0.0)
+        self.assertEqual(tracking((*signal[:3], "G"), 6), 0.0)
+        self.assertAlmostEqual(tracking((*signal[:2], 3.0, "r"), 0), 0.005)
+        self.assertEqual(tracking((*signal[:2], 2.9, "r"), 0), 0.0)
+
+        min_gap = traci.vehicle.getMinGap("ego")
+        with patch.object(traci.vehicle, "getLeader") as leader:
+            leader.return_value = ("leader", 4.0 - min_gap)
+            self.assertGreater(tracking(signal, 1), 0.0)
+            self.assertEqual(tracking(signal, 6), 0.0)
+            leader.return_value = ("leader", 7.0 - min_gap)
+            self.assertAlmostEqual(tracking(signal, 12 ** 0.5), 0.02)
+
+    def test_linear_underspeed_tracking_rewards_a_slow_start(self):
+        self.env.rw.update(red_speed_tracking_cap=0.02)
+        self.place(18, "r")
+        signal = self.env._next_signal()
+        tracking = self.env._red_speed_tracking_reward
+        self.assertEqual(tracking(signal, 2.0), 0.0)
+        previous_overspeed_reward = tracking(signal, 7.0)
+
+        self.env.rw["red_speed_tracking_linear_underspeed"] = True
+        target_speed = 45 ** 0.5
+        self.assertEqual(tracking(signal, 0.0), 0.0)
+        self.assertAlmostEqual(tracking(signal, 2.0), 0.02 * 2.0 / target_speed)
+        self.assertAlmostEqual(tracking(signal, target_speed), 0.02)
+        self.assertEqual(tracking(signal, 7.0), previous_overspeed_reward)
+        self.assertEqual(tracking(signal, 9.0), 0.0)
+        self.assertAlmostEqual(tracking((*signal[:2], 3.0, "r"), 0.0), 0.005)
+
+    def test_red_stopped_brake_penalty_only_applies_with_room_after_stopping(self):
+        self.env.rw["red_stopped_brake_coef"] = 0.01
+        self.place(15, "r", speed=1)
+        _, _, _, _, info = self.env.step([-0.8, 0])
+        self.assertEqual(info["speed"], 0.0)
+        self.assertEqual(info["red_stopped_brake_penalty"], 0.0)
+        _, reward, _, _, info = self.env.step([-0.8, 0])
+        self.assertAlmostEqual(info["red_stopped_brake_penalty"], 0.0064)
+        self.assertAlmostEqual(reward, -0.0064)
+        for action in (0, 0.1):
+            self.place(15, "r")
+            self.assertEqual(self.env.step([action, 0])[4]["red_stopped_brake_penalty"], 0.0)
+        for distance, color in ((4, "r"), (15, "y"), (15, "G")):
+            self.place(distance, color)
+            self.assertEqual(self.env.step([-0.8, 0])[4]["red_stopped_brake_penalty"], 0.0)
+
+        self.place(15, "r")
+        signal = self.env._next_signal()
+        with patch.object(traci.vehicle, "getLeader",
+                          return_value=("leader", 4 - traci.vehicle.getMinGap("ego"))):
+            self.assertEqual(self.env._red_stopped_brake_penalty(signal, signal, 0, -0.8), 0.0)
+
+    def test_red_safe_zone_rewards_once_and_caps_holding_without_clawback(self):
+        self.env.rw["red_safe_zone_first_reward"] = 2.0
+
+        def bonus():
+            info = self.env.step([0, 0])[4]
+            return info["red_safe_zone_first_reward"], info["red_safe_zone_hold_reward"]
+
+        self.place(4, "r")
+        self.assertEqual(bonus(), (0.0, 0.0))
+        self.place(6, "r")
+        self.assertEqual(bonus(), (0.0, 0.0))
+        self.place(4, "r")
+        self.assertEqual([bonus() for _ in range(3)], [(0.0, 0.0), (0.0, 0.0), (2.0, 0.0)])
+        self.assertEqual(bonus(), (0.0, 0.005))
+        self.place(4, "G")
+        self.assertEqual(bonus(), (0.0, 0.0))
+        self.place(4, "r")
+        self.assertAlmostEqual(sum(bonus()[1] for _ in range(42)), 0.195)
+        self.assertEqual(bonus(), (0.0, 0.0))
+
+        self.place(2, "r", speed=10)
+        _, reward, terminated, _, info = self.env.step([1, 0])
+        self.assertTrue(terminated and info["red_light_violation"])
+        self.assertEqual(reward, -10.0)
+
     def test_red_stop_and_reward_exemptions(self):
         self.place(10, "r", speed=0)
         with patch.object(self.env, "_neighbor", return_value=(2.0, 0.0)):

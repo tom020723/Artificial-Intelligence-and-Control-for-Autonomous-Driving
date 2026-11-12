@@ -61,6 +61,13 @@ class _EpisodeStats:
     green_passes: int = 0
     red_stop_cost: float = 0.0
     outcome: str | None = None
+    last_stop_clearance_m: float | None = None
+    last_stop_reference: str | None = None
+    red_wait_clearance_m: float | None = None
+    red_wait_reference: str | None = None
+    start_lane: int | None = None
+    signal_offset_s: float | None = None
+    traffic_vph: int | None = None
     speeds: list[float] = field(default_factory=list)
     gaps: list[float] = field(default_factory=list)
 
@@ -76,6 +83,18 @@ class _DrivingStats:
         stats.lane_changes += int(info.get("lane_change", 0) != 0 and bool(info.get("lane_change_applied")))
         stats.green_passes += int(info.get("green_pass_count", info.get("green_pass_reward", 0.0) > 0))
         stats.red_stop_cost += float(info.get("red_stop_penalty", 0.0))
+        if "stop_clearance_m" in info:
+            stats.last_stop_clearance_m = info["stop_clearance_m"]
+            stats.last_stop_reference = info["stop_reference"]
+            signals = info.get("observed_signals", ())
+            if (info["stop_clearance_m"] is not None and signals
+                    and signals[0]["state"].lower() == "r"):
+                stats.red_wait_clearance_m = info["stop_clearance_m"]
+                stats.red_wait_reference = info["stop_reference"]
+        if "start_lane" in info:
+            stats.start_lane = info["start_lane"]
+            stats.signal_offset_s = info["signal_offset_s"]
+            stats.traffic_vph = info["traffic_vph"]
 
         for outcome in ("red_light_violation", "collided", "arrived", "wrong_lane"):
             if info.get(outcome):
@@ -153,25 +172,31 @@ def evaluate_parallel_policy(policy, env, device):
     return _run_parallel_episodes(policy, env, device).metrics(env.prototype.visibility)
 
 
-def evaluate_parallel_routes(policy, env, device, routes):
+def evaluate_parallel_routes(policy, env, device, routes, **reset_options):
     """Run one episode for each explicit route and return results in route order."""
-    stats = _run_parallel_episodes(policy, env, device, routes)
+    stats = _run_parallel_episodes(policy, env, device, routes, **reset_options)
     statuses = {"arrived": "arrival", "collided": "collision", "red_light_violation": "red_light"}
     return [
         {"status": statuses.get(episode.outcome, episode.outcome or "unknown"),
+         "start_lane": episode.start_lane, "signal_offset_s": episode.signal_offset_s,
+         "traffic_vph": episode.traffic_vph,
+         "last_stop_clearance_m": episode.last_stop_clearance_m,
+         "last_stop_reference": episode.last_stop_reference,
+         "red_wait_clearance_m": episode.red_wait_clearance_m,
+         "red_wait_reference": episode.red_wait_reference,
          **stats.metrics(env.prototype.visibility, [episode]).as_dict()}
         for episode in stats.episodes
     ]
 
 
-def _run_parallel_episodes(policy, env, device, routes=None):
+def _run_parallel_episodes(policy, env, device, routes=None, **reset_options):
     import torch
 
     policy.to(device).eval()
     stats = _DrivingStats(env.num_envs)
     active = list(range(env.num_envs))
     try:
-        obs = env.reset() if routes is None else env.reset(routes=routes)
+        obs = env.reset(**reset_options) if routes is None else env.reset(routes=routes, **reset_options)
         with torch.inference_mode():
             while active:
                 obs_batch = torch.as_tensor(obs, dtype=torch.float32, device=device)

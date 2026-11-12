@@ -357,13 +357,42 @@ TRAFFIC = {
     },
 }
 
-# 전체 녹색 여부와 신호 관측을 독립 설정한다. 둘 다 True면 41차원 관측으로 기초 주행 학습.
-if ROUTE_ONLY_EXPERIMENT or SIGNAL_EXPERIMENT:
-    NOHYEONG["all_signals_green"] = ROUTE_ONLY_EXPERIMENT
+_CENTRAL_BACKGROUND_VPH = TRAFFIC["vehs_per_hour"]
+_RING_BACKGROUND_VPH = tuple(
+    demand["vph"] for demand in NOHYEONG["ring_segments"] + NOHYEONG["loop_routes"]
+)
+
+
+def _configure_no_traffic(all_green):
+    NOHYEONG["all_signals_green"] = all_green
     NOHYEONG["warmup_seconds"] = 0
     TRAFFIC["background_enabled"] = False
     TRAFFIC["vehs_per_hour"] = 0
     TRAFFIC["prefill"]["enabled"] = False
     for demand in NOHYEONG["ring_segments"] + NOHYEONG["loop_routes"]:
         demand["vph"] = 0
+
+
+def configure_phase2():
+    global ROUTE_ONLY_EXPERIMENT, SIGNAL_EXPERIMENT
+    ROUTE_ONLY_EXPERIMENT = False
+    SIGNAL_EXPERIMENT = True
+    _configure_no_traffic(all_green=False)
+    NOHYEONG["ego_routes"]["ring_prob"] = 0.15
+
+
+def configure_parallel_training(phase):
+    """Configure the two signalized phases of the parallel trainer."""
+    configure_phase2()  # Old run snapshots still call this helper directly.
+    if phase == 2:
+        TRAFFIC["background_enabled"] = True
+        TRAFFIC["vehs_per_hour"] = _CENTRAL_BACKGROUND_VPH
+        for demand, vph in zip(NOHYEONG["ring_segments"] + NOHYEONG["loop_routes"],
+                               _RING_BACKGROUND_VPH, strict=True):
+            demand["vph"] = vph
+
+
+# 전체 녹색 여부와 신호 관측을 독립 설정한다.
+if ROUTE_ONLY_EXPERIMENT or SIGNAL_EXPERIMENT:
+    _configure_no_traffic(all_green=ROUTE_ONLY_EXPERIMENT)
 

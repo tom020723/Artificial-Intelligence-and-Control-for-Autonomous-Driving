@@ -86,7 +86,7 @@ def build(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
 
     with open(os.path.join(out_dir, "highway.rou.xml"), "w") as f:
         f.write(f"""<routes>
-    <vType id="ego_type" accel="{ego['accel']}" decel="{ego['decel']}" maxSpeed="{ego['max_speed']}" color="1,0,0" vClass="passenger" guiShape="passenger/sedan"/>
+    <vType id="ego_type" accel="{ego['accel']}" decel="{ego['decel']}" maxSpeed="{ego['max_speed']}" color="1,0,0" vClass="passenger" guiShape="passenger/sedan" timeToTeleport="-1"/>
 {vtypes_block}
     <route id="r0" edges="e0"/>
     <flow id="traffic" type="{flow_type}" route="r0" begin="0" end="100000"
@@ -708,7 +708,7 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     flows.sort(key=lambda line: float(ET.fromstring(line).get("begin")))
     with open(os.path.join(out_dir, "highway.rou.xml"), "w") as f:
         f.write(f"""<routes>
-    <vType id="ego_type" accel="{ego['accel']}" decel="{ego['decel']}" maxSpeed="{ego['max_speed']}" color="1,0,0" vClass="passenger" guiShape="passenger/sedan"/>
+    <vType id="ego_type" accel="{ego['accel']}" decel="{ego['decel']}" maxSpeed="{ego['max_speed']}" color="1,0,0" vClass="passenger" guiShape="passenger/sedan" timeToTeleport="-1"/>
 {vtypes_block}
     <route id="r0" edges="{' '.join(r0_edges)}"/>
 {chr(10).join(routes)}
