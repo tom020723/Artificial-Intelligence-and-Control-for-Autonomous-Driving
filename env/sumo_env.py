@@ -39,6 +39,8 @@ if "SUMO_HOME" not in os.environ:
         # Windows (기본 인스톨러 경로)
         r"C:\Program Files (x86)\Eclipse\Sumo",
         r"C:\Program Files\Eclipse\Sumo",
+        # Windows (드라이브별 인스톨러 경로)
+        r"D:\Eclipse\Sumo",
     ]
     for _p in _candidates:
         if os.path.isdir(_p):
@@ -419,11 +421,18 @@ class SumoHighwayEnv(gym.Env):
 
     def _depart_lane_for(self, edge: str) -> str:
         """EGO["depart_lane"] 설정을 실제 출발 도로의 차선 수에 맞춰 바꾼다.
-        (도로마다 차선 수가 달라서, 4차선 기준 번호가 2차선 도로에선 없는 차선이 될 수 있음)"""
+        (도로마다 차선 수가 달라서, 4차선 기준 번호가 2차선 도로에선 없는 차선이 될 수 있음)
+
+        "center" : 중앙 차선
+        "random" : 0..n-1 중 무작위 (에피소드마다 달라짐 — 고정 출발 편향 제거)
+        숫자    : 그 차선 번호 (범위를 넘으면 끝 차선으로 clamp)
+        """
         n = traci.edge.getLaneNumber(edge)
         dl = self._ego_depart_lane_cfg.lower()
         if dl == "center":
             return str(n // 2)
+        if dl == "random":
+            return str(int(self.np_random.integers(0, n)))
         if dl.isdigit():
             return str(min(int(dl), n - 1))
         return self._ego_depart_lane_cfg

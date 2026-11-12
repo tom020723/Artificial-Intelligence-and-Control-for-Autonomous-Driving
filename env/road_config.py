@@ -14,9 +14,13 @@ road_builder.py가 SUMO 도로 파일(.net.xml 등)을 자동으로 다시 만�
 #    현재는 "직선 편도 도로" 하나만 생성한다.
 #    (교차로, 합류부 등 복잡한 도로는 road_builder.py를 확장해야 함)
 # ──────────────────────────────────────────────────────────────
-ROUTE_ONLY_EXPERIMENT = True  # Phase 1: 전체 녹색, 배경 차량 OFF
+ROUTE_ONLY_EXPERIMENT = False  # Phase 1: 전체 녹색 (배경 차량 OFF)
 
-SIGNAL_EXPERIMENT = True  # 신호 관측 유지, 배경 차량 OFF (둘 다 False면 기본 환경)
+SIGNAL_EXPERIMENT = True  # 신호 관측 유지 (둘 다 False면 기본 환경)
+
+# Phase 3: 배경 차량 활성화. True면 신호 정상 작동 + 배경 차량 ON.
+#   Phase 1/2는 False(배경차 OFF). Phase 3로 넘어갈 때 True로 바꾼다.
+BACKGROUND_EXPERIMENT = False
 
 ROAD = {
     # ── 도로 종류 ──
@@ -358,8 +362,11 @@ TRAFFIC = {
 }
 
 # 전체 녹색 여부와 신호 관측을 독립 설정한다. 둘 다 True면 41차원 관측으로 기초 주행 학습.
+# Phase 1: 전체 녹색(ROUTE_ONLY) 또는 신호 관측(SIGNAL)만 켜고 배경차는 OFF.
+# Phase 3: BACKGROUND_EXPERIMENT=True로 배경차를 켠다 (신호는 정상 주기 유지).
 if ROUTE_ONLY_EXPERIMENT or SIGNAL_EXPERIMENT:
     NOHYEONG["all_signals_green"] = ROUTE_ONLY_EXPERIMENT
+if (ROUTE_ONLY_EXPERIMENT or SIGNAL_EXPERIMENT) and not BACKGROUND_EXPERIMENT:
     NOHYEONG["warmup_seconds"] = 0
     TRAFFIC["background_enabled"] = False
     TRAFFIC["vehs_per_hour"] = 0

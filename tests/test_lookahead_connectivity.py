@@ -30,8 +30,13 @@ class LookaheadConnectivityTests(unittest.TestCase):
         cls.tmp.cleanup()
 
     def setUp(self):
-        self.obs_config={**OBSERVATION,'lookahead_connectivity_enabled':True}
-        self.env=SumoHighwayEnv(self.cfg,ROAD,EGO,SIMULATION,self.obs_config,ACTION,REWARD,traffic=TRAFFIC)
+        # 이 테스트 클래스는 "full 59차원" 레이아웃(destination one-hot + 신호 2개)을
+        # 검증한다. OBSERVATION 기본값은 Phase 2에서 49차원으로 바뀌었으므로
+        # 여기서 명시적으로 59차원 구성으로 되돌려 지정한다.
+        self.obs_config = {**OBSERVATION, 'lookahead_connectivity_enabled': True,
+                           'destination_enabled': True, 'signal_count': 2}
+        self.env = SumoHighwayEnv(self.cfg, ROAD, EGO, SIMULATION, self.obs_config,
+                                  ACTION, REWARD, traffic=TRAFFIC)
 
     def tearDown(self):
         self.env.close()

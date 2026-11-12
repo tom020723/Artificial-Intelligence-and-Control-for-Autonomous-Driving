@@ -88,11 +88,11 @@ SIMULATION = {
 OBSERVATION = {
     "connectivity_half_width": 4,  # 연결성만 ±4차선; 차량/밀도는 기존 ±2차선 유지
     "lookahead_connectivity_enabled": True,
-    "destination_enabled": True,
+    "destination_enabled": False,
     "destination_arms": ("A1", "A2", "A3", "A4", "A5"),
     "signal_enabled": SIGNAL_EXPERIMENT,
     "signal_visibility": 100.0,
-    "signal_count": 2,
+    "signal_count": 1,
     "visibility": 50.0,          # 관측 가능 거리 W (m). 앞뒤 차량 감지와
                                  # 상대거리/연결성/밀도 정규화의 기준.
     "density_veh_length": 7.5,   # 밀도 계산 시 차량 1대의 점유 길이 (m)

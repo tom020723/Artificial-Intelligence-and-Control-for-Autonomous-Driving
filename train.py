@@ -21,7 +21,7 @@ import os
 import shutil
 from datetime import datetime
 
-from env.road_config import ROAD, EGO, TRAFFIC, ROUTE_ONLY_EXPERIMENT, SIGNAL_EXPERIMENT
+from env.road_config import ROAD, EGO, TRAFFIC, ROUTE_ONLY_EXPERIMENT, SIGNAL_EXPERIMENT, BACKGROUND_EXPERIMENT
 from env.mdp_config import SIMULATION, OBSERVATION, ACTION
 from env.mdp_config import REWARD as REWARD_DEFAULTS
 from env import road_builder
@@ -46,9 +46,14 @@ TOTAL_TIMESTEPS = 300_000   # 이번 실행에서 수집할 스텝 수 (--init-m
 #  이 파일이 run 폴더에 스냅샷되므로 "그 결과가 어떤 계수였는지"도 남는다.
 # ══════════════════════════════════════════════════════════════════
 REWARD_OVERRIDES = dict(
-    red_light_penalty=5.0,     # 실험 4·5: 적신호 위반 후 즉시 종료
+    red_light_penalty=5.0,     # 적신호 위반 시 -이 값, 즉시 종료
     green_pass_bonus=10.0,     # 경로에 맞는 청신호 정지선 통과당 1회
-    red_stop_penalty_coef=0.05,  # 적신호 거리 감점의 스텝당 상한 (속도 조건 없음)
+    # ★ Phase 2 재설계: 적신호 "거리 비례" 감점을 끈다.
+    #   이 페널티는 ego가 신호 관측 범위(100m) 밖에서 미리 멈춰 감점을
+    #   회피하도록 학습시켜 "조기 정차"를 유발했다 (docs/train.md TODO).
+    #   정차 자체는 속도 보상(정차 시 0)과 적신호 위반 벌점(-5+종료)이
+    #   자연스럽게 학습시키므로, 거리 비례 감점만 제거한다.
+    red_stop_penalty_coef=0.0,  # 0 → 적신호 거리 감점 비활성 (조기 정차 방지)
     red_stop_safe_gap=3.0,     # 앞차와 유지할 간격(m)
     red_stop_margin=3.0,       # 정지선 앞 정차 여유(m)
     red_stop_distance_scale=100.0,  # 여유 거리 정규화(m)
@@ -60,8 +65,13 @@ REWARD_OVERRIDES = dict(
     blocked_penalty=0.05,      # "느린 앞차에 막힘" 스텝당 감점 (추월 학습 핵심)
     blocked_gap=20.0,          #   막힘 판정: 앞차 이 거리 이내
     blocked_speed_frac=0.7,    #   그리고 내 속도 < vmax × 이 값
-    lane_change_penalty=0.02,  # Phase 1 재학습: 수락된 변경 명령당 감점
-    invalid_action_penalty=0.2,# 실험 4: 거절된 차선변경 명령당 감점
+    # ★ Phase 3 재설계: 배경차 환경에서 차선 변경 페널티 0.
+    #   1차(0.02/0.2): 변경 1.1회로 포기 → 완주 71%, 차선실패 15%.
+    #   2차(0/0): 변경 20.6회(수렴 전 과도 탐험) → 완주 77%, 신호위반 0% (최선).
+    #   3차(0.01/0.05): 완주 74%, 차선실패 20%, 신호위반 2.2% (더 나쁨).
+    #   → 0/0이 최선이므로 유지하고, 2차 모델에서 추가 학습으로 수렴시킨다.
+    lane_change_penalty=0.0,   # 수락된 변경 명령당 감점 (Phase 3: 0)
+    invalid_action_penalty=0.0,# 거절된 차선변경 명령당 감점 (Phase 3: 0)
 )
 REWARD = {**REWARD_DEFAULTS, **REWARD_OVERRIDES}
 
@@ -128,7 +138,7 @@ RUN_NAME = None         # None이면 run_날짜_시각 자동 생성.
 
 def make_run_dir() -> str:
     """results/<run이름>/ 폴더를 만들고 경로를 반환."""
-    prefix = "signal" if SIGNAL_EXPERIMENT else ("route_only" if ROUTE_ONLY_EXPERIMENT else "run")
+    prefix = "background" if BACKGROUND_EXPERIMENT else ("signal" if SIGNAL_EXPERIMENT else ("route_only" if ROUTE_ONLY_EXPERIMENT else "run"))
     prefix = os.environ.get("SUMO_RUN_PREFIX", prefix)
     name = RUN_NAME or datetime.now().strftime(f"{prefix}_%Y%m%d_%H%M%S")
     run_dir = os.path.join(BASE, RESULTS_DIR, name)
