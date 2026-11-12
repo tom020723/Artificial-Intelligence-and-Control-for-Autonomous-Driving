@@ -179,6 +179,10 @@ class SumoHighwayEnv(gym.Env):
                                                  -self.connectivity_half_width - 1, -1))
         # 누락된 키는 False: 기존 저장 모델의 관측 레이아웃을 유지한다.
         self.lookahead_connectivity_enabled = bool(mdp_obs.get("lookahead_connectivity_enabled", False))
+        # 추가 연결성이 내다보는 route edge 수. 기본 2는 기존 모델과 같은 관측.
+        # 노형오거리 진입로는 [긴 도로 → 짧은 구간 2개 → 교차로]라서 2로는 긴 도로에서
+        # 회전 차선을 알 수 없다 (예: A1 출발 5차선 중 A4행은 맨 왼쪽만 가능).
+        self.lookahead_edges = int(mdp_obs.get("lookahead_edges", 2))
         # 연결 차선 ID는 정적 정보다. 신호색/진입 가능 시점은 캐시하지 않는다.
         self._lane_successors_cache = {}
         self.destination_enabled = bool(mdp_obs.get("destination_enabled", False))
@@ -623,7 +627,7 @@ class SumoHighwayEnv(gym.Env):
         # 교차로 내부라면 기준 차선은 다음 route edge에 있다 (_reference_lane).
         if route_index + 1 < len(route) and route[route_index + 1] == edge:
             route_index += 1
-        next_edges = route[route_index + 1:route_index + 3]
+        next_edges = route[route_index + 1:route_index + 1 + self.lookahead_edges]
         values = []
         for offset in self.connectivity_offsets:
             index = current_index + offset
@@ -783,6 +787,19 @@ class SumoHighwayEnv(gym.Env):
         if scale <= 0:
             raise ValueError("red_stop_distance_scale must be positive")
         return coef * float(np.clip(min(front_room, stop_room) / scale, 0.0, 1.0))
+
+    def _late_brake_penalty(self, signal, speed):
+        """적신호 앞에서 정지선까지 서는 데 필요한 감속이 기준을 넘으면 감점. 0이면 비활성.
+
+        정지 위치 감점만 있으면 '최대한 늦게, 가깝게' 서는 쪽으로 학습되어
+        정지선을 1m 안팎으로 넘는 위반이 생긴다 (A2 진입로). 미리 부드럽게 서게 한다.
+        """
+        coef = float(self.rw.get("late_brake_penalty_coef", 0.0))
+        if coef <= 0 or signal is None or signal[3].lower() != "r":
+            return 0.0
+        limit = float(self.rw.get("late_brake_decel", 2.5))     # m/s², 편안한 감속 기준
+        required = speed * speed / (2.0 * max(signal[2], 0.1))  # v² / 2d
+        return coef * float(np.clip((required - limit) / limit, 0.0, 1.0))
 
     def _destination_observation(self):
         """경로의 마지막 edge에서 목적지를 읽어 설정 순서의 one-hot을 반환한다."""
@@ -1108,6 +1125,7 @@ class SumoHighwayEnv(gym.Env):
             reward = float(self.rw["speed_weight"]) * ego_speed / self.vmax
             red_stop_penalty = self._red_stop_penalty(red_signal)
             reward -= red_stop_penalty
+            reward -= self._late_brake_penalty(red_signal, ego_speed)
             exempt_close = (red_visible and ego_speed <=
                             float(self.rw.get("signal_wait_speed", 0.5)))
             if (not exempt_close and ego_gap is not None and
