@@ -1,0 +1,2 @@
+# Preserve archived bytes so manifest hashes survive checkout on every OS.
+* -text -whitespace

@@ -7,6 +7,13 @@
   - phase 2: 신호등 단순 작동, 배경 차량 X
   - phase 3: 신호등 단순 작동, 배경 차량 O
 
+> **현재 병렬 학습 Phase 정의 변경 (2026-11-13)**: `train_parallel.py` 기준
+> Phase 1 = 정상 신호 + 배경 차량 없음 + 중앙 차선 출발, Phase 2 = 정상 신호
+> + 배경 차량 교통량 커리큘럼. 과거 이 문서의 Phase 1(항상 초록불)은 현재
+> Phase 1과 다르다. Phase 1 신호 대응 기준 모델의 검증 결과는
+> [phase1_results.md](phase1_results.md)를 참고한다. 최종 판정은
+> **미달(동일 설정 seed 2 재현 실패)**이다.
+
 <br>
 
 - **TODO**

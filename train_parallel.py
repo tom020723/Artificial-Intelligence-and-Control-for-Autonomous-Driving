@@ -29,8 +29,9 @@ SIGNAL_STOP_REWARDS = dict(
     green_stop_grace_seconds=1.0,
     green_stop_speed=0.1,          # m/s 이하를 정지로 간주
     green_stop_clear_gap=10.0,     # 앞차가 없거나 범퍼 간격이 이 이상이면 진행 가능
-    red_stop_penalty_coef=0.0,      # 멀리 있다고 감점하지 않음
-    red_stop_clearance_reward=0.0, # 정지 중에도 들어오던 거리 보상 비활성화
+    red_stop_penalty_coef=0.02,     # 먼 적신호 정차를 약하게 감점
+    red_stop_clearance_reward=0.02, # 정지 중 정지선 여유가 작을수록 보상
+    red_stop_clearance_reward_scale=2.0, # 먼 정차에서 보상을 빠르게 감쇠
     red_stop_progress_per_meter=0.0,  # 적신호 전진량 보상 비활성화
     red_speed_tracking_cap=0.20,      # 0.02, 0.05 실험을 거쳐 57번 설정 채택.
     red_speed_tracking_linear_underspeed=True,  # 목표보다 느릴 때도 출발부터 보상
@@ -64,6 +65,8 @@ def main():
     parser.add_argument("--minibatch-size", type=int, default=2048)
     parser.add_argument("--learning-epochs", type=int, default=5,
                         help="한 rollout을 PPO로 반복 학습하는 횟수")
+    parser.add_argument("--seed", type=int, default=HPARAMS["seed"],
+                        help="정책·환경·워커에 적용할 재현 가능한 학습 시드")
     parser.add_argument("--eval-interval", type=int, default=0,
                         help="정기 평가 간격 (iteration 수, 기본값 0: 비활성화)")
     parser.add_argument("--results-dir", type=Path, default=Path(BASE) / RESULTS_DIR)
@@ -84,6 +87,8 @@ def main():
         parser.error("rollout은 2 step 이상이며 미니배치 크기의 배수여야 합니다.")
     if args.eval_interval < 0:
         parser.error("--eval-interval은 0 이상이어야 합니다.")
+    if not 0 <= args.seed < 2**32:
+        parser.error("--seed는 0 이상이며 2**32 미만이어야 합니다.")
     minibatches_per_epoch = rollout_steps // args.minibatch_size
 
     road_config.configure_parallel_training(args.phase)
@@ -120,10 +125,10 @@ def main():
             "minibatch_size": args.minibatch_size,
             "minibatches_per_epoch": minibatches_per_epoch,
             "epochs": args.learning_epochs,
-            "seed": HPARAMS["seed"],
+            "seed": args.seed,
             "eval_interval": args.eval_interval,
             "eval_episodes": envs_per_worker if args.eval_interval else 0,
-            "eval_seed": HPARAMS["seed"] + 1 if args.eval_interval else None,
+            "eval_seed": (args.seed + 1) % 2**32 if args.eval_interval else None,
             "randomize_signals": True,
             "randomize_departures": randomize_departures,
             "independent_episode_rng": True,
@@ -136,7 +141,8 @@ def main():
     config = road_builder.build(ROAD, EGO, TRAFFIC, str(run_dir / "sumo"))
     env_kwargs = dict(cfg_path=config, road=ROAD, ego=EGO, mdp_sim=SIMULATION,
                       mdp_obs=observation, action=ACTION, reward=reward, traffic=TRAFFIC)
-    hparams = dict(HPARAMS, n_steps=rollout_steps, minibatch_size=args.minibatch_size,
+    hparams = dict(HPARAMS, seed=args.seed, n_steps=rollout_steps,
+                   minibatch_size=args.minibatch_size,
                    n_epochs=args.learning_epochs)
     print(f"결과 폴더: {run_dir}", flush=True)
     template = ParallelSumo(envs_per_worker, env_kwargs, run_dir / "parallel", hparams["seed"],
@@ -157,7 +163,7 @@ def main():
     if args.eval_interval:
         # Share the generated network files. The worker owns its own simulator.
         eval_env = deepcopy(template)
-        eval_env.seed += 1
+        eval_env.seed = (args.seed + 1) % 2**32
         if curriculum is not None:
             eval_env.fixed_traffic_vph = 800
     logger = RunLogger(run_dir)

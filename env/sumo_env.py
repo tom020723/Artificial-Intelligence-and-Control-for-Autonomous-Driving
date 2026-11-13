@@ -1180,12 +1180,13 @@ class SumoHighwayEnv(gym.Env):
                                   and self._lane_follows_route(self._api.vehicle.getLaneID(self.ego_id)))
         distance_before = (self._api.vehicle.getDistance(self.ego_id)
                            if signals_before else None)
+        edge_before = self._api.vehicle.getRoadID(self.ego_id)
         return (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before, speed_before,
-                signals_before, route_connected_before, distance_before)
+                signals_before, route_connected_before, distance_before, edge_before)
 
     def _finish_step(self, state, *, collided, arrived):
         (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before, speed_before,
-         signals_before, route_connected_before, distance_before) = state
+         signals_before, route_connected_before, distance_before, edge_before) = state
         self.step_count += 1
         alive = self._ego_is_present()
         lane_after = int(self._api.vehicle.getLaneIndex(self.ego_id)) if alive else None
@@ -1338,8 +1339,12 @@ class SumoHighwayEnv(gym.Env):
             "lane_change_raw": lane_raw,
             "lane_change": lane_change,
             "lane_change_applied": lane_change_applied,
+            "lane_change_rejected": lane_change != 0 and not lane_change_applied,
             "lane_before": lane_before,
             "lane_after": lane_after,
+            "edge_before": edge_before,
+            "route_connected_before": route_connected_before,
+            "distance_before_m": distance_before,
         }
         return obs, float(reward), terminated, truncated, info
 

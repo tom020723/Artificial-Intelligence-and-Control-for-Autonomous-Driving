@@ -37,7 +37,7 @@ python train_parallel.py --phase 2 --init-model results/parallel_1_YYYYMMDD_HHMM
 ```
 
 - **Phase 1:** ego 차량 단독으로 배경차량 없이 신호 작동 상황에서 학습
-- **Phase 2:** 환경마다 직전 episode의 완주 성공 여부로 조절되는 교통량 설정을 통해 최종 학습 *(아직 미구현)*
+- **Phase 2:** 환경마다 직전 episode의 완주 성공 여부로 조절되는 교통량 설정을 통해 최종 학습 *(커리큘럼 로직은 `env/parallel_traffic.py`의 `TrafficCurriculum`으로 구현됨, 학습·평가 성능은 아직 검증되지 않음)*
 
 | 옵션 | Phase 1 권장값 | Phase 1 예비 |
 |---|---:|---:|
@@ -74,9 +74,26 @@ python scripts/evaluate_quick.py results/<학습 결과 폴더>
 - 적신호 정차 시 전방 여유 거리의 경로별·전체 평균, 중앙값, Q1, Q3 및 표본 수
 
 
-### 정밀 평가
+### 별도 offset 및 랜덤 차선 진단
 
-*아직 미구현 - 랜덤 차선 출발 등 ...*
+development와 분리된 offset 집합은 다음처럼 평가한다.
+
+```bash
+python scripts/evaluate_quick.py results/<학습 결과 폴더> --offset-set separate
+```
+
+출발 차선 일반화 진단은 합격 기준과 별도로 수행한다.
+
+```bash
+python scripts/evaluate_quick.py results/<학습 결과 폴더> --randomize-departures
+```
+
+단일 에피소드의 신호·차선·보상 시계열은 다음처럼 저장할 수 있다.
+
+```bash
+python scripts/trace_evaluation.py results/<학습 결과 폴더> <route> <offset> \
+  --output results/<학습 결과 폴더>/analysis/traces/example.csv
+```
 
 
 ## 4. TODO
@@ -84,5 +101,5 @@ python scripts/evaluate_quick.py results/<학습 결과 폴더>
   - `--phase 2`에서 배경차량이 있는 것을 고려해서 정지선 멀리서 정차 + 앞차량과 너무 떨어져 정차 문제로 생각해주세요.
 - `--phase 1`에서 `--randomize-departures True`를 활성화해도 잘되도록
 - `--phase 1` 에피소드 시작 시 환경 설정 개선
-- `--phase 2` 구현
+- `--phase 2` 학습·평가 검증
 - 정밀평가 구현
