@@ -1,0 +1,170 @@
+[
+  {
+    "file": "case_00.csv",
+    "set": "quick",
+    "return_error": 9.356359242929102e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_01.csv",
+    "set": "quick",
+    "return_error": 3.478939643741796e-05,
+    "steps_match": true
+  },
+  {
+    "file": "case_02.csv",
+    "set": "quick",
+    "return_error": 5.552721621171486e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_03.csv",
+    "set": "quick",
+    "return_error": 1.1639218584491573e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_04.csv",
+    "set": "quick",
+    "return_error": 2.145008625831224e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_05.csv",
+    "set": "quick",
+    "return_error": 3.3301198953950006e-07,
+    "steps_match": true
+  },
+  {
+    "file": "case_06.csv",
+    "set": "quick",
+    "return_error": 1.183348921074412e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_07.csv",
+    "set": "quick",
+    "return_error": 9.87560823517697e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_08.csv",
+    "set": "quick",
+    "return_error": 7.36341304019561e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_09.csv",
+    "set": "quick",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_10.csv",
+    "set": "quick",
+    "return_error": 1.1586216430714558e-09,
+    "steps_match": true
+  },
+  {
+    "file": "case_11.csv",
+    "set": "quick",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_12.csv",
+    "set": "quick",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_13.csv",
+    "set": "quick",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_14.csv",
+    "set": "quick",
+    "return_error": 2.197060128139583e-05,
+    "steps_match": true
+  },
+  {
+    "file": "case_15.csv",
+    "set": "quick_holdout",
+    "return_error": 2.0260736803834334e-05,
+    "steps_match": true
+  },
+  {
+    "file": "case_16.csv",
+    "set": "quick_holdout",
+    "return_error": 5.546275367862563e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_17.csv",
+    "set": "quick_holdout",
+    "return_error": 2.941346186702276e-05,
+    "steps_match": true
+  },
+  {
+    "file": "case_18.csv",
+    "set": "quick_holdout",
+    "return_error": 4.03674429350076e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_19.csv",
+    "set": "quick_holdout",
+    "return_error": 4.191283025534176e-06,
+    "steps_match": true
+  },
+  {
+    "file": "case_20.csv",
+    "set": "quick_holdout",
+    "return_error": 1.2338270551026653e-05,
+    "steps_match": true
+  },
+  {
+    "file": "case_21.csv",
+    "set": "quick_holdout",
+    "return_error": 1.0934210536106548e-05,
+    "steps_match": true
+  },
+  {
+    "file": "case_22.csv",
+    "set": "quick_holdout",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_23.csv",
+    "set": "quick_holdout",
+    "return_error": 1.1586216430714558e-09,
+    "steps_match": true
+  },
+  {
+    "file": "case_24.csv",
+    "set": "quick_holdout",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_25.csv",
+    "set": "quick_holdout",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_26.csv",
+    "set": "quick_holdout",
+    "return_error": 0.0,
+    "steps_match": true
+  },
+  {
+    "file": "case_27.csv",
+    "set": "quick_holdout",
+    "return_error": 2.1524090335844903e-05,
+    "steps_match": true
+  }
+]
