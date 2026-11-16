@@ -31,11 +31,28 @@ from utils.evaluator import evaluate_parallel_routes
 
 
 # 1.0, 3.5, ..., 123.5 s: samples green, yellow and all-red for every approach.
-TICKS = tuple(range(2, 250, 5))
 STEP = 0.5
+# Each offset set has 50 ticks (0.5 s steps). development and holdout share the
+# same (route, offset-order) departure-lane seed so the same start lane is used
+# across the two sets and across models.
+OFFSET_SETS = {
+    "development": tuple(range(2, 250, 5)),   # 1.0, 3.5, ..., 123.5 s
+    "holdout": tuple(range(4, 250, 5)),       # 2.0, 4.5, ..., 124.5 s
+}
+# Fixed evaluation seed, independent of the training seed, so all models are
+# evaluated against the same departure lanes.
+EVAL_SEED = 0
 
 
-def _evaluate_worker(model, config, work, saved, vph, cases, depart_lane=None):
+def _departure_seed(route_index, tick, offset_set):
+    """Episode seed keyed by (eval seed, route index, offset order), not the tick
+    value, so development and holdout share the same start lane per route."""
+    return np.random.SeedSequence([EVAL_SEED, route_index,
+                                   OFFSET_SETS[offset_set].index(int(tick))])
+
+
+def _evaluate_worker(model, config, work, saved, vph, cases, depart_lane=None,
+                     offset_set="development"):
     import torch
 
     torch.set_num_threads(1)
@@ -65,7 +82,7 @@ def _evaluate_worker(model, config, work, saved, vph, cases, depart_lane=None):
     rows = evaluate_parallel_routes(
         agent.policy, env, agent.device, [route for _, route, _ in cases],
         signal_ticks=[tick for _, _, tick in cases],
-        replica_seeds=[np.random.SeedSequence([0, route_index, tick])
+        replica_seeds=[_departure_seed(route_index, tick, offset_set)
                        for route_index, _, tick in cases])
     return [{"route": route, **row} for (_, route, _), row in zip(cases, rows, strict=True)]
 
@@ -127,7 +144,7 @@ def _plot_clearances(table, distribution, routes, summary):
     ], ncol=2, fontsize=8, loc="upper center", bbox_to_anchor=(.5, -.10), frameon=False)
 
 
-def _plot(run, out, routes, rows, summary):
+def _plot(run, out, routes, rows, summary, ticks):
     fig = plt.figure(figsize=(23, 16), layout="constrained")
     grid = fig.add_gridspec(4, 2, height_ratios=(1, 1, 1, 3.3))
     _plot_training_panels(fig, grid, run)
@@ -148,24 +165,24 @@ def _plot(run, out, routes, rows, summary):
         rates.barh(y, values, left=left, height=.72, color=color)
         left += values
     for i, route in enumerate(routes):
-        rates.text(len(TICKS) + 1, i, f"{counts[route]['arrival']}/{len(TICKS)}",
+        rates.text(len(ticks) + 1, i, f"{counts[route]['arrival']}/{len(ticks)}",
                    ha="left", va="center", fontsize=8)
-    rates.set(xlim=(0, len(TICKS) + 10), title="Final outcomes by route",
+    rates.set(xlim=(0, len(ticks) + 10), title="Final outcomes by route",
               xlabel="Episodes (one per signal offset)")
-    rates.set_xticks(range(0, len(TICKS) + 1, 10))
+    rates.set_xticks(range(0, len(ticks) + 1, 10))
     rates.set_yticks(np.arange(len(routes) + 1), [*labels, "All routes"], fontsize=8)
     rates.grid(axis="x", alpha=.2)
     rates.set_axisbelow(True)
 
     codes = {key: i for i, key in enumerate(OUTCOMES)}
     index = {(row["route"], row["signal_offset_s"]): codes[row["status"]] for row in rows}
-    matrix = [[index[route, tick * STEP] for tick in TICKS] for route in routes]
+    matrix = [[index[route, tick * STEP] for tick in ticks] for route in routes]
     colors = [item[2] for item in OUTCOMES.values()]
-    spacing = (TICKS[1] - TICKS[0]) * STEP
+    spacing = (ticks[1] - ticks[0]) * STEP
     offsets.imshow(matrix, cmap=ListedColormap(colors),
                    norm=BoundaryNorm(np.arange(len(colors) + 1) - .5, len(colors)),
                    interpolation="nearest", aspect="auto",
-                   extent=(TICKS[0] * STEP - spacing / 2, TICKS[-1] * STEP + spacing / 2,
+                   extent=(ticks[0] * STEP - spacing / 2, ticks[-1] * STEP + spacing / 2,
                            len(routes) - .5, -.5))
     offsets.set(xlim=(0, 125), ylim=(len(routes) + .5, -.5),
                 title="Final outcome by route and signal start",
@@ -195,6 +212,8 @@ def main():
     parser.add_argument("--traffic-vph", type=int, help="배경 교통이 있는 모델의 고정 중앙 투입량")
     parser.add_argument("--a2-ring-lane-sweep", action="store_true",
                         help="A2→A4 Ring 출발 차선별로 신호 시작 시점 50개를 추가 평가")
+    parser.add_argument("--offset-set", choices=tuple(OFFSET_SETS), default="development",
+                        help="평가할 신호 시작 시점 세트 (기본 development)")
     args = parser.parse_args()
     run = args.run.resolve()
     if run.is_file() and run.name == "model.pt":
@@ -202,8 +221,9 @@ def main():
     model = run / "model.pt"
     if not model.is_file():
         parser.error(f"모델을 찾을 수 없습니다: {model}")
-    if not 1 <= args.num_workers <= len(TICKS):
-        parser.error(f"--num-workers는 1~{len(TICKS)} 사이여야 합니다.")
+    ticks = OFFSET_SETS[args.offset_set]
+    if not 1 <= args.num_workers <= len(ticks):
+        parser.error(f"--num-workers는 1~{len(ticks)} 사이여야 합니다.")
     road, _, _ = load_saved_configs(str(model))
     if road["NOHYEONG"]["all_signals_green"]:
         parser.error("빠른 신호 평가에는 신호가 작동하는 모델 설정이 필요합니다.")
@@ -225,20 +245,25 @@ def main():
         if (len(non_ring_routes), len(ring_routes)) != (18, 5):
             parser.error("평가에는 Ring 미경유 18개와 Ring 경유 5개의 고유 경로가 필요합니다.")
         routes = non_ring_routes + ring_routes
-        chunks = np.array_split(TICKS, args.num_workers)
+        chunks = np.array_split(ticks, args.num_workers)
         with ProcessPoolExecutor(max_workers=args.num_workers, mp_context=get_context("spawn")) as pool:
             jobs = [pool.submit(_evaluate_worker, model, config, root / f"worker_{i}", saved, vph,
-                                [(j, route, int(tick)) for j, route in enumerate(routes) for tick in chunk])
+                                [(j, route, int(tick)) for j, route in enumerate(routes) for tick in chunk],
+                                None, args.offset_set)
                     for i, chunk in enumerate(chunks)]
             rows = [row for job in jobs for row in job.result()]
             if args.a2_ring_lane_sweep:
                 route = "ego_r_RING_A2_A4_A2_A4"
-                cases = [(routes.index(route), route, tick) for tick in TICKS]
+                cases = [(routes.index(route), route, tick) for tick in ticks]
                 lane_jobs = [pool.submit(_evaluate_worker, model, config, root / f"lane_{lane}",
-                                         saved, vph, cases, lane) for lane in range(4)]
+                                         saved, vph, cases, lane, args.offset_set)
+                             for lane in range(4)]
                 lane_rows = [row for job in lane_jobs for row in job.result()]
     rows.sort(key=lambda row: (row["route"], row["signal_offset_s"]))
-    out = run / "analysis" / ("quick" if args.traffic_vph is None else f"quick_traffic_{vph}")
+    base = "quick" if args.offset_set == "development" else f"quick_{args.offset_set}"
+    if args.traffic_vph is not None:
+        base += f"_traffic_{vph}"
+    out = run / "analysis" / base
     out.mkdir(parents=True, exist_ok=True)
     with (out / "route_evaluation.csv").open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=list(rows[0]))
@@ -263,11 +288,12 @@ def main():
     summary = {
         "model_sha256": hashlib.sha256(model.read_bytes()).hexdigest(),
         "phase": saved.get("phase"),
+        "offset_set": args.offset_set,
         "num_workers": args.num_workers,
         "traffic_vph": vph,
         "deterministic": True,
         "randomize_departures": saved.get("randomize_departures", False),
-        "signal_offsets_s": [tick * STEP for tick in TICKS],
+        "signal_offsets_s": [tick * STEP for tick in ticks],
         "red_wait_definition": "Last measurable stop per episode with speed <= 0.5 m/s "
                                "and nearest observed signal red; nearest stop line or stopped leader.",
         "first_signal_stop_definition": "First measurable stop per episode with speed <= 0.5 m/s "
@@ -284,11 +310,24 @@ def main():
             str(lane): summarize([row for row in lane_rows if row["start_lane"] == lane])
             for lane in range(4)
         }
-    _plot(run, out, routes, rows, summary)
+    _plot(run, out, routes, rows, summary, ticks)
     summary["elapsed_seconds"] = round(perf_counter() - start, 2)
     (out / "evaluation_summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     arrived = summary["all"]["statuses"].get("arrival", 0)
+    _check_integrity(rows, routes, ticks)
     print(f"완주 {arrived}/{len(rows)} | {summary['elapsed_seconds']}초 | {out / 'learning_curve.png'}")
+
+
+def _check_integrity(rows, routes, ticks):
+    """Verify exactly one (route, offset) combination per route and offset set."""
+    expected = {(route, tick * STEP) for route in routes for tick in ticks}
+    observed = {(row["route"], row["signal_offset_s"]) for row in rows}
+    if len(rows) != len(expected):
+        raise RuntimeError(f"행 수 불일치: {len(rows)} != 기대 {len(expected)}")
+    missing = expected - observed
+    duplicated = len(rows) != len(observed)
+    if missing or duplicated:
+        raise RuntimeError(f"무결성 실패: 누락 {len(missing)}개, 중복 {duplicated}")
 
 
 if __name__ == "__main__":
