@@ -1,0 +1,65 @@
+{
+  "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving/results/parallel_1_20261110_194551_441463/model.pt",
+  "model_sha256": "20d1ddf9942b67550d2345aeaf75104504216fc87716b89cc81b2c7f34869aa4",
+  "observation_dim": 49,
+  "deterministic": true,
+  "all_green": true,
+  "background": false,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "groups": {
+    "all": {
+      "episodes": 135,
+      "statuses": {
+        "arrival": 135
+      },
+      "success_rate": 1.0,
+      "collision_rate": 0.0,
+      "wrong_lane_rate": 0.0,
+      "timeout_rate": 0.0,
+      "red_light_violation_rate": 0.0,
+      "ep_return": 16.81797292353107,
+      "lane_changes": 1.2222222222222223,
+      "mean_speed": 13.835731513390833,
+      "ep_length": 83.07407407407408,
+      "green_passes": 0.6666666666666666
+    },
+    "direct_od": {
+      "episodes": 110,
+      "statuses": {
+        "arrival": 110
+      },
+      "success_rate": 1.0,
+      "collision_rate": 0.0,
+      "wrong_lane_rate": 0.0,
+      "timeout_rate": 0.0,
+      "red_light_violation_rate": 0.0,
+      "ep_return": 18.469038486097414,
+      "lane_changes": 1.0909090909090908,
+      "mean_speed": 13.85117086746295,
+      "ep_length": 84.31818181818181,
+      "green_passes": 0.8181818181818182
+    },
+    "explicit_ring": {
+      "episodes": 25,
+      "statuses": {
+        "arrival": 25
+      },
+      "success_rate": 1.0,
+      "collision_rate": 0.0,
+      "wrong_lane_rate": 0.0,
+      "timeout_rate": 0.0,
+      "red_light_violation_rate": 0.0,
+      "ep_return": 9.553284448239156,
+      "lane_changes": 1.8,
+      "mean_speed": 13.76779835547351,
+      "ep_length": 77.6,
+      "green_passes": 0.0
+    }
+  }
+}

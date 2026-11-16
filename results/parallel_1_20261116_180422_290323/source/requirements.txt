@@ -1,0 +1,7 @@
+numpy
+torch
+gymnasium
+traci
+sumolib
+tensorboard
+matplotlib

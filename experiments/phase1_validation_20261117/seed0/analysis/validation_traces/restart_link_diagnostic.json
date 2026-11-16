@@ -1,0 +1,2999 @@
+[
+  {
+    "step": 0,
+    "time_after_s": 0.5,
+    "speed": 12.436106359958648,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 1,
+    "time_after_s": 1.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 2,
+    "time_after_s": 1.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 3,
+    "time_after_s": 2.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 4,
+    "time_after_s": 2.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 5,
+    "time_after_s": 3.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 6,
+    "time_after_s": 3.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 7,
+    "time_after_s": 4.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 8,
+    "time_after_s": 4.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 9,
+    "time_after_s": 5.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 10,
+    "time_after_s": 5.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 11,
+    "time_after_s": 6.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 12,
+    "time_after_s": 6.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 13,
+    "time_after_s": 7.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 14,
+    "time_after_s": 7.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 15,
+    "time_after_s": 8.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 16,
+    "time_after_s": 8.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 17,
+    "time_after_s": 9.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 18,
+    "time_after_s": 9.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 19,
+    "time_after_s": 10.0,
+    "speed": 13.89,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 97.07694682002074,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 20,
+    "time_after_s": 10.5,
+    "speed": 13.89,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 90.13194682002074,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 21,
+    "time_after_s": 11.0,
+    "speed": 13.89,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 83.18694682002075,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 22,
+    "time_after_s": 11.5,
+    "speed": 13.89,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 76.24194682002074,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 23,
+    "time_after_s": 12.0,
+    "speed": 13.531326507925987,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 69.47628356605776,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 24,
+    "time_after_s": 12.5,
+    "speed": 12.96600223571062,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 62.99328244820245,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 25,
+    "time_after_s": 13.0,
+    "speed": 12.289180881679057,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 56.84869200736292,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 26,
+    "time_after_s": 13.5,
+    "speed": 11.523337600529192,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 51.087023207098326,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 27,
+    "time_after_s": 14.0,
+    "speed": 10.686246345341203,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 45.743900034427725,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 28,
+    "time_after_s": 14.5,
+    "speed": 9.79594974607229,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 40.84592516139158,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 29,
+    "time_after_s": 15.0,
+    "speed": 8.872821781933306,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 36.40951427042492,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 1
+  },
+  {
+    "step": 30,
+    "time_after_s": 15.5,
+    "speed": 9.613519353568552,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 31.602754593640647,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 31,
+    "time_after_s": 16.0,
+    "speed": 10.068843297064303,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 26.568332945108494,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 2
+  },
+  {
+    "step": 32,
+    "time_after_s": 16.5,
+    "speed": 9.023083449304103,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 22.056791220456443,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 2
+  },
+  {
+    "step": 33,
+    "time_after_s": 17.0,
+    "speed": 7.9252267608046525,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 18.094177840054115,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 1
+  },
+  {
+    "step": 34,
+    "time_after_s": 17.5,
+    "speed": 6.728800902664661,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "r",
+        "distance": 14.729777388721786,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 2
+  },
+  {
+    "step": 35,
+    "time_after_s": 18.0,
+    "speed": 5.719013581573963,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 11.870270597934805,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 2,
+    "lane_after": 1
+  },
+  {
+    "step": 36,
+    "time_after_s": 18.5,
+    "speed": 4.632614002525806,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 9.553963596671903,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 37,
+    "time_after_s": 19.0,
+    "speed": 3.690674392282962,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 7.70862640053042,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 38,
+    "time_after_s": 19.5,
+    "speed": 2.9006175228953355,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 6.258317639082751,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 39,
+    "time_after_s": 20.0,
+    "speed": 2.2920732074975962,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 5.112281035333954,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 40,
+    "time_after_s": 20.5,
+    "speed": 1.814818061292171,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 4.204872004687868,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 41,
+    "time_after_s": 21.0,
+    "speed": 1.3684501343965525,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 3.520646937489591,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 42,
+    "time_after_s": 21.5,
+    "speed": 0.9482542642951006,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 3.04651980534204,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 43,
+    "time_after_s": 22.0,
+    "speed": 0.5563906887173646,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.768324460983358,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 44,
+    "time_after_s": 22.5,
+    "speed": 0.2034869500994676,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 45,
+    "time_after_s": 23.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 46,
+    "time_after_s": 23.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 47,
+    "time_after_s": 24.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 48,
+    "time_after_s": 24.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 49,
+    "time_after_s": 25.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 50,
+    "time_after_s": 25.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 51,
+    "time_after_s": 26.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 52,
+    "time_after_s": 26.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 53,
+    "time_after_s": 27.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 54,
+    "time_after_s": 27.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 55,
+    "time_after_s": 28.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 56,
+    "time_after_s": 28.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 57,
+    "time_after_s": 29.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 58,
+    "time_after_s": 29.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 59,
+    "time_after_s": 30.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 60,
+    "time_after_s": 30.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 61,
+    "time_after_s": 31.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 62,
+    "time_after_s": 31.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 63,
+    "time_after_s": 32.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 64,
+    "time_after_s": 32.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 65,
+    "time_after_s": 33.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 66,
+    "time_after_s": 33.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 67,
+    "time_after_s": 34.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 68,
+    "time_after_s": 34.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 69,
+    "time_after_s": 35.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 70,
+    "time_after_s": 35.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 71,
+    "time_after_s": 36.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 72,
+    "time_after_s": 36.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 73,
+    "time_after_s": 37.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 74,
+    "time_after_s": 37.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 75,
+    "time_after_s": 38.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 76,
+    "time_after_s": 38.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 77,
+    "time_after_s": 39.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 78,
+    "time_after_s": 39.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 79,
+    "time_after_s": 40.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 80,
+    "time_after_s": 40.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 81,
+    "time_after_s": 41.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 82,
+    "time_after_s": 41.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 83,
+    "time_after_s": 42.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 84,
+    "time_after_s": 42.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 85,
+    "time_after_s": 43.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 86,
+    "time_after_s": 43.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 87,
+    "time_after_s": 44.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 88,
+    "time_after_s": 44.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 89,
+    "time_after_s": 45.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 90,
+    "time_after_s": 45.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 91,
+    "time_after_s": 46.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 92,
+    "time_after_s": 46.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 93,
+    "time_after_s": 47.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 94,
+    "time_after_s": 47.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 95,
+    "time_after_s": 48.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 96,
+    "time_after_s": 48.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 97,
+    "time_after_s": 49.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 98,
+    "time_after_s": 49.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 99,
+    "time_after_s": 50.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 100,
+    "time_after_s": 50.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 101,
+    "time_after_s": 51.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 102,
+    "time_after_s": 51.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 103,
+    "time_after_s": 52.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 104,
+    "time_after_s": 52.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 105,
+    "time_after_s": 53.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 106,
+    "time_after_s": 53.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 107,
+    "time_after_s": 54.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 108,
+    "time_after_s": 54.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 109,
+    "time_after_s": 55.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 110,
+    "time_after_s": 55.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 111,
+    "time_after_s": 56.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 112,
+    "time_after_s": 56.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 113,
+    "time_after_s": 57.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 114,
+    "time_after_s": 57.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 115,
+    "time_after_s": 58.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 116,
+    "time_after_s": 58.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 117,
+    "time_after_s": 59.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 118,
+    "time_after_s": 59.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 119,
+    "time_after_s": 60.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 120,
+    "time_after_s": 60.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 121,
+    "time_after_s": 61.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 122,
+    "time_after_s": 61.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 123,
+    "time_after_s": 62.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 124,
+    "time_after_s": 62.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 125,
+    "time_after_s": 63.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 126,
+    "time_after_s": 63.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 127,
+    "time_after_s": 64.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 128,
+    "time_after_s": 64.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 129,
+    "time_after_s": 65.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 130,
+    "time_after_s": 65.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 131,
+    "time_after_s": 66.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 132,
+    "time_after_s": 66.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 133,
+    "time_after_s": 67.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 134,
+    "time_after_s": 67.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 135,
+    "time_after_s": 68.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 136,
+    "time_after_s": 68.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 137,
+    "time_after_s": 69.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 138,
+    "time_after_s": 69.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 139,
+    "time_after_s": 70.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 140,
+    "time_after_s": 70.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 141,
+    "time_after_s": 71.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 142,
+    "time_after_s": 71.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 143,
+    "time_after_s": 72.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 144,
+    "time_after_s": 72.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 145,
+    "time_after_s": 73.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 146,
+    "time_after_s": 73.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 147,
+    "time_after_s": 74.0,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "r",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 148,
+    "time_after_s": 74.5,
+    "speed": 0.0,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 25,
+        "state": "G",
+        "distance": 2.6665809859336242,
+        "lane_id": "r0_A4_in_1",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 149,
+    "time_after_s": 75.0,
+    "speed": 2.457645571231842,
+    "observed_signals": [
+      {
+        "tls_id": "r0_nC",
+        "link_index": 26,
+        "state": "G",
+        "distance": 1.4377582003177025,
+        "lane_id": "r0_A4_in_2",
+        "lane_position": 29.02
+      }
+    ],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 2
+  },
+  {
+    "step": 150,
+    "time_after_s": 75.5,
+    "speed": 4.93411477804184,
+    "observed_signals": [],
+    "green_pass_count": 1,
+    "lane_before": 2,
+    "lane_after": 1
+  },
+  {
+    "step": 151,
+    "time_after_s": 76.0,
+    "speed": 7.496264630556107,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 152,
+    "time_after_s": 76.5,
+    "speed": 10.027357882261278,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 153,
+    "time_after_s": 77.0,
+    "speed": 12.522413510084153,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 154,
+    "time_after_s": 77.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 155,
+    "time_after_s": 78.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 156,
+    "time_after_s": 78.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 157,
+    "time_after_s": 79.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 158,
+    "time_after_s": 79.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 159,
+    "time_after_s": 80.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 160,
+    "time_after_s": 80.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 161,
+    "time_after_s": 81.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 162,
+    "time_after_s": 81.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 1
+  },
+  {
+    "step": 163,
+    "time_after_s": 82.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 1,
+    "lane_after": 0
+  },
+  {
+    "step": 164,
+    "time_after_s": 82.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 165,
+    "time_after_s": 83.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 166,
+    "time_after_s": 83.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 167,
+    "time_after_s": 84.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 168,
+    "time_after_s": 84.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 169,
+    "time_after_s": 85.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 170,
+    "time_after_s": 85.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 171,
+    "time_after_s": 86.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 172,
+    "time_after_s": 86.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 173,
+    "time_after_s": 87.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 174,
+    "time_after_s": 87.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 175,
+    "time_after_s": 88.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 176,
+    "time_after_s": 88.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 177,
+    "time_after_s": 89.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 178,
+    "time_after_s": 89.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 179,
+    "time_after_s": 90.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 180,
+    "time_after_s": 90.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 181,
+    "time_after_s": 91.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 182,
+    "time_after_s": 91.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 183,
+    "time_after_s": 92.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 184,
+    "time_after_s": 92.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 185,
+    "time_after_s": 93.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 186,
+    "time_after_s": 93.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 187,
+    "time_after_s": 94.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 188,
+    "time_after_s": 94.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 189,
+    "time_after_s": 95.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 190,
+    "time_after_s": 95.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 191,
+    "time_after_s": 96.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 192,
+    "time_after_s": 96.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 193,
+    "time_after_s": 97.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 194,
+    "time_after_s": 97.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 195,
+    "time_after_s": 98.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 196,
+    "time_after_s": 98.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 197,
+    "time_after_s": 99.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 198,
+    "time_after_s": 99.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 199,
+    "time_after_s": 100.0,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 200,
+    "time_after_s": 100.5,
+    "speed": 13.89,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": 0
+  },
+  {
+    "step": 201,
+    "time_after_s": 101.0,
+    "speed": null,
+    "observed_signals": [],
+    "green_pass_count": 0,
+    "lane_before": 0,
+    "lane_after": null
+  }
+]

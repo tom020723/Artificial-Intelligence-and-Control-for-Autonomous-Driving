@@ -14,6 +14,10 @@ road_builder.py가 SUMO 도로 파일(.net.xml 등)을 자동으로 다시 만�
 #    현재는 "직선 편도 도로" 하나만 생성한다.
 #    (교차로, 합류부 등 복잡한 도로는 road_builder.py를 확장해야 함)
 # ──────────────────────────────────────────────────────────────
+ROUTE_ONLY_EXPERIMENT = True  # Phase 1: 전체 녹색, 배경 차량 OFF
+
+SIGNAL_EXPERIMENT = True  # 신호 관측 유지, 배경 차량 OFF (둘 다 False면 기본 환경)
+
 ROAD = {
     # ── 도로 종류 ──
     #   "straight" : 교수님 기본 예제(직선 편도 고속도로). 아래 length/num_lanes 사용.
@@ -78,33 +82,43 @@ NOHYEONG = {
     # SUMO lane index 0 = rightmost; A1 road lane 1 = index 3.
     # Each tuple is (destination arm, destination lane index).
     "central_lane_movements": {
-        "A1": {0: [("A2", 0)], 1: [("A2", 1)], 2: [("A2", 2)],
-               3: [("A4", 1)], 4: [("A1", 0)]},          # 8시 방향: 직진 3, 좌회전 1, 가장 왼쪽은 유턴 전용
-        "A2": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A1", 2)],
-               3: [("A3", 3)]},
+        "A1": {0: [("A3", 0)],
+               1: [("A2", 0), ("A5", 1)],
+               2: [("A2", 1), ("A5", 2)],
+               3: [("A2", 2), ("A5", 2)],
+               4: [("A4", 1), ("A1", 0)]},  # 0번 A3, 1~3번 A2/A5, 4번 좌회전·유턴
+        "A2": {1: [("A1", 0)], 2: [("A1", 1)], 3: [("A1", 2)],
+               4: [("A3", 3)]},  # 0번은 nC에서 RING_A2_A4로 비신호 진출
         "A3": {0: [("A5", 0)], 1: [("A2", 0)],
-               2: [("A4", 0), ("A2", 1)], 3: [("A4", 1)],
-               4: [("A1", 2)]},
+               2: [("A4", 0), ("A2", 2)], 3: [("A4", 1)],
+               4: [("A1", 2), ("A3", 0)]},
         "A4": {0: [("A3", 0)], 1: [("A5", 0), ("A3", 1)],
-               2: [("A2", 3), ("A5", 1)]},
+               2: [("A2", 2), ("A5", 1)]},
         "A5": {0: [("A1", 0)], 1: [("A1", 1)], 2: [("A3", 3)]},
     },
-    "upstream_uturns": {"A3": {"radius": 48.0, "from_lane": 4, "to_lane": 0}},
+    # A2_in1_3 / A5_in1_2에서 유턴. 각 접근로의 중앙 신호와 동일한 현시 사용.
+    # A2의 100m 분기점은 split_radius_overrides에서 76m를 이동한 위치다.
+    "upstream_uturns": {
+        "A2": {"radius": 100.0, "from_lane": 3, "to_lane": 0, "signal_control": "central"},
+        "A5": {"radius": 90.0, "from_lane": 2, "to_lane": 0, "signal_control": "central"},
+    },
     # Segment indices run from the central junction outward.
     #   8시 방향(A1): 교차로로 들어오는 쪽 5차선 (나가는 쪽 3차선은 아래 도로 목록의 lanes)
-    "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 4, 1: 5, 2: 4}, "A3": {0: 5, 1: 5, 2: 4}},
+    "inbound_lanes": {"A1": {0: 5, 1: 5, 2: 5}, "A2": {0: 5, 1: 4}, "A3": {0: 5, 1: 4}},
     # 나가는 방향 차선 수 (구간 번호 k: 0 = 교차로에 붙은 구간). 없으면 도로 기본 차선 수.
     #   월랑로(A4): 교차로~첫 갈림점은 2차선, 그 바깥은 3차선. 늘어난 가장 바깥 차선(0번)은
     #   노형로 북동쪽에서 오는 우회전 길이 이어받는다 (실제 도로처럼 차선이 하나 늘어나는 합류).
-    "outbound_lanes": {"A4": {0: 2}},
-    "outbound_lane_links": {"A4": {0: [(0, 1), (1, 2)]}},   # (교차로 쪽 차선, 바깥 구간 차선)
+    "outbound_lanes": {"A2": {0: 3, 1: 3}, "A4": {0: 2}},
+    "outbound_lane_links": {"A2": {0: [(0, 0), (1, 1), (2, 2)]},
+                            "A4": {0: [(0, 1), (1, 2)]}},
     "inbound_lane_links": {"A2": {
-        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
-        1: [(1, 0), (2, 1), (3, 2), (4, 3)],
+        1: [(0, 0), (0, 1), (1, 2), (2, 3), (3, 4)],
     }, "A3": {
-        2: [(0, 1), (1, 2), (2, 3), (3, 4)],
-        1: [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)],
+        1: [(0, 1), (1, 2), (2, 3), (3, 4)],
     }},
+    "split_node_ids": {"A2": {100.0: "nM_A2"}},
+    "central_extensions": {"A2": 65.0},  # nC 영역이 삭제한 A2 분기점까지 포함하도록 확장
+    "no_lane_change_edges": [],  # A2_in/A2_out 점선: 차선 변경 허용 실험
     "crosswalk_width": 4.0,    # 횡단보도 폭 (m)
 
     # 다섯 도로 (A1~A5)
@@ -138,40 +152,35 @@ NOHYEONG = {
     },
     "ring_segments": [
         # ── 우회전 전용 길 (2차선) ──
-        {"id": "RING_A2_A4", "from": "A2", "from_r": 46, "to": "A4", "to_r": 60, "lanes": 1, "vph": 60,
+        {"id": "RING_A2_A4", "from": "A2", "from_r": 46, "from_center": True,
+         "to": "A4", "to_r": 60, "lanes": 1, "vph": 60,
          "via": [(32.4, 33.1), (29.9, 31.9), (26.6, 30.4), (22.2, 28.9), (17.7, 27.4), (13.4, 26.1), (8.8, 24.9), (4.3, 24.0), (-0.5, 23.7), (-4.2, 23.7), (-8.1, 24.3), (-25.0, 30.6), (-31.5, 37.1), (-36.1, 42.9)]},   # 북쪽 녹지와 가운데 교차로 사이 → 월랑로 나가는 방향의 새 바깥 차선 자리를 따라 합류
         {"id": "RING_A4_A1", "from": "A4", "from_r": 60, "to": "A1", "to_r": 69, "lanes": 1, "vph": 40,
          "via": [(-44, 24), (-44, 4), (-47, -14), (-54, -27)]},                        # 서쪽 녹지 안쪽
-        {"id": "RING_A1_A3", "from": "A1", "from_r": 89, "to": "A3", "to_r": 77, "vph": 80,
+        {"id": "RING_A1_A3", "from": "A1", "from_r": 89, "to": "A3", "to_r": 77, "right_exit_only": True, "vph": 80,
          "via": [(-70, -56), (-58, -68), (-42, -78), (-22, -84), (-3, -84), (12, -80)]}, # 남쪽 녹지 바깥 (아래쪽 원형도로)
-        {"id": "RING_A3_A5", "from": "A3", "from_r": 77, "to": "A5", "to_r": 90, "vph": 80,
+        {"id": "RING_A3_A5", "from": "A3", "from_r": 77, "to": "A5", "to_r": 90, "right_exit_only": True, "vph": 80,
          "via": [(40, -75), (58, -68), (73, -57), (83, -43), (89, -27), (91, -8)]},    # 동남 녹지 바깥 (아래쪽 원형도로)
         {"id": "RING_A5_A2", "from": "A5", "from_r": 90, "to": "A2", "to_r": 76,
-         "lanes": 1, "right_exit_only": True, "vph": 60,
+         "lanes": 1, "target_lanes": [0], "right_exit_only": True, "vph": 60,
          "via": [(83, 21), (76, 29), (70, 35)]},                                        # 삼각 섬 바깥
-        # ── 주차장 길 (위쪽 원형도로, 1차선) ──
-        {"id": "OUTER_N", "from": "A2", "from_r": 76, "to": "A4", "to_r": 72, "lanes": 2, "vph": 60,
+        # ── 주차장: 형상은 남기고 모든 차량의 통행 및 진출입 연결을 차단 ──
+        {"id": "OUTER_N", "from": "A2", "from_r": 76, "to": "A4", "to_r": 72, "lanes": 2, "closed": True, "vph": 0,
          "via": [(52, 56), (38, 68), (20, 78), (0, 83), (-20, 82), (-36, 74), (-47, 62)]},   # 북쪽 녹지 바깥
-        {"id": "OUTER_W", "from": "A4", "from_r": 72, "to": "A1", "to_r": 89, "lanes": 2, "vph": 40,
+        {"id": "OUTER_W", "from": "A4", "from_r": 72, "to": "A1", "to_r": 89, "lanes": 2, "closed": True, "vph": 0,
          "via": [(-66, 46), (-80, 36), (-90, 18), (-93, -2), (-90, -22), (-84, -38)]},      # 서쪽 녹지 바깥
     ],
 
-    # 원형도로를 여러 개 이어서 지나가는 일반 차량 (출발 도로 → 지나갈 원형도로들 → 도착 도로)
-    #   일반 차량은 보통 "가장 빠른 길"로만 다녀서, 돌아가는 길인 원형도로는 잘 안 탄다.
-    #   그래서 원형도로에도 차가 다니도록 이렇게 직접 지정한다.
-    #   via 에는 위 원형도로의 id 를 지나갈 순서대로 적는다. vph = 시간당 대수.
-    "loop_routes": [
-        {"from": "A2", "to": "A1", "via": ["OUTER_N", "OUTER_W"], "vph": 40},                 # 위쪽 원형도로 전체
-        {"from": "A2", "to": "A3", "via": ["OUTER_N", "OUTER_W", "RING_A1_A3"], "vph": 30},   # 위쪽 → 아래쪽
-        {"from": "A1", "to": "A5", "via": ["RING_A1_A3", "RING_A3_A5"], "vph": 40},           # 아래쪽 원형도로 전체
-    ],
+    # 주차장 경유 및 우회전 도로 사이 직진을 요구하던 기존 순환 경로는 사용하지 않는다.
+    "loop_routes": [],
 
     # Visual crossings anchored to actual road lanes, not island coordinates.
     # center: at the central junction mouth; behind_block: outside last split.
     "crosswalks": {"A1": "center", "A2": {"segment": 1}, "A3": "center",
                    "A4": "center", "A5": {"segment": 0}},
-    # Move the physical red-light waiting position upstream of the zebra.
-    "stop_offsets": {"A1": 8.0, "A3": 8.0, "A4": 8.0},
+    # End incoming lanes before the zebra; the lane end is the signal stop line.
+    "stop_offsets": {},
+    "inbound_end_offsets": {"A1": 8.0, "A3": 8.0, "A4": 8.0},
     "crosswalk_block_offset": 6.0,  # last split boundary -> crossing edge (m)
     "ring_crosswalks": False,  # avoid duplicated stripes at every split node
 
@@ -347,4 +356,43 @@ TRAFFIC = {
         "lane_spacing_factor": [0.85, 1.0, 1.35],
     },
 }
+
+_CENTRAL_BACKGROUND_VPH = TRAFFIC["vehs_per_hour"]
+_RING_BACKGROUND_VPH = tuple(
+    demand["vph"] for demand in NOHYEONG["ring_segments"] + NOHYEONG["loop_routes"]
+)
+
+
+def _configure_no_traffic(all_green):
+    NOHYEONG["all_signals_green"] = all_green
+    NOHYEONG["warmup_seconds"] = 0
+    TRAFFIC["background_enabled"] = False
+    TRAFFIC["vehs_per_hour"] = 0
+    TRAFFIC["prefill"]["enabled"] = False
+    for demand in NOHYEONG["ring_segments"] + NOHYEONG["loop_routes"]:
+        demand["vph"] = 0
+
+
+def configure_phase2():
+    global ROUTE_ONLY_EXPERIMENT, SIGNAL_EXPERIMENT
+    ROUTE_ONLY_EXPERIMENT = False
+    SIGNAL_EXPERIMENT = True
+    _configure_no_traffic(all_green=False)
+    NOHYEONG["ego_routes"]["ring_prob"] = 0.15
+
+
+def configure_parallel_training(phase):
+    """Configure the two signalized phases of the parallel trainer."""
+    configure_phase2()  # Old run snapshots still call this helper directly.
+    if phase == 2:
+        TRAFFIC["background_enabled"] = True
+        TRAFFIC["vehs_per_hour"] = _CENTRAL_BACKGROUND_VPH
+        for demand, vph in zip(NOHYEONG["ring_segments"] + NOHYEONG["loop_routes"],
+                               _RING_BACKGROUND_VPH, strict=True):
+            demand["vph"] = vph
+
+
+# 전체 녹색 여부와 신호 관측을 독립 설정한다.
+if ROUTE_ONLY_EXPERIMENT or SIGNAL_EXPERIMENT:
+    _configure_no_traffic(all_green=ROUTE_ONLY_EXPERIMENT)
 

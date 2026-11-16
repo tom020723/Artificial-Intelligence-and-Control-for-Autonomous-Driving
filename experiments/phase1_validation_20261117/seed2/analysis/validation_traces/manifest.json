@@ -1,0 +1,276 @@
+[
+  {
+    "route": "ego_d_A1_A5",
+    "start_lane": 1,
+    "signal_offset_s": 3.5,
+    "reasons": [
+      "quick:first_signal_stop_clearance_m"
+    ],
+    "file": "case_00.csv"
+  },
+  {
+    "route": "ego_d_A2_A1",
+    "start_lane": 1,
+    "signal_offset_s": 28.5,
+    "reasons": [
+      "quick:first_signal_stop_clearance_m",
+      "quick:red_wait_clearance_m"
+    ],
+    "file": "case_01.csv"
+  },
+  {
+    "route": "ego_d_A3_A2",
+    "start_lane": 2,
+    "signal_offset_s": 53.5,
+    "reasons": [
+      "quick:first_signal_stop_clearance_m",
+      "quick:red_wait_clearance_m"
+    ],
+    "file": "case_02.csv"
+  },
+  {
+    "route": "ego_d_A3_A2",
+    "start_lane": 2,
+    "signal_offset_s": 56.0,
+    "reasons": [
+      "quick:red_wait_clearance_m"
+    ],
+    "file": "case_03.csv"
+  },
+  {
+    "route": "ego_d_A1_A1",
+    "start_lane": 3,
+    "signal_offset_s": 1.0,
+    "reasons": [
+      "quick:green_restart_delay_s"
+    ],
+    "file": "case_04.csv"
+  },
+  {
+    "route": "ego_d_A1_A1",
+    "start_lane": 2,
+    "signal_offset_s": 3.5,
+    "reasons": [
+      "quick:green_restart_delay_s"
+    ],
+    "file": "case_05.csv"
+  },
+  {
+    "route": "ego_d_A1_A1",
+    "start_lane": 2,
+    "signal_offset_s": 6.0,
+    "reasons": [
+      "quick:green_restart_delay_s"
+    ],
+    "file": "case_06.csv"
+  },
+  {
+    "route": "ego_d_A5_A5",
+    "start_lane": 1,
+    "signal_offset_s": 106.0,
+    "reasons": [
+      "quick:minimum_clearance"
+    ],
+    "file": "case_07.csv"
+  },
+  {
+    "route": "ego_d_A3_A5",
+    "start_lane": 2,
+    "signal_offset_s": 51.0,
+    "reasons": [
+      "quick:minimum_clearance"
+    ],
+    "file": "case_08.csv"
+  },
+  {
+    "route": "ego_d_A2_A3",
+    "start_lane": 0,
+    "signal_offset_s": 28.5,
+    "reasons": [
+      "quick:minimum_clearance"
+    ],
+    "file": "case_09.csv"
+  },
+  {
+    "route": "ego_r_RING_A1_A3_A1_A3",
+    "start_lane": 1,
+    "signal_offset_s": 1.0,
+    "reasons": [
+      "quick:ring"
+    ],
+    "file": "case_10.csv"
+  },
+  {
+    "route": "ego_r_RING_A2_A4_A2_A4",
+    "start_lane": 1,
+    "signal_offset_s": 1.0,
+    "reasons": [
+      "quick:ring"
+    ],
+    "file": "case_11.csv"
+  },
+  {
+    "route": "ego_r_RING_A3_A5_A3_A5",
+    "start_lane": 2,
+    "signal_offset_s": 1.0,
+    "reasons": [
+      "quick:ring"
+    ],
+    "file": "case_12.csv"
+  },
+  {
+    "route": "ego_r_RING_A4_A1_A4_A1",
+    "start_lane": 2,
+    "signal_offset_s": 1.0,
+    "reasons": [
+      "quick:ring"
+    ],
+    "file": "case_13.csv"
+  },
+  {
+    "route": "ego_r_RING_A5_A2_A5_A2",
+    "start_lane": 0,
+    "signal_offset_s": 1.0,
+    "reasons": [
+      "quick:ring"
+    ],
+    "file": "case_14.csv"
+  },
+  {
+    "route": "ego_d_A2_A1",
+    "start_lane": 3,
+    "signal_offset_s": 32.0,
+    "reasons": [
+      "quick_holdout:first_signal_stop_clearance_m"
+    ],
+    "file": "case_15.csv"
+  },
+  {
+    "route": "ego_d_A3_A2",
+    "start_lane": 2,
+    "signal_offset_s": 54.5,
+    "reasons": [
+      "quick_holdout:first_signal_stop_clearance_m",
+      "quick_holdout:red_wait_clearance_m"
+    ],
+    "file": "case_16.csv"
+  },
+  {
+    "route": "ego_d_A3_A2",
+    "start_lane": 2,
+    "signal_offset_s": 57.0,
+    "reasons": [
+      "quick_holdout:first_signal_stop_clearance_m",
+      "quick_holdout:red_wait_clearance_m"
+    ],
+    "file": "case_17.csv"
+  },
+  {
+    "route": "ego_d_A3_A2",
+    "start_lane": 1,
+    "signal_offset_s": 7.0,
+    "reasons": [
+      "quick_holdout:red_wait_clearance_m"
+    ],
+    "file": "case_18.csv"
+  },
+  {
+    "route": "ego_d_A1_A1",
+    "start_lane": 3,
+    "signal_offset_s": 2.0,
+    "reasons": [
+      "quick_holdout:green_restart_delay_s"
+    ],
+    "file": "case_19.csv"
+  },
+  {
+    "route": "ego_d_A1_A1",
+    "start_lane": 2,
+    "signal_offset_s": 4.5,
+    "reasons": [
+      "quick_holdout:green_restart_delay_s"
+    ],
+    "file": "case_20.csv"
+  },
+  {
+    "route": "ego_d_A1_A1",
+    "start_lane": 2,
+    "signal_offset_s": 7.0,
+    "reasons": [
+      "quick_holdout:green_restart_delay_s"
+    ],
+    "file": "case_21.csv"
+  },
+  {
+    "route": "ego_d_A2_A2",
+    "start_lane": 2,
+    "signal_offset_s": 42.0,
+    "reasons": [
+      "quick_holdout:minimum_clearance"
+    ],
+    "file": "case_22.csv"
+  },
+  {
+    "route": "ego_d_A2_A2",
+    "start_lane": 2,
+    "signal_offset_s": 44.5,
+    "reasons": [
+      "quick_holdout:minimum_clearance"
+    ],
+    "file": "case_23.csv"
+  },
+  {
+    "route": "ego_d_A2_A2",
+    "start_lane": 2,
+    "signal_offset_s": 59.5,
+    "reasons": [
+      "quick_holdout:minimum_clearance"
+    ],
+    "file": "case_24.csv"
+  },
+  {
+    "route": "ego_r_RING_A1_A3_A1_A3",
+    "start_lane": 1,
+    "signal_offset_s": 2.0,
+    "reasons": [
+      "quick_holdout:ring"
+    ],
+    "file": "case_25.csv"
+  },
+  {
+    "route": "ego_r_RING_A2_A4_A2_A4",
+    "start_lane": 1,
+    "signal_offset_s": 2.0,
+    "reasons": [
+      "quick_holdout:ring"
+    ],
+    "file": "case_26.csv"
+  },
+  {
+    "route": "ego_r_RING_A3_A5_A3_A5",
+    "start_lane": 2,
+    "signal_offset_s": 2.0,
+    "reasons": [
+      "quick_holdout:ring"
+    ],
+    "file": "case_27.csv"
+  },
+  {
+    "route": "ego_r_RING_A4_A1_A4_A1",
+    "start_lane": 2,
+    "signal_offset_s": 2.0,
+    "reasons": [
+      "quick_holdout:ring"
+    ],
+    "file": "case_28.csv"
+  },
+  {
+    "route": "ego_r_RING_A5_A2_A5_A2",
+    "start_lane": 0,
+    "signal_offset_s": 2.0,
+    "reasons": [
+      "quick_holdout:ring"
+    ],
+    "file": "case_29.csv"
+  }
+]

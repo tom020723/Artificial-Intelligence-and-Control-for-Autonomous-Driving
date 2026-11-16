@@ -35,7 +35,7 @@ class RunLogger:
 
     # ------------------------------------------------------------------
     def log_train(self, step: int, metrics: dict, verbose: bool = True):
-        """업데이트 1회의 학습 지표 기록."""
+        """학습 라운드 1회의 지표 기록."""
         row = {"steps": step, **metrics}
         self.train_rows.append(row)
 
@@ -45,10 +45,11 @@ class RunLogger:
                     self.writer.add_scalar(f"train/{k}", v, step)
 
         if verbose:
+            counter_key = "iteration" if "iteration" in metrics else "update"
             parts = [f"{k}={v:.4g}" if isinstance(v, float) else f"{k}={v}"
-                     for k, v in metrics.items() if k != "update"]
-            upd = metrics.get("update", "")
-            print(f"[update {upd:>4}] steps={step:>7d}  " + "  ".join(parts))
+                     for k, v in metrics.items() if k != counter_key]
+            counter = metrics.get(counter_key, "")
+            print(f"[{counter_key} {counter:>4}] steps={step:>7d}  " + "  ".join(parts))
 
     def log_eval(self, step: int, metrics: dict, summary: str = "",
                  n_episodes: int = 0):
