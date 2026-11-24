@@ -6,7 +6,7 @@
 | `event.wrong_lane` | Boolean | 경로 밖 차로로 가서 종료됐는지 여부. 원인 불명 소실 포함 (3.2) | 잘못된 차로로 가서 끝났는지 |
 | `episode_info` | Dictionary | 자차 경로 ID와 재현용 시드·시작 시각·신호 시작 시점. 각 에피소드 첫 행(t=0)에만 기록 (3.1) | 이번 주행의 경로와 시드 |
 | `new_routes` | Dictionary | `{경로 ID: 경유 도로 목록}`. 그 경로가 처음 나온 행에만 기록 (3.1, 3.7) | 처음 나온 경로가 지나는 도로 |
-| `state.road_context.observed_signals[]` | List of Dictionary | 기존 `state` 안에 추가. 지금 보이는 자차 적용 신호의 제어기·연결 번호·신호 문자·정지선까지 거리 (3.3) | 앞 신호 색과 정지선까지 거리 |
+| `state.road_context.observed_signals[]` | List of Dictionary | 기존 `state` 안에 추가. 지금 보이는 자차 적용 신호의 제어기·연결 번호·신호 색 숫자 코드·정지선까지 거리 (3.3) | 앞 신호 색과 정지선까지 거리 |
 | `state.vehicles[].route_id` | String | 기존 `state.vehicles` 각 차량에 추가. 그 차량이 타고 있는 경로 ID (3.7) | 각 차가 어느 경로로 가는지 |
 | `analysis` | Dictionary (후처리) | 수집한 컬럼으로 후처리한 정보: 실패 원인(3.2), 현재 구간·예정 진행(3.4), 합류·분기까지 거리(3.6), 상호작용 후보(3.7) | 저장된 값으로 나중에 계산한 것 |
 
@@ -119,7 +119,7 @@
 | `state.road_context.observed_signals[]` | List of Dictionary 또는 null | 시점 t에서 관측 범위 안의 자차 적용 신호 목록 | 지금 보이는 신호 목록 |
 | `observed_signals[].tls_id` | String | 신호 제어기 ID | 어느 신호 제어기인지 (노형오거리는 `nC` 하나) |
 | `observed_signals[].link_index` | Integer | 제어 연결 인덱스. 신호 문자열에서 이 연결의 위치 | 어느 진입 차로→진출 도로 연결의 신호인지 |
-| `observed_signals[].state` | String | SUMO 원시 신호 문자. 대소문자 보존 | 신호 색 (r/y/G/g) |
+| `observed_signals[].state` | Float | 신호 색 숫자 코드. 적(`r`) 0, 황(`y`) 0.5, 비보호 녹(`g`) 0.75, 보호 녹(`G`) 1, 그 밖 −1 | 신호 색 |
 | `observed_signals[].distance` | Float | 해당 제어 정지선까지의 경로상 거리(m). 자차 앞부분 기준, 선 위는 0 | 정지선까지 몇 m 남았는지 |
 
 `r`=적색, `y`=황색, `G`=우선권 녹색, `g`=양보형 녹색이다. 그 외 `u`, `o`, `O`, `s` 등 SUMO 문자도 원문으로 저장하며 다른 색으로 임의 통합하지 않는다.

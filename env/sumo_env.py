@@ -1600,7 +1600,8 @@ class SumoHighwayEnv(gym.Env):
                 # 행동 전 시점 t의 자차 적용 신호 (정책 관측 범위와 동일). 조회 실패는 null.
                 "road_context": {
                     "observed_signals": None if signals is None else [
-                        {"tls_id": s[0], "link_index": int(s[1]), "state": s[3],
+                        {"tls_id": s[0], "link_index": int(s[1]),
+                         "state": self._SIGNAL_STATE_CODES.get(s[3], -1.0),
                          "distance": float(s[2])}
                         for s in self._observed_signals(signals)],
                     # 진입로 [A1..A5] 신호 색과 현재 현시가 바뀔 때까지 남은 시간(s).
@@ -1610,6 +1611,10 @@ class SumoHighwayEnv(gym.Env):
             }
         except self._api.TraCIException:
             return {"ego_alive": False}
+
+    # 데이터 칼럼용 신호 색 코드 (SUMO 문자 → 숫자). 적 0, 황 0.5, 비보호 녹 0.75, 보호 녹 1.
+    # 그 밖의 SUMO 신호 문자(s, u, o, O 등)는 -1.
+    _SIGNAL_STATE_CODES = {"r": 0.0, "R": 0.0, "y": 0.5, "Y": 0.5, "g": 0.75, "G": 1.0}
 
     # 충돌 상대 vType id → 데이터 칼럼 코드. 그 밖(ego_type 등)은 -1.
     _PARTNER_TYPE_CODES = {"car_krauss": 0, "car_idm": 1, "car_eidm": 2, "car_acc": 3}

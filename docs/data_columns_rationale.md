@@ -86,6 +86,7 @@ BC 지도에서 `g`는 U턴 연결 4개에만 나온다.
 | 도로의 차로 수·연결·형상 | 위 ID + `.sumo/highway.net.xml` |
 | 앞으로 지날 도로 | `episode_info.route_id` + `new_routes` |
 | 지도 전체 신호와 전환 시점 | `state.road_context.all_signals`, `state.road_context.signal_remaining_s` |
+| 자차가 보는 신호의 정지선 위치·연결 | `state.road_context.observed_signals[]` (`tls_id`, `link_index`, `state` 숫자 코드, `distance`) |
 | 주변 차량 위치·차로·경로 | `state.vehicles[]` (`lane_id`, `lane_pos`, `speed`, `route_id`) |
 
 차로 수 같은 고정 지도 정보는 ID로 조회할 수 있어 매 행에 넣지 않는다.
@@ -94,7 +95,6 @@ BC 지도에서 `g`는 U턴 연결 4개에만 나온다.
 
 | 항목 | 이유 |
 |---|---|
-| `state.road_context.observed_signals[]` | 색과 정지선 거리는 observation 31–34번에, 지도 전체 신호는 `all_signals`에 있음. 신호 문자가 String이기도 함 |
 | `tls_id`, `program_id`, `phase_name`, `phase_index`, 연결별 신호 문자열 | 제어기가 `nC` 하나이고 프로그램이 고정이라 매 행 같은 값이거나 `all_signals`와 같은 정보. 대부분 String |
 | `state.road_context.sim_time_s` (매 행의 SUMO 시각) | 신호는 `all_signals`로 기록하므로 시각으로 계산할 필요가 없고, 수집기가 SUMO 로그 파일을 저장하지 않아 시각으로 맞춰 볼 대상도 없음 |
 | `episode_info.sim_time_start_s` (기록 시작 시점의 SUMO 시각) | 위와 같은 이유. 재현은 `seed`·`sumo_seed`와 설정으로 충분함. SUMO 출력 파일을 함께 저장하게 되면 다시 추가 |

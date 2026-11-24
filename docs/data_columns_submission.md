@@ -60,7 +60,7 @@
 | `state.road_context.all_signals` | Vector (5-dim) 또는 null | 진입로 A1~A5별 신호 | 다섯 방향 신호 색 |
 | `state.road_context.signal_remaining_s` | Float 또는 null | 현재 현시가 바뀔 때까지 남은 시간 (s) | 몇 초 뒤 바뀌는지 |
 | `state.vehicles[].route_id` | String 또는 null | 각 차량이 타고 있는 경로 ID | 각 차가 어느 경로로 가는지 |
-| `state.road_context.observed_signals` | List of Dictionary 또는 null | 자차가 지금 보는(100m 이내) 신호의 `tls_id`·`link_index`·`state`(G/g/y/r)·`distance`(정지선까지 m) | 앞 신호 색과 정지선 거리 |
+| `state.road_context.observed_signals` | List of Dictionary 또는 null | 자차가 지금 보는(100m 이내) 신호의 `tls_id`·`link_index`·`state`(신호 색 숫자 코드)·`distance`(정지선까지 m) | 앞 신호 색과 정지선 거리 |
 
 **`event.red_light_violation`**
 
@@ -102,6 +102,27 @@ SUMO가 붙인 차량 ID를 그대로 쓴다. `state.vehicles[].id`와 같은 �
 |---|---|
 | true | 자차가 앞차를 들이받음 |
 | false | 뒤차가 자차를 들이받음 |
+
+**`state.road_context.observed_signals`**
+
+자차 경로에 적용되는, 100m 안에 보이는 신호 목록이다. 보이는 신호가 없으면 `[]`, 조회 실패면 null.
+
+| 항목 | 형태 | 의미 |
+|---|---|---|
+| `tls_id` | String | 신호 제어기 ID (예: 중앙 교차로 `nC`) |
+| `link_index` | Integer | 그 제어기에서 자차가 지나갈 연결 번호 |
+| `state` | Float | 신호 색 숫자 코드 (아래 표) |
+| `distance` | Float | 자차 앞부분부터 정지선까지 경로상 거리 (m). 정지선 위면 0 |
+
+| `state` 값 | SUMO 신호 문자 | 의미 |
+|---|---|---|
+| 0 | `r` | 적색. 정지 |
+| 0.5 | `y` | 황색 |
+| 0.75 | `g` | 비보호 녹색. 진행 가능하지만 우선권이 있는 차량에 양보 (U턴, 합류하는 연결 등) |
+| 1 | `G` | 보호 녹색. 우선권을 갖고 진행 |
+| −1 | 그 밖의 문자 | 현재 신호 프로그램에서는 나오지 않음 |
+
+`all_signals`와 같은 기준(적 0, 황 0.5, 녹 1)에, 비보호 녹색만 0.75로 구분한다.
 
 **`state.road_context.all_signals`** — 순서는 [A1, A2, A3, A4, A5]
 

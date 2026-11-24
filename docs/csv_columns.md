@@ -26,5 +26,5 @@
 | event.wrong_lane | Boolean | 경로 밖 차로로 가서 종료됐는지 여부 (원인 불명 소실 포함) | o |
 | episode_info | Dictionary | 자차 경로 ID·시드·SUMO 시드·시작 시각·신호 시작 시점. 각 에피소드 첫 행(t=0)에만 기록 | o |
 | new_routes | Dictionary | `{경로 ID: 경유 도로 목록}`. 그 경로가 처음 나온 행에만 기록 | o |
-| state.road_context.observed_signals | List of Dictionary | `state` 칸 내부. 자차 적용 신호의 ID·연결 번호·신호 문자(G/g/y/r)·정지선까지 거리(m) | o |
+| state.road_context.observed_signals | List of Dictionary | `state` 칸 내부. 자차 적용 신호의 ID·연결 번호·신호 색 숫자 코드(적 0, 황 0.5, 비보호 녹 0.75, 보호 녹 1)·정지선까지 거리(m) | o |
 | state.vehicles[].route_id | String | `state` 칸 내부. 각 차량이 타고 있는 경로 ID | o |
