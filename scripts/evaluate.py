@@ -24,7 +24,7 @@ from env import road_builder
 from env.ego_routes import read_ego_route_groups
 from env.parallel_sumo import ParallelSumo
 from env.parallel_traffic import TrafficCurriculum
-from test import load_saved_configs
+from utils.saved_configs import load_saved_configs
 from utils.evaluator import evaluate_parallel_routes
 
 

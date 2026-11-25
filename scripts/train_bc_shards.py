@@ -10,12 +10,81 @@ import sys
 import time
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch.utils.tensorboard import SummaryWriter
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from train_bc_actor import lane_class, export_policy, epoch, initialize_from_raw_policy
 from utils.bc_results import create_bc_result_dir
 from utils.networks import HybridActorCritic
 from train import HPARAMS
+
+
+def lane_class(actions):
+    """PPO order: left +1 => 0, keep 0 => 1, right -1 => 2."""
+    if not np.isin(actions[:,1], [-1,0,1]).all():
+        raise ValueError('Hybrid BC requires lane command labels in {-1,0,+1}')
+    return (1-actions[:,1]).astype(np.int64)
+
+
+def export_policy(model, mean, std):
+    """Fold normalization into first Linear for unchanged raw-observation PPO."""
+    state={key:value.detach().cpu().clone() for key,value in model.state_dict().items()}
+    mean, std=mean.detach().cpu(), std.detach().cpu()
+    weight=state['trunk.0.weight']/std.unsqueeze(0)
+    state['trunk.0.bias']-=weight@mean
+    state['trunk.0.weight']=weight
+    return state
+
+
+def initialize_from_raw_policy(model, state, mean, std):
+    """Keep the raw-input actor unchanged when adopting new dataset statistics."""
+    state = {key: value.detach().clone() for key, value in state.items()}
+    weight = state['trunk.0.weight']
+    state['trunk.0.bias'] = state['trunk.0.bias'] + weight @ mean
+    state['trunk.0.weight'] = weight * std.unsqueeze(0)
+    model.load_state_dict(state)
+
+
+def epoch(model, x, accel, lane, weights, batch_size, optimizer=None, *, accel_weights=None):
+    train=optimizer is not None
+    model.train(train)
+    order=torch.randperm(len(x),device=x.device) if train else torch.arange(len(x),device=x.device)
+    squared=x.new_zeros(())
+    ce=x.new_zeros(())
+    denominator=x.new_zeros(())
+    confusion=torch.zeros((3,3),dtype=torch.int64,device=x.device)
+    with torch.set_grad_enabled(train):
+        for idx in order.split(batch_size):
+            mu,_,logits,_=model(x[idx])
+            errors=(mu.squeeze(-1)-accel[idx]).square()
+            losses=F.cross_entropy(logits,lane[idx],weight=weights,reduction='none')
+            accel_loss = errors.mean()
+            if accel_weights is not None:
+                batch_weights = accel_weights[idx]
+                accel_loss = (errors * batch_weights).sum() / batch_weights.sum()
+            loss=accel_loss+losses.sum()/weights[lane[idx]].sum()
+            if not torch.isfinite(loss):
+                raise ValueError('Nonfinite BC loss')
+            if train:
+                optimizer.zero_grad(set_to_none=True)
+                loss.backward()
+                torch.nn.utils.clip_grad_norm_(model.parameters(),1.0)
+                optimizer.step()
+            squared+=errors.detach().sum()
+            ce+=losses.detach().sum()
+            denominator+=weights[lane[idx]].sum()
+            pred=logits.detach().argmax(-1)
+            confusion+=torch.bincount(lane[idx]*3+pred,minlength=9).reshape(3,3)
+    cm=confusion.cpu().numpy()
+    precision=np.diag(cm)/np.maximum(cm.sum(axis=0),1)
+    recall=np.diag(cm)/np.maximum(cm.sum(axis=1),1)
+    f1=2*precision*recall/np.maximum(precision+recall,1e-12)
+    mse=float(squared)/len(x)
+    lane_loss=float(ce/denominator)
+    return dict(loss=mse+lane_loss,accel_mse=mse,lane_ce=lane_loss,
+                lane_macro_f1=float(f1.mean()),left_precision=float(precision[0]),
+                left_recall=float(recall[0]),right_precision=float(precision[2]),
+                right_recall=float(recall[2]),confusion=cm.tolist())
+
 
 
 def load(path):

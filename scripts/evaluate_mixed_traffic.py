@@ -3,11 +3,9 @@ import argparse
 from collections import Counter, defaultdict
 from concurrent.futures import ProcessPoolExecutor
 import csv
-from dataclasses import replace
 import hashlib
 from multiprocessing import get_context
 from pathlib import Path
-import shutil
 import sys
 import xml.etree.ElementTree as ET
 
@@ -16,10 +14,9 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from collect_background_data import BackgroundObserver, libsumo
 from env.parallel_sumo import _signal_schedule
-from env.parallel_traffic import TrafficCurriculum, parse_traffic_flows
-from scripts.evaluate_fixed_routes import FixedTrafficSchedule, read_json, write_json
-from scripts.run_bc51_dagger import load_actor
-from test import load_saved_configs
+from scripts.evaluate_fixed_routes import FixedTrafficSchedule, prepare_road, read_json, write_json
+from utils.saved_configs import load_saved_configs
+from utils.bc_policy import load_actor
 
 MIX = {"krauss": .30, "idm": .25, "eidm": .15, "acc": .10, "ego": .20}
 EGO_TYPE = "ego_type"
@@ -27,27 +24,6 @@ MAX_TRIP_SECONDS = 500
 MAX_DEPART_DELAY = 125
 DEFAULT_SEEDS = range(21701, 21713)
 DEFAULT_SECONDS = 3600
-
-
-def prepare_road(suite, out, spec):
-    shutil.copytree(suite / "sumo", out / "sumo")
-    cfg = out / "sumo/highway.sumocfg"
-    route_file = cfg.with_name("highway.rou.xml")
-    tree = ET.parse(route_file)
-    root = tree.getroot()
-    routes = {node.get("id"): node.get("edges").split() for node in root.findall("route")}
-    existing = set(routes)
-    net_path = cfg.with_name("highway.net.xml")
-    curriculum = replace(TrafficCurriculum(**spec["settings"]), total_vph=True)
-    flows = parse_traffic_flows(root.findall("flow"), routes, net_path, 800, curriculum)
-    for node in root.findall("flow"):
-        root.remove(node)
-    for route in sorted(routes.keys() - existing):
-        ET.SubElement(root, "route", id=route, edges=" ".join(routes[route]))
-    tree.write(route_file, encoding="utf-8", xml_declaration=True)
-    net = ET.parse(net_path).getroot()
-    lane_counts = {edge.get("id"): len(edge.findall("lane")) for edge in net.findall("edge")}
-    return cfg, flows, {flow.route: lane_counts[routes[flow.route][0]] for flow in flows}
 
 
 def run_road(cfg, flows, lanes, suite, model, vph, seconds, seed, *, gui_delay=None,

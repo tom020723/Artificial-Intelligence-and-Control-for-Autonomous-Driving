@@ -11,7 +11,6 @@
 import argparse
 import glob
 import os
-import runpy
 import xml.etree.ElementTree as ET
 import torch
 
@@ -23,37 +22,13 @@ from env.sumo_env import SumoHighwayEnv
 from algorithms.ppo import PPO
 from algorithms.bc import BCPolicy
 from utils.evaluator import evaluate_policy
+from utils.saved_configs import load_saved_configs  # also used by the scripts/ tools
 
 # train.py와 동일한 네트워크 구조로 만들어야 가중치를 불러올 수 있으므로
 # 하이퍼파라미터를 그대로 가져온다 (구조 관련 항목만 실제로 쓰임).
 from train import HPARAMS, RESULTS_DIR, REWARD  # ← 보상도 train과 동일 조건
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-
-
-def load_saved_configs(model_path):
-    """평가 프로세스 안에서만 run의 설정 snapshot을 복원한다."""
-    from env import road_config, mdp_config
-    folder = os.path.dirname(model_path)
-    required = [os.path.join(folder, name) for name in ("road_config.py", "mdp_config.py", "train.py")]
-    for path in required:
-        if not os.path.isfile(path):
-            raise FileNotFoundError(f"저장된 설정이 없습니다: {path}")
-    road = runpy.run_path(required[0])
-    # 실험 1처럼 신호 실험 플래그가 없던 snapshot도 지원한다.
-    road_config.SIGNAL_EXPERIMENT = road.get("SIGNAL_EXPERIMENT", False)
-    for name, value in road.items():
-        if name.isupper():
-            setattr(road_config, name, value)
-    mdp = runpy.run_path(required[1])
-    for name, value in mdp.items():
-        if name.isupper():
-            setattr(mdp_config, name, value)
-    training = runpy.run_path(required[2])
-    road_builder.NOHYEONG = road_config.NOHYEONG
-    road_builder.SCENERY = road_config.SCENERY
-    road_builder.SIMULATION = mdp["SIMULATION"]
-    return road, mdp, training
 
 
 def find_latest_model() -> str:

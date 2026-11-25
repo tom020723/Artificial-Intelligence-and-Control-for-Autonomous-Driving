@@ -17,9 +17,8 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from env.parallel_sumo import _signal_schedule, libsumo
 from scripts.evaluate_fixed_routes import (
-    FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, read_json, run, write_json,
+    FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, prepare_road, read_json, run, write_json,
 )
-from scripts.evaluate_mixed_traffic import prepare_road
 
 DEFAULT_SEEDS = tuple(range(52101, 52126))
 CAPTURE_WINDOWS = ((120, 600), (900, 1800), (2400, 3500))

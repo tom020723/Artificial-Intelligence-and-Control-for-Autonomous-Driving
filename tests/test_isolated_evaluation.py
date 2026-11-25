@@ -11,7 +11,7 @@ from tempfile import TemporaryDirectory
 import unittest
 
 from scripts.evaluate_fixed_routes import case_sumo_seed, evaluate_worker, read_json, run
-from scripts.run_bc51_fixed_start import fixed_start_context
+from utils.bc_policy import evaluation_context
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "results/eval_diverse_start_lanes_4740_20261123_172237"
@@ -36,7 +36,7 @@ class IsolatedEvaluationTests(unittest.TestCase):
         cls.tmp = TemporaryDirectory(prefix="isolated-eval-test-")
         cls.root = Path(cls.tmp.name)
         cls.context = cls.root / "context"
-        fixed_start_context(MODEL.parent, cls.context, max_vph=read_json(SUITE / "suite.json")["traffic_vph"])
+        evaluation_context(MODEL.parent, cls.context, max_vph=read_json(SUITE / "suite.json")["traffic_vph"])
         shutil.copy2(MODEL, cls.context / "model.pt")
         by_id = {c["case_id"]: c for c in read_json(SUITE / "cases.json")}
         cls.cases = [by_id[i] for i in CASES]

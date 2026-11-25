@@ -6,7 +6,8 @@ import sys
 from tempfile import TemporaryDirectory
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from scripts.evaluate_mixed_traffic import DEFAULT_SECONDS, DEFAULT_SEEDS, prepare_road, read_json, run_road
+from scripts.evaluate_fixed_routes import prepare_road, read_json
+from scripts.evaluate_mixed_traffic import DEFAULT_SECONDS, DEFAULT_SEEDS, run_road
 
 
 def main():

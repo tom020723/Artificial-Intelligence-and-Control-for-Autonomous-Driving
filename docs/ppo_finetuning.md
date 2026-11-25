@@ -100,6 +100,8 @@
 
 ## 재현
 
+전문가 수집부터 PPO 평가까지 한 번에 돌리는 방법은 `docs/REPRODUCE.md`. 아래는 이 문서의 실험에 쓴 명령이다.
+
 ```bash
 python -m scripts.finetune_bc_ppo results/BC_20261122_220742_calibrated_4740_signed_gaps_spawn20/training/model.pt \
   results/eval_fixed_routes_4740_idm_only_speedgain_20261121_013051 \

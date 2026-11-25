@@ -16,6 +16,9 @@ import sys
 from time import perf_counter
 import xml.etree.ElementTree as ET
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -28,23 +31,35 @@ from env.collision_detection import configure_collision_gaps
 from env.control_timing import lane_change_timing_allowed
 from env.ego_routes import read_ego_route_groups
 from env.parallel_sumo import ParallelSumo, libsumo
-from env.parallel_traffic import TrafficCurriculum, TrafficSchedule
+from env.parallel_traffic import TrafficCurriculum, TrafficSchedule, parse_traffic_flows
 from env.traffic_snapshots import TrafficSnapshotBank
 from env.uniform_idm import separate_idm_type
-from scripts.evaluate import OUTCOMES, plt
-from scripts.evaluate_quick_bc import plot_bc_training
-from scripts.evaluate_quick_phase1 import STEP, summarize
-from scripts.run_bc51_fixed_start import fixed_start_context
-from test import load_saved_configs
+from utils.saved_configs import load_saved_configs
+from utils.bc_policy import evaluation_context
+from utils.evaluation_summary import OUTCOMES, read_csv, summarize
 from utils.evaluator import _DrivingStats, parallel_route_rows
 
 DEMAND = CALIBRATED_VPH
+STEP = 0.5  # simulation step (s)
 TRAFFIC_SEED = 21701
 MAX_REPLICAS_PER_WORKER = 64
 SNAPSHOT_TIMES = tuple(range(802, 951, 2))
 EXPERTS = ("car_idm", "car_krauss", "car_eidm", "car_acc")
 STATUSES = ("arrival", "collision", "red_light", "wrong_lane", "timeout")
 MAX_ISOLATED_WORKERS = 24
+# Background lcSpeedGain of the final suite: only IDM vehicles change lanes for speed.
+IDM_ONLY_SPEED_GAIN = {"car_idm": 1.0, "car_krauss": 0.0, "car_eidm": 0.0, "car_acc": 0.0}
+
+
+def set_background_speed_gain(path, values):
+    """Overwrite lcSpeedGain of every background vehicle type in a route file."""
+    tree = ET.parse(path)
+    types = tree.findall("./vTypeDistribution/vType")
+    if {node.get("id") for node in types} != set(values):
+        raise ValueError(f"Expected background types {sorted(values)}")
+    for node in types:
+        node.set("lcSpeedGain", str(values[node.get("id")]))
+    tree.write(path, encoding="utf-8", xml_declaration=True)
 
 
 def default_workers():
@@ -83,15 +98,53 @@ def use_current_road(context):
         current.rstrip() + "\n\n" + marker + saved.split(marker, 1)[1], encoding="utf-8")
 
 
+def write_benchmark_context(context):
+    """Write a suite's settings from the repository code and benchmark/ (benchmark/README.md)."""
+    repo = Path(__file__).resolve().parents[1]
+    context.mkdir(parents=True)
+    for name, extra in (("road_config.py", "road_context.py"), ("mdp_config.py", "mdp_context.py")):
+        base = (repo / "env" / name).read_text(encoding="utf-8")
+        (context / name).write_text(
+            base.rstrip() + "\n\n" + (repo / "benchmark" / extra).read_text(encoding="utf-8"), encoding="utf-8")
+    shutil.copyfile(repo / "train.py", context / "train.py")
+    return TrafficCurriculum(**read_json(repo / "benchmark/traffic_curriculum.json"))
+
+
+def prepare_road(suite, out, spec):
+    """Copy a suite's SUMO inputs to `out` with flows parsed out; returns (cfg, flows, origin lane counts)."""
+    shutil.copytree(suite / "sumo", out / "sumo")
+    cfg = out / "sumo/highway.sumocfg"
+    route_file = cfg.with_name("highway.rou.xml")
+    tree = ET.parse(route_file)
+    root = tree.getroot()
+    routes = {node.get("id"): node.get("edges").split() for node in root.findall("route")}
+    existing = set(routes)
+    net_path = cfg.with_name("highway.net.xml")
+    curriculum = replace(TrafficCurriculum(**spec["settings"]), total_vph=True)
+    flows = parse_traffic_flows(root.findall("flow"), routes, net_path, 800, curriculum)
+    for node in root.findall("flow"):
+        root.remove(node)
+    for route in sorted(routes.keys() - existing):
+        ET.SubElement(root, "route", id=route, edges=" ".join(routes[route]))
+    tree.write(route_file, encoding="utf-8", xml_declaration=True)
+    net = ET.parse(net_path).getroot()
+    lane_counts = {edge.get("id"): len(edge.findall("lane")) for edge in net.findall("edge")}
+    return cfg, flows, {flow.route: lane_counts[routes[flow.route][0]] for flow in flows}
+
+
 def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
-            traffic_seed=0, current_road=False, background_idm_only=False):
+            traffic_seed=0, current_road=False, background_idm_only=False, background_lc_speed_gain=None):
+    """Build a fixed-route suite; reference=None takes the settings from benchmark/."""
     context = suite / "reference"
-    if (reference / "evaluation_config.json").is_file():
+    if reference is None:
+        curriculum = write_benchmark_context(context)
+        current_road = True
+    elif (reference / "evaluation_config.json").is_file():
         shutil.copytree(reference, context)
         curriculum = TrafficCurriculum(**read_json(context / "evaluation_config.json")["traffic_curriculum"])
     else:
-        _, curriculum, _ = fixed_start_context(reference, context, max_vph=traffic_vph)
-    if current_road:
+        _, curriculum, _ = evaluation_context(reference, context, max_vph=traffic_vph)
+    if current_road and reference is not None:
         use_current_road(context)
     if background_idm_only:
         with (context / "road_config.py").open("a", encoding="utf-8") as file:
@@ -105,6 +158,9 @@ def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
     background_routes = suite / "sumo/highway.rou.xml"
     ego_routes = suite / "sumo/highway.ego.rou.xml"
     set_weighted_od_flow_rates(background_routes, traffic_vph)
+    if background_lc_speed_gain is not None:
+        # Before the snapshot bank is built, so the saved traffic states use it too.
+        set_background_speed_gain(background_routes, background_lc_speed_gain)
     if uniform_idm_vph:
         tree = ET.parse(background_routes)
         separate_idm_type(tree)
@@ -147,14 +203,17 @@ def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
     if len({(c["snapshot_tick"], c["route"]) for c in cases}) != len(SNAPSHOT_TIMES) * len(routes):
         raise ValueError("Fixed case list must contain exactly one case per saved state and route")
     write_json(suite / "cases.json", cases)
-    write_json(suite / "suite.json", dict(traffic_vph=traffic_vph, adaptive_traffic=adaptive,
+    spec = dict(traffic_vph=traffic_vph, adaptive_traffic=adaptive,
         uniform_idm_vph=uniform_idm_vph, traffic_seed=traffic_seed, current_road=current_road,
         warmup_seconds=800, routes=routes,
         settings=asdict(curriculum), vehicle_types=road["TRAFFIC"]["controllers"],
         collision_detection=gaps, simulation_step_seconds=STEP, max_seconds=500,
         max_replicas_per_worker=MAX_REPLICAS_PER_WORKER, workers=4, seeds_per_snapshot=1,
         snapshot_times_seconds=SNAPSHOT_TIMES,
-        spawn_protect_m=0))
+        spawn_protect_m=0)
+    if background_lc_speed_gain is not None:
+        spec["background_lc_speed_gain"] = dict(background_lc_speed_gain)
+    write_json(suite / "suite.json", spec)
     print(f"Prepared {len(cases):,} cases in {suite}", flush=True)
 
 
@@ -453,6 +512,42 @@ def evaluate_worker(suite, context, scratch, cases, expert_type, replicas, trace
         env.close()
 
 
+def plot_bc_training(fig, grid, run, evaluated_epoch=None):
+    """BC training curves of `run` by epoch, marking the evaluated checkpoint."""
+    rows = read_csv(run / "training_log.csv")
+    panels = (
+        ("Supervised BC loss", ("train_loss", "val_loss"), ("Train", "Validation")),
+        ("Validation acceleration MSE", ("val_accel_mse",), ("Acceleration",)),
+        ("Validation weighted lane cross entropy", ("val_lane_ce",), ("Lane CE",)),
+        ("Validation lane macro F1", ("val_lane_macro_f1",), ("Macro F1",)),
+        ("Validation lane-change precision", ("val_left_precision", "val_right_precision"), ("Left", "Right")),
+        ("Validation lane-change recall", ("val_left_recall", "val_right_recall"), ("Left", "Right")),
+    )
+    best_path = run / "result.json"
+    best_epoch = evaluated_epoch if evaluated_epoch is not None else (
+        json.loads(best_path.read_text()).get("best_epoch") if best_path.exists() else None)
+    for i, (title, keys, labels) in enumerate(panels):
+        ax = fig.add_subplot(grid[i // 2, i % 2])
+        plotted = False
+        for key, label in zip(keys, labels, strict=True):
+            points = [(float(row["epoch"]), float(row[key])) for row in rows
+                      if row.get("epoch") and row.get(key) not in (None, "")]
+            if points:
+                x, y = zip(*points)
+                ax.plot(x, y, label=label)
+                plotted = True
+        if best_epoch is not None and plotted:
+            ax.axvline(best_epoch, color="#64748b", linestyle=":", linewidth=1, label="Evaluated checkpoint")
+        if plotted:
+            ax.legend(fontsize=7)
+        else:
+            ax.text(.5, .5, "No BC metric logged", ha="center", va="center", transform=ax.transAxes)
+        ax.set(title=title, xlabel="Epoch")
+        if i >= 3:
+            ax.set_ylim(0, 1.03)
+        ax.grid(alpha=.25)
+
+
 def plot_summary(out, label, rows, summary, routes, model_run):
     fig = plt.figure(figsize=(24, 14 if model_run else 11), layout="constrained")
     outer = fig.add_gridspec(3 if model_run else 2, 1,
@@ -550,7 +645,7 @@ def run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, 
     out.mkdir()
     context = out / "context"
     if model is not None:
-        fixed_start_context(model.parent, context, max_vph=spec["traffic_vph"])
+        evaluation_context(model.parent, context, max_vph=spec["traffic_vph"])
         shutil.copy2(model, context / "model.pt")
     else:
         shutil.copytree(reference, context)
@@ -639,16 +734,21 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     init = sub.add_parser("prepare")
     init.add_argument("suite", type=Path)
-    init.add_argument("--reference", type=Path, required=True, help="Saved suite reference directory or BC results directory")
+    init.add_argument("--reference", type=Path,
+                      help="Copy the settings from a saved suite reference or BC results directory "
+                           "(default: build them from the repository code and benchmark/)")
     init.add_argument("--traffic-vph", type=int, default=DEMAND)
     init.add_argument("--adaptive-traffic", action="store_true")
     init.add_argument("--uniform-idm-vph", type=int, default=0)
     init.add_argument("--traffic-seed", type=int, default=0,
                       help="Vary the warm-up traffic states and spawn streams (0 = original benchmark)")
     init.add_argument("--current-road", action="store_true",
-                      help="Build the road from env/road_config.py instead of the reference's saved snapshot")
+                      help="With --reference: build the road from env/road_config.py instead of its saved snapshot")
     init.add_argument("--background-idm-only", action="store_true",
                       help="Use only IDM background vehicles, with lcSpeedGain=1.0")
+    init.add_argument("--idm-only-speed-gain", action="store_true",
+                      help="Keep the mixed background but let only IDM vehicles change lanes for speed "
+                           "(lcSpeedGain 1.0 for IDM, 0.0 otherwise); used by the final suite")
     evaluate = sub.add_parser("evaluate")
     evaluate.add_argument("suite", type=Path)
     evaluate.add_argument("label", nargs="?",
@@ -681,9 +781,15 @@ def main():
             parser.error("--uniform-idm-vph requires adaptive traffic and must be below --traffic-vph")
         if args.background_idm_only and (args.adaptive_traffic or args.uniform_idm_vph):
             parser.error("--background-idm-only requires fixed traffic")
-        prepare(suite, args.reference.resolve(strict=True), args.traffic_vph, args.adaptive_traffic,
+        if args.idm_only_speed_gain and (args.background_idm_only or args.uniform_idm_vph):
+            parser.error("--idm-only-speed-gain requires the mixed background types")
+        if args.current_road and args.reference is None:
+            parser.error("--current-road applies only with --reference (the default already uses env/road_config.py)")
+        reference = args.reference.resolve(strict=True) if args.reference else None
+        prepare(suite, reference, args.traffic_vph, args.adaptive_traffic,
                 args.uniform_idm_vph, traffic_seed=args.traffic_seed, current_road=args.current_road,
-                background_idm_only=args.background_idm_only)
+                background_idm_only=args.background_idm_only,
+                background_lc_speed_gain=IDM_ONLY_SPEED_GAIN if args.idm_only_speed_gain else None)
     else:
         if args.expert and args.label is None:
             parser.error("expert evaluation requires a label")
