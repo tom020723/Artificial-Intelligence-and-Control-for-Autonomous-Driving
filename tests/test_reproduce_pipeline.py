@@ -72,6 +72,19 @@ class JunctionCollisionOptionTests(unittest.TestCase):
                 sumo_collision_options()
 
 
+class EvaluationJunctionCheckTests(unittest.TestCase):
+    def test_evaluation_counts_junction_collisions_by_default_and_restores_the_setting(self):
+        import os
+        import scripts.evaluate_fixed_routes as evaluation
+        seen = []
+        with patch.object(evaluation, "_run", side_effect=lambda *a, **k: seen.append(os.environ.get("SUMO_CHECK_JUNCTIONS"))):
+            with patch.dict("os.environ", {}, clear=True):
+                evaluation.run("suite", "label", None, None, 1, 0)
+                evaluation.run("suite", "label", None, None, 1, 0, junction_check=False)
+                self.assertNotIn("SUMO_CHECK_JUNCTIONS", os.environ)
+        self.assertEqual(seen, ["1", "0"])
+
+
 class PpoCheckpointTests(unittest.TestCase):
     def make_run(self, root):
         bc = root / "BC/training"

@@ -216,70 +216,70 @@
   "overall": {
     "episodes": 7050,
     "statuses": {
-      "arrival": 6875,
+      "arrival": 6827,
+      "collision": 89,
       "wrong_lane": 103,
-      "collision": 41,
       "red_light": 20,
       "timeout": 11
     },
-    "success_rate": 0.975177304964539,
-    "collision_rate": 0.0058156028368794325,
+    "success_rate": 0.9683687943262411,
+    "collision_rate": 0.012624113475177305,
     "wrong_lane_rate": 0.014609929078014184,
     "timeout_rate": 0.0015602836879432625,
     "red_light_violation_rate": 0.0028368794326241137,
-    "ep_return": 14.741149996896448,
-    "lane_changes": 1.5319148936170213,
-    "mean_speed": 7.326397436346611,
-    "ep_length": 198.85560283687943,
-    "green_passes": 0.745531914893617,
+    "ep_return": 14.652284920940389,
+    "lane_changes": 1.5306382978723405,
+    "mean_speed": 7.319187324391323,
+    "ep_length": 198.42524822695034,
+    "green_passes": 0.7439716312056738,
     "red_wait_clearance": {
       "min_m": 0.07837341777518603,
-      "q10_m": 0.6967834560596593,
-      "q1_m": 0.9895693159685681,
-      "median_m": 1.7236731882156,
-      "q3_m": 2.0580948727843924,
-      "q90_m": 2.4323247797900507,
+      "q10_m": 0.6975828635771961,
+      "q1_m": 0.9904242453170946,
+      "median_m": 1.7238918107587442,
+      "q3_m": 2.058086098665158,
+      "q90_m": 2.4325128014724355,
       "max_m": 96.30958798626853,
-      "mean_m": 2.5422642056994107,
-      "n": 4671
+      "mean_m": 2.5436203399622532,
+      "n": 4668
     },
     "red_wait_clearance_by_reference": {
       "stop_line": {
         "min_m": 0.07837341777518603,
-        "q10_m": 0.5442904796322324,
-        "q1_m": 0.6369819497001501,
-        "median_m": 0.8138471497984892,
-        "q3_m": 0.9607650605808384,
-        "q90_m": 1.0447543908372616,
+        "q10_m": 0.5438255750698004,
+        "q1_m": 0.6374401968703456,
+        "median_m": 0.814456457369996,
+        "q3_m": 0.9610412165392255,
+        "q90_m": 1.046468856167923,
         "max_m": 96.30958798626853,
-        "mean_m": 3.3003749820384494,
-        "n": 1374
+        "mean_m": 3.3080522354434994,
+        "n": 1370
       },
       "queued_vehicle": {
         "min_m": 0.2788573288608234,
-        "q10_m": 1.5131005677156906,
-        "q1_m": 1.6577108791327433,
-        "median_m": 1.8851342687618367,
-        "q3_m": 2.128076378873266,
-        "q90_m": 2.4977901312222186,
+        "q10_m": 1.513183215351456,
+        "q1_m": 1.6576711616933932,
+        "median_m": 1.884763893898712,
+        "q3_m": 2.1276312695261916,
+        "q90_m": 2.4977151204112356,
         "max_m": 59.97690052183441,
-        "mean_m": 2.2263272306645794,
-        "n": 3297
+        "mean_m": 2.2260728272850834,
+        "n": 3298
       }
     },
     "first_signal_stop_clearance": {
       "min_m": 0.16984936806137085,
-      "q10_m": 1.4610047632701182,
-      "q1_m": 1.8722603080375402,
-      "median_m": 2.2525034607965324,
-      "q3_m": 2.482309665776228,
-      "q90_m": 3.6526960868437923,
+      "q10_m": 1.461264944327413,
+      "q1_m": 1.8722733776835567,
+      "median_m": 2.252729273801707,
+      "q3_m": 2.482321748112576,
+      "q90_m": 3.666241254418116,
       "max_m": 99.95846211068596,
-      "mean_m": 5.623897588766421,
-      "n": 4671
+      "mean_m": 5.626415072029618,
+      "n": 4668
     },
     "green_restart": {
-      "observed": 4588,
+      "observed": 4585,
       "no_restart": 46,
       "median_delay_s": 2.0,
       "p90_delay_s": 6.0
@@ -358,19 +358,20 @@
     "ego_d_A1_A2": {
       "episodes": 375,
       "statuses": {
-        "arrival": 361,
+        "arrival": 353,
+        "collision": 8,
         "wrong_lane": 10,
         "red_light": 4
       },
-      "success_rate": 0.9626666666666667,
-      "collision_rate": 0.0,
+      "success_rate": 0.9413333333333334,
+      "collision_rate": 0.021333333333333333,
       "wrong_lane_rate": 0.02666666666666667,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.010666666666666666,
-      "ep_return": 18.026893325560255,
-      "lane_changes": 1.232,
-      "mean_speed": 7.628197463374165,
-      "ep_length": 189.112,
+      "ep_return": 17.8209605132862,
+      "lane_changes": 1.2213333333333334,
+      "mean_speed": 7.617499180929764,
+      "ep_length": 188.336,
       "green_passes": 0.9306666666666666,
       "red_wait_clearance": {
         "min_m": 0.438628248246431,
@@ -428,42 +429,42 @@
     "ego_d_A1_A3": {
       "episodes": 375,
       "statuses": {
-        "arrival": 371,
-        "wrong_lane": 2,
-        "collision": 2
+        "arrival": 369,
+        "collision": 4,
+        "wrong_lane": 2
       },
-      "success_rate": 0.9893333333333333,
-      "collision_rate": 0.005333333333333333,
+      "success_rate": 0.984,
+      "collision_rate": 0.010666666666666666,
       "wrong_lane_rate": 0.005333333333333333,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 18.504555823984656,
+      "ep_return": 18.387827454716465,
       "lane_changes": 2.1146666666666665,
-      "mean_speed": 10.004933959023726,
-      "ep_length": 136.04266666666666,
-      "green_passes": 0.968,
+      "mean_speed": 10.004468462523988,
+      "ep_length": 135.528,
+      "green_passes": 0.9626666666666667,
       "red_wait_clearance": {
         "min_m": 0.6996301773456715,
-        "q10_m": 0.7959532708177065,
-        "q1_m": 0.869409806301972,
-        "median_m": 1.6570093163801936,
-        "q3_m": 1.8717603146239465,
-        "q90_m": 9.159389277613577,
+        "q10_m": 0.8036662592285339,
+        "q1_m": 0.8705312489979322,
+        "median_m": 1.6610451535710533,
+        "q3_m": 1.8718485707367525,
+        "q90_m": 9.333044350674696,
         "max_m": 59.97690052183441,
-        "mean_m": 4.029240879240472,
-        "n": 183
+        "mean_m": 4.046841101846862,
+        "n": 182
       },
       "red_wait_clearance_by_reference": {
         "stop_line": {
           "min_m": 0.6996301773456715,
-          "q10_m": 0.7801073666789797,
-          "q1_m": 0.8042687393741517,
-          "median_m": 0.866115418616701,
-          "q3_m": 0.9277726548886314,
-          "q90_m": 1.4064050298881499,
+          "q10_m": 0.7793740194947425,
+          "q1_m": 0.8051998404304932,
+          "median_m": 0.8674740414792819,
+          "q3_m": 0.9307456512588477,
+          "q90_m": 1.4170382639694683,
           "max_m": 33.20963502701939,
-          "mean_m": 1.7110982200854423,
-          "n": 85
+          "mean_m": 1.72163509931411,
+          "n": 84
         },
         "queued_vehicle": {
           "min_m": 1.240692064711097,
@@ -478,18 +479,18 @@
         }
       },
       "first_signal_stop_clearance": {
-        "min_m": 0.8857209730707147,
-        "q10_m": 1.7355046131286564,
-        "q1_m": 1.8186519368343532,
-        "median_m": 2.0258718507585556,
-        "q3_m": 2.59164794389815,
-        "q90_m": 16.543252899633654,
+        "min_m": 0.942622231149624,
+        "q10_m": 1.736912506445,
+        "q1_m": 1.8201188568116446,
+        "median_m": 2.0289448036813376,
+        "q3_m": 2.5919136362938255,
+        "q90_m": 16.70976840957966,
         "max_m": 95.54056653737089,
-        "mean_m": 7.106018930689415,
-        "n": 183
+        "mean_m": 7.140196391995011,
+        "n": 182
       },
       "green_restart": {
-        "observed": 181,
+        "observed": 180,
         "no_restart": 15,
         "median_delay_s": 0.5,
         "p90_delay_s": 4.5
@@ -580,10 +581,10 @@
       "wrong_lane_rate": 0.06666666666666667,
       "timeout_rate": 0.024,
       "red_light_violation_rate": 0.0026666666666666666,
-      "ep_return": 11.728993211046525,
+      "ep_return": 11.729172509754477,
       "lane_changes": 1.6186666666666667,
-      "mean_speed": 4.535118924230808,
-      "ep_length": 353.37333333333333,
+      "mean_speed": 4.535147956911224,
+      "ep_length": 353.3786666666667,
       "green_passes": 0.8533333333333334,
       "red_wait_clearance": {
         "min_m": 0.07891547327185222,
@@ -593,7 +594,7 @@
         "q3_m": 2.1579702343858242,
         "q90_m": 2.5125853803572156,
         "max_m": 96.30958798626853,
-        "mean_m": 2.703588872965772,
+        "mean_m": 2.7036096598978565,
         "n": 355
       },
       "red_wait_clearance_by_reference": {
@@ -616,7 +617,7 @@
           "q3_m": 2.1478520600048334,
           "q90_m": 2.5,
           "max_m": 28.521000676395097,
-          "mean_m": 2.220150489811363,
+          "mean_m": 2.220173622604121,
           "n": 319
         }
       },
@@ -710,18 +711,18 @@
     "ego_d_A2_A2": {
       "episodes": 300,
       "statuses": {
-        "arrival": 296,
-        "collision": 4
+        "arrival": 284,
+        "collision": 16
       },
-      "success_rate": 0.9866666666666667,
-      "collision_rate": 0.013333333333333334,
+      "success_rate": 0.9466666666666667,
+      "collision_rate": 0.05333333333333334,
       "wrong_lane_rate": 0.0,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 15.721756494545307,
-      "lane_changes": 1.5233333333333334,
-      "mean_speed": 5.563892191261017,
-      "ep_length": 188.66,
+      "ep_return": 15.318542909883048,
+      "lane_changes": 1.52,
+      "mean_speed": 5.501578782944004,
+      "ep_length": 187.08333333333334,
       "green_passes": 0.9633333333333334,
       "red_wait_clearance": {
         "min_m": 0.4353196065221141,
@@ -779,20 +780,20 @@
     "ego_d_A2_A3": {
       "episodes": 300,
       "statuses": {
-        "arrival": 292,
-        "collision": 1,
+        "arrival": 286,
+        "collision": 7,
         "wrong_lane": 7
       },
-      "success_rate": 0.9733333333333334,
-      "collision_rate": 0.0033333333333333335,
+      "success_rate": 0.9533333333333334,
+      "collision_rate": 0.023333333333333334,
       "wrong_lane_rate": 0.023333333333333334,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 17.327470702905575,
+      "ep_return": 16.936332163279058,
       "lane_changes": 1.5466666666666666,
-      "mean_speed": 6.798603691918212,
-      "ep_length": 212.06666666666666,
-      "green_passes": 0.87,
+      "mean_speed": 6.744725273333074,
+      "ep_length": 210.74,
+      "green_passes": 0.8566666666666667,
       "red_wait_clearance": {
         "min_m": 0.2788573288608234,
         "q10_m": 0.7499442433998894,
@@ -801,7 +802,7 @@
         "q3_m": 1.8671015285879946,
         "q90_m": 2.2951517242070913,
         "max_m": 11.010088296243852,
-        "mean_m": 1.7096012254109805,
+        "mean_m": 1.7095939180511444,
         "n": 269
       },
       "red_wait_clearance_by_reference": {
@@ -813,7 +814,7 @@
           "q3_m": 0.84339187599479,
           "q90_m": 1.5724341053011757,
           "max_m": 2.775934515977248,
-          "mean_m": 0.9319184591561802,
+          "mean_m": 0.9318882179285518,
           "n": 65
         },
         "queued_vehicle": {
@@ -849,19 +850,19 @@
     "ego_d_A3_A1": {
       "episodes": 300,
       "statuses": {
-        "arrival": 294,
-        "collision": 2,
+        "arrival": 291,
+        "collision": 5,
         "wrong_lane": 4
       },
-      "success_rate": 0.98,
-      "collision_rate": 0.006666666666666667,
+      "success_rate": 0.97,
+      "collision_rate": 0.016666666666666666,
       "wrong_lane_rate": 0.013333333333333334,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 17.56639855649359,
+      "ep_return": 17.448923355589624,
       "lane_changes": 1.5166666666666666,
-      "mean_speed": 6.379732298833701,
-      "ep_length": 227.40333333333334,
+      "mean_speed": 6.35810178943965,
+      "ep_length": 226.88,
       "green_passes": 0.96,
       "red_wait_clearance": {
         "min_m": 0.38798876123500037,
@@ -871,19 +872,19 @@
         "q3_m": 2.1387645829169806,
         "q90_m": 2.3011210083012728,
         "max_m": 62.95753784655277,
-        "mean_m": 2.215853654756226,
+        "mean_m": 2.2159436962904535,
         "n": 271
       },
       "red_wait_clearance_by_reference": {
         "stop_line": {
           "min_m": 0.38798876123500037,
-          "q10_m": 0.6932454866907577,
+          "q10_m": 0.693129263471576,
           "q1_m": 0.8405544454922449,
           "median_m": 0.9182257621016063,
           "q3_m": 0.9439573446276484,
           "q90_m": 0.9767649431292412,
           "max_m": 62.95753784655277,
-          "mean_m": 1.9494983801642949,
+          "mean_m": 1.9498520215523472,
           "n": 69
         },
         "queued_vehicle": {
@@ -919,31 +920,31 @@
     "ego_d_A3_A2": {
       "episodes": 300,
       "statuses": {
-        "arrival": 290,
+        "arrival": 289,
         "wrong_lane": 7,
         "red_light": 1,
-        "collision": 2
+        "collision": 3
       },
-      "success_rate": 0.9666666666666667,
-      "collision_rate": 0.006666666666666667,
+      "success_rate": 0.9633333333333334,
+      "collision_rate": 0.01,
       "wrong_lane_rate": 0.023333333333333334,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0033333333333333335,
-      "ep_return": 17.103715231612938,
-      "lane_changes": 1.5333333333333334,
-      "mean_speed": 6.356953916872224,
-      "ep_length": 214.11,
-      "green_passes": 0.9233333333333333,
+      "ep_return": 17.035173132650367,
+      "lane_changes": 1.53,
+      "mean_speed": 6.381873320832342,
+      "ep_length": 213.68333333333334,
+      "green_passes": 0.92,
       "red_wait_clearance": {
         "min_m": 0.26532404098747975,
-        "q10_m": 0.9603165560145982,
-        "q1_m": 1.0453820053766876,
-        "median_m": 1.5796806447676026,
-        "q3_m": 1.7509437326705388,
-        "q90_m": 1.951361789106926,
+        "q10_m": 0.9600657265837164,
+        "q1_m": 1.0448589932604992,
+        "median_m": 1.5798956604625491,
+        "q3_m": 1.75117187793688,
+        "q90_m": 1.9519752634859522,
         "max_m": 78.10406186387871,
-        "mean_m": 2.1038914272760225,
-        "n": 269
+        "mean_m": 2.10731480947836,
+        "n": 268
       },
       "red_wait_clearance_by_reference": {
         "stop_line": {
@@ -959,29 +960,29 @@
         },
         "queued_vehicle": {
           "min_m": 1.065241374987167,
-          "q10_m": 1.4833032290611725,
-          "q1_m": 1.5517596495534676,
-          "median_m": 1.6204063674531781,
-          "q3_m": 1.8289705856989649,
-          "q90_m": 2.0264070474312983,
+          "q10_m": 1.4841893099700407,
+          "q1_m": 1.555113285548753,
+          "median_m": 1.62139610668574,
+          "q3_m": 1.8298451196020267,
+          "q90_m": 2.030975915957096,
           "max_m": 20.829442246927446,
-          "mean_m": 2.1052081188011758,
-          "n": 195
+          "mean_m": 2.109944114274122,
+          "n": 194
         }
       },
       "first_signal_stop_clearance": {
         "min_m": 0.9434103757539063,
-        "q10_m": 1.4756907525519012,
-        "q1_m": 1.946919651659755,
-        "median_m": 2.4213523241995,
-        "q3_m": 2.5614199027661257,
-        "q90_m": 2.9652120637200463,
+        "q10_m": 1.4755696608731312,
+        "q1_m": 1.96144866618283,
+        "median_m": 2.421532862466231,
+        "q3_m": 2.5614932086281357,
+        "q90_m": 2.965993130901427,
         "max_m": 71.47750493972454,
-        "mean_m": 3.398198385351525,
-        "n": 269
+        "mean_m": 3.4037321087462575,
+        "n": 268
       },
       "green_restart": {
-        "observed": 265,
+        "observed": 264,
         "no_restart": 2,
         "median_delay_s": 2.0,
         "p90_delay_s": 4.5
@@ -990,18 +991,19 @@
     "ego_d_A3_A3": {
       "episodes": 300,
       "statuses": {
-        "arrival": 299,
+        "arrival": 295,
+        "collision": 4,
         "wrong_lane": 1
       },
-      "success_rate": 0.9966666666666667,
-      "collision_rate": 0.0,
+      "success_rate": 0.9833333333333333,
+      "collision_rate": 0.013333333333333334,
       "wrong_lane_rate": 0.0033333333333333335,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 16.97380399239323,
-      "lane_changes": 1.5266666666666666,
-      "mean_speed": 5.87957621789807,
-      "ep_length": 237.29333333333332,
+      "ep_return": 16.822864735952535,
+      "lane_changes": 1.5233333333333334,
+      "mean_speed": 5.857935127824145,
+      "ep_length": 236.61666666666667,
       "green_passes": 0.9733333333333334,
       "red_wait_clearance": {
         "min_m": 0.16984936806137085,
@@ -1011,7 +1013,7 @@
         "q3_m": 2.169759789271051,
         "q90_m": 2.371989579270263,
         "max_m": 10.451011650163768,
-        "mean_m": 1.9194608186488151,
+        "mean_m": 1.9195033690981436,
         "n": 275
       },
       "red_wait_clearance_by_reference": {
@@ -1023,7 +1025,7 @@
           "q3_m": 0.8035812392433428,
           "q90_m": 0.8843501270708387,
           "max_m": 4.53132822933393,
-          "mean_m": 0.7950198606206978,
+          "mean_m": 0.7951846686990826,
           "n": 71
         },
         "queued_vehicle": {
@@ -1128,29 +1130,30 @@
     "ego_d_A3_A5": {
       "episodes": 300,
       "statuses": {
-        "arrival": 294,
-        "wrong_lane": 6
+        "arrival": 292,
+        "wrong_lane": 6,
+        "collision": 2
       },
-      "success_rate": 0.98,
-      "collision_rate": 0.0,
+      "success_rate": 0.9733333333333334,
+      "collision_rate": 0.006666666666666667,
       "wrong_lane_rate": 0.02,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 17.985906778777522,
-      "lane_changes": 1.6366666666666667,
-      "mean_speed": 10.000064921687677,
-      "ep_length": 135.34666666666666,
-      "green_passes": 0.9566666666666667,
+      "ep_return": 17.89290607134654,
+      "lane_changes": 1.6333333333333333,
+      "mean_speed": 9.990846094711777,
+      "ep_length": 134.90333333333334,
+      "green_passes": 0.9533333333333334,
       "red_wait_clearance": {
         "min_m": 0.7937729254395052,
-        "q10_m": 0.9258345575547245,
-        "q1_m": 0.9769203043138805,
-        "median_m": 1.626889530832905,
-        "q3_m": 1.8209456380374789,
-        "q90_m": 2.09417679625316,
+        "q10_m": 0.9252935097511539,
+        "q1_m": 0.9756748894363589,
+        "median_m": 1.6262586620640604,
+        "q3_m": 1.8152828920195212,
+        "q90_m": 2.0914664437299786,
         "max_m": 49.499039648866386,
-        "mean_m": 2.1508479002403096,
-        "n": 140
+        "mean_m": 2.149866630348702,
+        "n": 139
       },
       "red_wait_clearance_by_reference": {
         "stop_line": {
@@ -1166,29 +1169,29 @@
         },
         "queued_vehicle": {
           "min_m": 1.407748234056136,
-          "q10_m": 1.552560739611046,
-          "q1_m": 1.611406785019721,
-          "median_m": 1.7049539896045243,
-          "q3_m": 1.891143372904346,
-          "q90_m": 2.0967026058224496,
+          "q10_m": 1.5510938075454348,
+          "q1_m": 1.6111114515559013,
+          "median_m": 1.7035875298154384,
+          "q3_m": 1.884263139852231,
+          "q90_m": 2.0914895115992147,
           "max_m": 49.499039648866386,
-          "mean_m": 2.2445093556672706,
-          "n": 99
+          "mean_m": 2.2440732836314905,
+          "n": 98
         }
       },
       "first_signal_stop_clearance": {
         "min_m": 1.3414495277963852,
-        "q10_m": 1.59187797389457,
-        "q1_m": 1.8601137615500818,
-        "median_m": 2.297339462400579,
-        "q3_m": 2.4225825985513243,
-        "q90_m": 2.696660077455542,
+        "q10_m": 1.5897992327995383,
+        "q1_m": 1.8553713799349225,
+        "median_m": 2.2960430037058828,
+        "q3_m": 2.4226074270277955,
+        "q90_m": 2.704561919837103,
         "max_m": 84.03809143855224,
-        "mean_m": 4.744531710192072,
-        "n": 140
+        "mean_m": 4.7619801440419955,
+        "n": 139
       },
       "green_restart": {
-        "observed": 137,
+        "observed": 136,
         "no_restart": 0,
         "median_delay_s": 1.0,
         "p90_delay_s": 4.5
@@ -1206,9 +1209,9 @@
       "wrong_lane_rate": 0.0044444444444444444,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.008888888888888889,
-      "ep_return": 15.957072389235105,
+      "ep_return": 15.957071595752916,
       "lane_changes": 1.0355555555555556,
-      "mean_speed": 5.84454733143107,
+      "mean_speed": 5.844546941979917,
       "ep_length": 237.98666666666668,
       "green_passes": 0.9422222222222222,
       "red_wait_clearance": {
@@ -1278,10 +1281,10 @@
       "wrong_lane_rate": 0.07555555555555556,
       "timeout_rate": 0.008888888888888889,
       "red_light_violation_rate": 0.0044444444444444444,
-      "ep_return": 11.074225696837452,
+      "ep_return": 11.075761057125327,
       "lane_changes": 1.16,
-      "mean_speed": 4.361106075275991,
-      "ep_length": 338.81333333333333,
+      "mean_speed": 4.3612656911756424,
+      "ep_length": 338.8088888888889,
       "green_passes": 0.8577777777777778,
       "red_wait_clearance": {
         "min_m": 0.23074606219297422,
@@ -1349,9 +1352,9 @@
       "wrong_lane_rate": 0.0044444444444444444,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.017777777777777778,
-      "ep_return": 15.848924051873485,
+      "ep_return": 15.848911926854138,
       "lane_changes": 0.9733333333333334,
-      "mean_speed": 5.925254576755529,
+      "mean_speed": 5.925248647008911,
       "ep_length": 232.7422222222222,
       "green_passes": 0.9244444444444444,
       "red_wait_clearance": {
@@ -1479,53 +1482,53 @@
     "ego_d_A5_A3": {
       "episodes": 225,
       "statuses": {
-        "arrival": 223,
-        "collision": 1,
+        "arrival": 220,
+        "collision": 4,
         "wrong_lane": 1
       },
-      "success_rate": 0.9911111111111112,
-      "collision_rate": 0.0044444444444444444,
+      "success_rate": 0.9777777777777777,
+      "collision_rate": 0.017777777777777778,
       "wrong_lane_rate": 0.0044444444444444444,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 17.16984149748691,
+      "ep_return": 16.870659347755957,
       "lane_changes": 1.0888888888888888,
-      "mean_speed": 6.528130392819234,
-      "ep_length": 231.67555555555555,
-      "green_passes": 0.9155555555555556,
+      "mean_speed": 6.540532705030447,
+      "ep_length": 228.11111111111111,
+      "green_passes": 0.9022222222222223,
       "red_wait_clearance": {
         "min_m": 0.34906458167378673,
-        "q10_m": 0.5779203313854048,
-        "q1_m": 0.9843210434840746,
+        "q10_m": 0.5980482341948701,
+        "q1_m": 1.099902066514078,
         "median_m": 1.7668713789901087,
         "q3_m": 2.0331354879183223,
         "q90_m": 2.220624844125998,
         "max_m": 55.57960080231069,
-        "mean_m": 2.4683180750567755,
+        "mean_m": 2.484072306910585,
         "n": 188
       },
       "red_wait_clearance_by_reference": {
         "stop_line": {
           "min_m": 0.5168606598900709,
-          "q10_m": 0.5628672181459201,
-          "q1_m": 0.5717444343152049,
-          "median_m": 0.7887969066383569,
-          "q3_m": 0.9462473017303488,
-          "q90_m": 0.9862745186014393,
+          "q10_m": 0.5617811975037,
+          "q1_m": 0.5755184856493152,
+          "median_m": 0.8008185920358173,
+          "q3_m": 0.9572124096267949,
+          "q90_m": 0.9906103189289951,
           "max_m": 55.57960080231069,
-          "mean_m": 3.531953212807398,
-          "n": 50
+          "mean_m": 3.717145984946111,
+          "n": 47
         },
         "queued_vehicle": {
           "min_m": 0.34906458167378673,
-          "q10_m": 1.5365755514677601,
-          "q1_m": 1.7011301899201285,
-          "median_m": 1.930988541229162,
-          "q3_m": 2.0551693218531364,
-          "q90_m": 2.2579077030471537,
+          "q10_m": 1.5370612624413411,
+          "q1_m": 1.681597693086843,
+          "median_m": 1.9195870903304453,
+          "q3_m": 2.052346978228586,
+          "q90_m": 2.2570784668237565,
           "max_m": 8.397860938746057,
-          "mean_m": 2.082943025147129,
-          "n": 138
+          "mean_m": 2.0730477475654094,
+          "n": 141
         }
       },
       "first_signal_stop_clearance": {
@@ -1618,19 +1621,19 @@
     "ego_r_RING_A1_A3_A1_A3": {
       "episodes": 375,
       "statuses": {
-        "arrival": 371,
-        "collision": 2,
+        "arrival": 369,
+        "collision": 4,
         "wrong_lane": 2
       },
-      "success_rate": 0.9893333333333333,
-      "collision_rate": 0.005333333333333333,
+      "success_rate": 0.984,
+      "collision_rate": 0.010666666666666666,
       "wrong_lane_rate": 0.005333333333333333,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 8.034943831976484,
+      "ep_return": 7.979376018041265,
       "lane_changes": 2.541333333333333,
-      "mean_speed": 9.601297797106346,
-      "ep_length": 134.73066666666668,
+      "mean_speed": 9.598214398544444,
+      "ep_length": 134.528,
       "green_passes": 0.0,
       "red_wait_clearance": {
         "min_m": null,
@@ -1757,18 +1760,18 @@
     "ego_r_RING_A3_A5_A3_A5": {
       "episodes": 300,
       "statuses": {
-        "arrival": 294,
-        "collision": 6
+        "arrival": 289,
+        "collision": 11
       },
-      "success_rate": 0.98,
-      "collision_rate": 0.02,
+      "success_rate": 0.9633333333333334,
+      "collision_rate": 0.03666666666666667,
       "wrong_lane_rate": 0.0,
       "timeout_rate": 0.0,
       "red_light_violation_rate": 0.0,
-      "ep_return": 8.458729937095411,
-      "lane_changes": 2.0833333333333335,
-      "mean_speed": 9.98373222221162,
-      "ep_length": 120.37666666666667,
+      "ep_return": 8.290516942075374,
+      "lane_changes": 2.08,
+      "mean_speed": 9.96641341499547,
+      "ep_length": 119.77333333333333,
       "green_passes": 0.0,
       "red_wait_clearance": {
         "min_m": null,
@@ -1963,7 +1966,7 @@
       }
     }
   },
-  "elapsed_seconds": 97.91,
+  "elapsed_seconds": 103.89,
   "by_start_lane": {
     "ego_d_A1_A1": {
       "0": {
@@ -2008,43 +2011,48 @@
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 65,
+          "arrival": 64,
+          "collision": 1,
           "wrong_lane": 9,
           "red_light": 1
         },
-        "success_rate": 0.8666666666666667
+        "success_rate": 0.8533333333333334
       },
       "1": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 73,
+          "collision": 2
         },
-        "success_rate": 1.0
+        "success_rate": 0.9733333333333334
       },
       "2": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
+          "arrival": 72,
+          "collision": 2,
           "red_light": 1
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.96
       },
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
+          "arrival": 73,
+          "collision": 1,
           "red_light": 1
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9733333333333334
       },
       "4": {
         "episodes": 75,
         "statuses": {
-          "arrival": 73,
+          "collision": 2,
+          "arrival": 71,
           "red_light": 1,
           "wrong_lane": 1
         },
-        "success_rate": 0.9733333333333334
+        "success_rate": 0.9466666666666667
       }
     },
     "ego_d_A1_A3": {
@@ -2058,16 +2066,18 @@
       "1": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 74,
+          "collision": 1
         },
-        "success_rate": 1.0
+        "success_rate": 0.9866666666666667
       },
       "2": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 74,
+          "collision": 1
         },
-        "success_rate": 1.0
+        "success_rate": 0.9866666666666667
       },
       "3": {
         "episodes": 75,
@@ -2209,54 +2219,38 @@
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
+          "arrival": 71,
+          "collision": 4
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9466666666666667
       },
       "1": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
+          "arrival": 70,
+          "collision": 5
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9333333333333333
       },
       "2": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
+          "arrival": 71,
+          "collision": 4
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9466666666666667
       },
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
+          "arrival": 72,
+          "collision": 3
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.96
       }
     },
     "ego_d_A2_A3": {
       "0": {
-        "episodes": 75,
-        "statuses": {
-          "arrival": 73,
-          "wrong_lane": 2
-        },
-        "success_rate": 0.9733333333333334
-      },
-      "1": {
-        "episodes": 75,
-        "statuses": {
-          "arrival": 72,
-          "wrong_lane": 3
-        },
-        "success_rate": 0.96
-      },
-      "2": {
         "episodes": 75,
         "statuses": {
           "arrival": 72,
@@ -2265,23 +2259,42 @@
         },
         "success_rate": 0.96
       },
+      "1": {
+        "episodes": 75,
+        "statuses": {
+          "arrival": 71,
+          "collision": 1,
+          "wrong_lane": 3
+        },
+        "success_rate": 0.9466666666666667
+      },
+      "2": {
+        "episodes": 75,
+        "statuses": {
+          "arrival": 70,
+          "collision": 3,
+          "wrong_lane": 2
+        },
+        "success_rate": 0.9333333333333333
+      },
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 73,
+          "collision": 2
         },
-        "success_rate": 1.0
+        "success_rate": 0.9733333333333334
       }
     },
     "ego_d_A3_A1": {
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 72,
-          "collision": 2,
+          "arrival": 71,
+          "collision": 3,
           "wrong_lane": 1
         },
-        "success_rate": 0.96
+        "success_rate": 0.9466666666666667
       },
       "1": {
         "episodes": 75,
@@ -2294,28 +2307,30 @@
       "2": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
+          "arrival": 73,
+          "collision": 1,
           "wrong_lane": 1
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9733333333333334
       },
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
+          "arrival": 73,
+          "collision": 1,
           "wrong_lane": 1
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9733333333333334
       }
     },
     "ego_d_A3_A2": {
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 73,
-          "collision": 2
+          "arrival": 72,
+          "collision": 3
         },
-        "success_rate": 0.9733333333333334
+        "success_rate": 0.96
       },
       "1": {
         "episodes": 75,
@@ -2355,23 +2370,26 @@
       "1": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 74,
+          "collision": 1
         },
-        "success_rate": 1.0
+        "success_rate": 0.9866666666666667
       },
       "2": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 73,
+          "collision": 2
         },
-        "success_rate": 1.0
+        "success_rate": 0.9733333333333334
       },
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 74,
+          "collision": 1
         },
-        "success_rate": 1.0
+        "success_rate": 0.9866666666666667
       }
     },
     "ego_d_A3_A4": {
@@ -2409,9 +2427,10 @@
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 74,
+          "collision": 1
         },
-        "success_rate": 1.0
+        "success_rate": 0.9866666666666667
       },
       "1": {
         "episodes": 75,
@@ -2432,10 +2451,11 @@
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 73,
-          "wrong_lane": 2
+          "arrival": 72,
+          "wrong_lane": 2,
+          "collision": 1
         },
-        "success_rate": 0.9733333333333334
+        "success_rate": 0.96
       }
     },
     "ego_d_A4_A2": {
@@ -2549,25 +2569,27 @@
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
+          "arrival": 73,
+          "collision": 1,
           "wrong_lane": 1
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9733333333333334
       },
       "1": {
-        "episodes": 75,
-        "statuses": {
-          "arrival": 75
-        },
-        "success_rate": 1.0
-      },
-      "2": {
         "episodes": 75,
         "statuses": {
           "arrival": 74,
           "collision": 1
         },
         "success_rate": 0.9866666666666667
+      },
+      "2": {
+        "episodes": 75,
+        "statuses": {
+          "arrival": 73,
+          "collision": 2
+        },
+        "success_rate": 0.9733333333333334
       }
     },
     "ego_d_A5_A5": {
@@ -2598,9 +2620,10 @@
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 75
+          "arrival": 74,
+          "collision": 1
         },
-        "success_rate": 1.0
+        "success_rate": 0.9866666666666667
       },
       "1": {
         "episodes": 75,
@@ -2612,10 +2635,10 @@
       "2": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
+          "arrival": 73,
+          "collision": 2
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.9733333333333334
       },
       "3": {
         "episodes": 75,
@@ -2673,34 +2696,34 @@
       "0": {
         "episodes": 75,
         "statuses": {
-          "arrival": 73,
-          "collision": 2
+          "arrival": 72,
+          "collision": 3
         },
-        "success_rate": 0.9733333333333334
+        "success_rate": 0.96
       },
       "1": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
-        },
-        "success_rate": 0.9866666666666667
-      },
-      "2": {
-        "episodes": 75,
-        "statuses": {
           "arrival": 73,
           "collision": 2
         },
         "success_rate": 0.9733333333333334
       },
+      "2": {
+        "episodes": 75,
+        "statuses": {
+          "arrival": 72,
+          "collision": 3
+        },
+        "success_rate": 0.96
+      },
       "3": {
         "episodes": 75,
         "statuses": {
-          "arrival": 74,
-          "collision": 1
+          "arrival": 72,
+          "collision": 3
         },
-        "success_rate": 0.9866666666666667
+        "success_rate": 0.96
       }
     },
     "ego_r_RING_A4_A1_A4_A1": {
@@ -2756,73 +2779,74 @@
   "center_lane_subset": {
     "episodes": 1800,
     "statuses": {
-      "arrival": 1770,
-      "collision": 8,
+      "arrival": 1756,
+      "collision": 22,
       "wrong_lane": 14,
       "red_light": 6,
       "timeout": 2
     },
-    "success_rate": 0.9833333333333333,
-    "collision_rate": 0.0044444444444444444,
+    "success_rate": 0.9755555555555555,
+    "collision_rate": 0.012222222222222223,
     "wrong_lane_rate": 0.0077777777777777776,
     "timeout_rate": 0.0011111111111111111,
     "red_light_violation_rate": 0.0033333333333333335,
-    "ep_return": 14.524944354551103,
-    "lane_changes": 1.3516666666666666,
-    "mean_speed": 7.192882485129392,
-    "ep_length": 205.20444444444445,
-    "green_passes": 0.7488888888888889,
+    "ep_return": 14.422649669728811,
+    "lane_changes": 1.3505555555555555,
+    "mean_speed": 7.184412391608631,
+    "ep_length": 204.685,
+    "green_passes": 0.7472222222222222,
     "red_wait_clearance": {
       "min_m": 0.07891547327185222,
-      "q10_m": 0.6890035834434105,
-      "q1_m": 0.985095852128425,
-      "median_m": 1.7196342984062687,
-      "q3_m": 2.03975191775381,
-      "q90_m": 2.3155372155403393,
+      "q10_m": 0.6887537294230412,
+      "q1_m": 0.9862727366154829,
+      "median_m": 1.7197202866255026,
+      "q3_m": 2.0398517391225237,
+      "q90_m": 2.31556070243327,
       "max_m": 89.1068735940149,
-      "mean_m": 2.032740519774827,
-      "n": 1202
+      "mean_m": 2.0344481297100967,
+      "n": 1201
     },
     "red_wait_clearance_by_reference": {
       "stop_line": {
         "min_m": 0.07891547327185222,
-        "q10_m": 0.5390523929565518,
-        "q1_m": 0.624269064764917,
-        "median_m": 0.8060637000965691,
-        "q3_m": 0.9564106325430402,
-        "q90_m": 0.9912155036229563,
+        "q10_m": 0.5386866558834583,
+        "q1_m": 0.6238531382080339,
+        "median_m": 0.8082002163591788,
+        "q3_m": 0.9566275816186369,
+        "q90_m": 0.9918022098246895,
         "max_m": 89.1068735940149,
-        "mean_m": 1.507519750264533,
-        "n": 349
+        "mean_m": 1.5117511218778639,
+        "n": 347
       },
       "queued_vehicle": {
         "min_m": 1.0088618270337495,
-        "q10_m": 1.5156353358476473,
-        "q1_m": 1.6638365732362992,
-        "median_m": 1.894409432925464,
-        "q3_m": 2.12666034224015,
-        "q90_m": 2.449374228845517,
+        "q10_m": 1.5157274490896568,
+        "q1_m": 1.6634726263096127,
+        "median_m": 1.894122833468579,
+        "q3_m": 2.1265780784501835,
+        "q90_m": 2.4490184623319076,
         "max_m": 59.52032791050725,
-        "mean_m": 2.247631549738594,
-        "n": 853
+        "mean_m": 2.2468320427285797,
+        "n": 854
       }
     },
     "first_signal_stop_clearance": {
       "min_m": 0.2100520656817082,
-      "q10_m": 1.4611234665218533,
-      "q1_m": 1.8488888914396044,
-      "median_m": 2.239684482338518,
-      "q3_m": 2.4571021777234634,
-      "q90_m": 2.773198413023583,
+      "q10_m": 1.4627222498226615,
+      "q1_m": 1.850782085749973,
+      "median_m": 2.239958370624077,
+      "q3_m": 2.4574703062706433,
+      "q90_m": 2.7747127502682325,
       "max_m": 95.54056653737089,
-      "mean_m": 4.445371076712829,
-      "n": 1202
+      "mean_m": 4.448334981878226,
+      "n": 1201
     },
     "green_restart": {
-      "observed": 1190,
+      "observed": 1189,
       "no_restart": 16,
       "median_delay_s": 2.0,
       "p90_delay_s": 6.5
     }
-  }
+  },
+  "junction_collisions": true
 }

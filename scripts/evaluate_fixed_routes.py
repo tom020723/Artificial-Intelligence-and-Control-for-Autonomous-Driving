@@ -27,7 +27,7 @@ from env import road_builder
 from env.adaptive_traffic_schedule import AdaptiveTrafficSchedule, adaptive_schedule_factory
 from env.background_demand import CALIBRATED_VPH, set_weighted_od_flow_rates
 from env.bc_ppo_reward import STOP_AMPLITUDE, STOP_SIGMA_M, STEP_REWARD, TERMINAL_REWARDS, StopRewardProbe
-from env.collision_detection import configure_collision_gaps, junction_collisions
+from env.collision_detection import JUNCTION_COLLISIONS_VARIABLE, configure_collision_gaps, junction_collisions
 from env.control_timing import lane_change_timing_allowed
 from env.ego_routes import read_ego_route_groups
 from env.parallel_sumo import ParallelSumo, libsumo
@@ -628,8 +628,26 @@ def _plot_snapshot_arrivals(fig, heat, rows, summary, routes, labels):
     fig.colorbar(raster, ax=heat, ticks=range(max_arrivals + 1), label=f"Arrivals / {max_arrivals}")
 
 
-def run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, *, output=None,
-        spawn_protect_m=0., probe_ppo_reward=False, isolated=False, workers=4, sumo_seed=0):
+def run(*args, junction_check=True, **kwargs):
+    """Evaluate with SUMO junction collision checks on (the default) or off.
+
+    Training and expert collection keep the SUMO default (off); evaluation counts
+    collisions inside junctions too. The setting reaches every worker through the
+    environment and is restored afterwards.
+    """
+    previous = os.environ.get(JUNCTION_COLLISIONS_VARIABLE)
+    os.environ[JUNCTION_COLLISIONS_VARIABLE] = "1" if junction_check else "0"
+    try:
+        return _run(*args, **kwargs)
+    finally:
+        if previous is None:
+            os.environ.pop(JUNCTION_COLLISIONS_VARIABLE, None)
+        else:
+            os.environ[JUNCTION_COLLISIONS_VARIABLE] = previous
+
+
+def _run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, *, output=None,
+         spawn_protect_m=0., probe_ppo_reward=False, isolated=False, workers=4, sumo_seed=0):
     started = perf_counter()
     reference = suite / "reference"
     spec = read_json(suite / "suite.json")
@@ -768,6 +786,8 @@ def main():
     evaluate.add_argument("--replicas", type=int, default=MAX_REPLICAS_PER_WORKER,
                           help=f"Replicas per worker (default and maximum: {MAX_REPLICAS_PER_WORKER})")
     evaluate.add_argument("--smoke", type=int, default=0, help="Use only the first N cases per worker")
+    evaluate.add_argument("--no-junction-check", action="store_true",
+                          help="Do not count collisions inside junctions (SUMO default; on by default here)")
     evaluate.add_argument("--isolated", action="store_true",
                           help="Run every case in a fresh SUMO (order- and batch-independent outcomes)")
     evaluate.add_argument("--workers", type=int, default=default_workers(),
@@ -808,7 +828,7 @@ def main():
             args.trace_failures_from.resolve(strict=True) if args.trace_failures_from else None,
             output=args.output.resolve() if args.output else None, spawn_protect_m=args.spawn_protect_m,
             probe_ppo_reward=args.probe_ppo_reward, isolated=args.isolated, workers=args.workers,
-            sumo_seed=args.sumo_seed)
+            sumo_seed=args.sumo_seed, junction_check=not args.no_junction_check)
 
 
 if __name__ == "__main__":

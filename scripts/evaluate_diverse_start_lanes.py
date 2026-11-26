@@ -158,6 +158,8 @@ def main():
                           help="Processes; each case runs in its own fresh SUMO (default: up to 24)")
     evaluate.add_argument("--sumo-seed", type=int, default=0,
                           help="Base SUMO seed; each case derives its own from it")
+    evaluate.add_argument("--no-junction-check", action="store_true",
+                          help="Do not count collisions inside junctions (SUMO default; on by default here)")
     evaluate.add_argument("--shared-sumo", action="store_true",
                           help="Previous mode: 4 workers run --replicas cases at once in one SUMO. "
                                "Outcomes then depend on case order and batching.")
@@ -182,7 +184,8 @@ def main():
         model = args.model.resolve(strict=True)
         output = args.output.resolve() if args.output else None
         run(suite, "diverse_start_lanes", None, model, args.replicas, args.smoke, output=output,
-            isolated=not args.shared_sumo, workers=args.workers, sumo_seed=args.sumo_seed)
+            isolated=not args.shared_sumo, workers=args.workers, sumo_seed=args.sumo_seed,
+            junction_check=not args.no_junction_check)
 
 
 if __name__ == "__main__":

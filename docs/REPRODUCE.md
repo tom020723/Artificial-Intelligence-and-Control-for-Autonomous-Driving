@@ -144,12 +144,14 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 
 120초 묶음 신호, 4,700대/시간 기준(2026-11-26). BC와 세트는 `OUT=results/final3`로 이 절차를 돌린 출력이고, PPO는 같은 BC에서 lane 변경 벌점 0.01로 학습한 것이다(지금 재현 스크립트의 4단계 설정과 같다). git에는 세트, 모델, 설정, 평가 요약과 사례별 결과만 넣었다.
 
-| 항목 | 경로 | 결과 (테스트 7,050건) |
-|---|---|---|
-| 고정 경로 평가 세트 | `results/final/suite_fixed_routes` | |
-| 무작위 출발 차선 테스트·검증 세트 | `results/final/suite_diverse_test`, `results/final/suite_diverse_validation` | |
-| 최종 BC | `results/final/BC/training/model.pt` (epoch 100) | 91.33% |
-| 최종 PPO | `results/final/PPO/eval_runs/iter080/model.pt` (검증 97.38%로 선택) | **97.52%** (교차로 충돌 검사를 켜면 96.84%) |
+평가는 교차로 안 충돌까지 세는 것이 기본이다(SUMO `--collision.check-junctions`, 평가 스크립트의 기본값; 학습과 수집은 SUMO 기본값인 꺼짐). 검사를 끈 결과는 `*_no_junction_check` 폴더에 함께 둔다.
+
+| 항목 | 경로 | 테스트 7,050건 (검사 켬) | 검사 끔 |
+|---|---|---|---|
+| 고정 경로 평가 세트 | `results/final/suite_fixed_routes` | | |
+| 무작위 출발 차선 테스트·검증 세트 | `results/final/suite_diverse_test`, `results/final/suite_diverse_validation` | | |
+| 최종 BC | `results/final/BC/training/model.pt` (epoch 100) | 90.79% (고정 경로 92.94%) | 91.33% (고정 경로 94.61%) |
+| 최종 PPO | `results/final/PPO/eval_runs/iter080/model.pt` (검증 96.49%로 선택) | **96.84%** | 97.52% |
 
 모델 폴더에는 수집 설정의 사본(`collection_config.json`)이 있어 데이터셋 없이도 평가할 수 있다.
 
