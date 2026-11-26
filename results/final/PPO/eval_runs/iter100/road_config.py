@@ -66,13 +66,37 @@ ROAD = {
 #   · 녹지: 위성사진 격자에서 읽은 윤곽 (순수 시각 요소).
 # ──────────────────────────────────────────────────────────────
 NOHYEONG = {
-    # Simulation plan: one approach at a time, straight and left together.
-    # Central traffic follows this plan; slip-road traffic yields independently.
+    # 중앙 교차로(nC) 신호. 우회전 전용 길은 신호 없이 따로 양보한다.
+    #   type "grouped"    : 차선별 동시신호. 아래 stages 를 순서대로 켠다 (주기 120초).
+    #   type "sequential" : 예전 방식. order 순서로 한 방향씩, 그 방향 전체 차선을 켠다 (주기 125초).
+    #                       (type 이 없는 예전 설정도 sequential 로 만든다)
+    # 방향: A1=8시, A2=2시, A3=5시, A4=10시, A5=3시.
     "signal_plan": {
-        "order": ["A1", "A2", "A3", "A4", "A5"],
-        "green_seconds": {"A1": 20, "A2": 20, "A3": 20, "A4": 20, "A5": 20},
+        "type": "grouped",
         "yellow_seconds": 3,
         "all_red_seconds": 2,
+        # ── type "grouped" 에서 쓰는 값 ──
+        #   lanes  : {도로: 초록을 받는 교차로 진입 차선 번호들 (0 = 맨 오른쪽) 또는 "all"}
+        #   uturns : 이 단계에 함께 켜는 상류 유턴(upstream_uturns)의 도로
+        #   연속한 두 단계에서 모두 초록인 차선은 그 사이 노랑·전적색 동안에도 초록을 유지한다.
+        #   같은 단계의 초록끼리 경로가 겹치면 도로를 만들 때 오류가 난다.
+        "stages": [
+            # 1) 노형로 양방향 직진 (A1 은 우회전 포함)
+            {"name": "A1A2_through", "seconds": 20,
+             "lanes": {"A1": [0, 1, 2, 3], "A2": [1, 2, 3], "A3": [0]}},
+            # 2) 노형로 양방향 좌회전·유턴
+            {"name": "A1A2_left", "seconds": 17,
+             "lanes": {"A1": [0, 4], "A2": [4], "A3": [0]}, "uturns": ["A2"]},
+            {"name": "A3", "seconds": 18, "lanes": {"A3": "all"}},
+            {"name": "A5", "seconds": 20, "lanes": {"A5": "all", "A1": [0]}, "uturns": ["A5"]},
+            # A3 유턴이 빠져나갈 시간을 확보하도록 A5를 A3와 A4 사이에 둔다.
+            {"name": "A4", "seconds": 20, "lanes": {"A4": "all"}},
+            # 우회전 전용 차선은 막는 흐름이 없는 단계에도 켠다:
+            #   A3 차선 0 (5시→3시) 은 1·2단계, A1 차선 0 (8시→5시) 은 2·4단계.
+        ],
+        # ── type "sequential" 에서 쓰는 값 ──
+        "order": ["A1", "A2", "A3", "A4", "A5"],
+        "green_seconds": {"A1": 20, "A2": 20, "A3": 20, "A4": 20, "A5": 20},
     },
     "center_node_type": "traffic_light",   # "traffic_light" | "priority"(신호 없음, 우선순위만)
     "uturn": True,             # 교차로에서 U턴 연결 생성 여부

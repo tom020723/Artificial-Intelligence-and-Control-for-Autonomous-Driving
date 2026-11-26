@@ -1,10 +1,10 @@
 {
-  "initial_model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/BC/training/model.pt",
-  "traffic_suite": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes",
-  "traffic_vph": 4740,
+  "initial_model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/BC/training/model.pt",
+  "traffic_suite": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/suite_fixed_routes",
+  "traffic_vph": 4700,
   "rollout": 32768,
   "num_envs": 512,
-  "num_workers": 4,
+  "num_workers": 16,
   "device": "cuda",
   "step_reward": -0.0001,
   "terminal_rewards": {
@@ -19,7 +19,7 @@
   "algorithm": "AnchoredPPO",
   "iterations": 100,
   "critic_warmup": 5,
-  "workers": 4,
+  "workers": 16,
   "envs": 512,
   "steps_per_env": 64,
   "lr": 5e-05,
@@ -32,5 +32,8 @@
   "overspeed_penalty": 0.0,
   "overspeed_tolerance": 0.1,
   "ego_speed_cap": false,
+  "from_scratch": false,
+  "lane_keep_prob": 0.9,
+  "lane_change_penalty": 0.01,
   "seed": 0
 }

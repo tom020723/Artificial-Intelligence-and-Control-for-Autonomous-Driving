@@ -1,5 +1,5 @@
 {
-  "traffic_vph": 4740,
+  "traffic_vph": 4700,
   "adaptive_traffic": false,
   "uniform_idm_vph": 0,
   "traffic_seed": 0,
@@ -33,7 +33,7 @@
   ],
   "settings": {
     "initial_vph": 0,
-    "max_vph": 4740,
+    "max_vph": 4700,
     "success_increment": 50,
     "failure_decrement": 150,
     "ring_traffic": true,

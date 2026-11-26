@@ -75,6 +75,19 @@ class EvaluationContextTests(unittest.TestCase):
             self.assertEqual(saved["expert_spawn_protect_m"], 30)
 
 
+class PortableContextTests(unittest.TestCase):
+    def test_uses_the_collection_config_beside_the_model_when_the_dataset_is_absent(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            run = make_run(root)
+            (run / "collection_config.json").write_text((root / "data" / "config.json").read_text())
+            (root / "data" / "config.json").unlink()
+            saved, curriculum, _ = evaluation_context(run, root / "context")
+            road = run_config(root / "context/road_config.py")
+            self.assertTrue(road["TRAFFIC"]["background_enabled"])
+            self.assertEqual(curriculum.ring_reference_vph, 800)
+
+
 class SummaryTests(unittest.TestCase):
     def test_clearance_stats_keep_references_apart_and_keep_zero(self):
         rows = [dict(red_wait_clearance_m=value, red_wait_reference=ref, first_signal_stop_clearance_m=None,

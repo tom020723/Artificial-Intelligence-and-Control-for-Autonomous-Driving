@@ -142,14 +142,20 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 
 ## 최종 결과물
 
-`results/final`은 `OUT=results/final`로 이 절차를 돌린 출력이다(2026-11-26). git에는 세트, 모델, 설정, 평가 요약과 사례별 결과만 넣었고 수집 원본과 데이터셋은 넣지 않았다.
+120초 묶음 신호, 4,700대/시간 기준(2026-11-26). BC와 세트는 `OUT=results/final3`로 이 절차를 돌린 출력이고, PPO는 같은 BC에서 lane 변경 벌점 0.01로 학습한 것이다(지금 재현 스크립트의 4단계 설정과 같다). git에는 세트, 모델, 설정, 평가 요약과 사례별 결과만 넣었다.
 
-| 항목 | 경로 |
-|---|---|
-| 고정 경로 평가 세트 | `results/final/suite_fixed_routes` |
-| 무작위 출발 차선 테스트·검증 세트 | `results/final/suite_diverse_test`, `results/final/suite_diverse_validation` |
-| 최종 BC | `results/final/BC/training/model.pt` (테스트 90.04%) |
-| 최종 PPO | `results/final/PPO/eval_runs/iter100/model.pt` (반복 100, 테스트 97.06%) |
+| 항목 | 경로 | 결과 (테스트 7,050건) |
+|---|---|---|
+| 고정 경로 평가 세트 | `results/final/suite_fixed_routes` | |
+| 무작위 출발 차선 테스트·검증 세트 | `results/final/suite_diverse_test`, `results/final/suite_diverse_validation` | |
+| 최종 BC | `results/final/BC/training/model.pt` (epoch 100) | 91.33% |
+| 최종 PPO | `results/final/PPO/eval_runs/iter080/model.pt` (검증 97.38%로 선택) | **97.52%** (교차로 충돌 검사를 켜면 96.84%) |
+
+모델 폴더에는 수집 설정의 사본(`collection_config.json`)이 있어 데이터셋 없이도 평가할 수 있다.
+
+### 학습 데이터셋
+
+BC를 학습한 데이터셋(shard 2,269개와 `manifest.json`, `config.json`, 약 4.4GB)은 git에 넣지 않고 이 컴퓨터의 `results/final3/BC/dataset`에 둔다. 파일별 SHA-256은 `results/final/BC/dataset/SHA256SUMS`에 있다. 그 폴더에서 `sha256sum -c` 로 확인한다. 수집 원본(약 30GB)은 지웠고, 필요하면 재현 스크립트 1단계로 같은 데이터를 다시 만든다.
 
 ## 정리된 파일
 

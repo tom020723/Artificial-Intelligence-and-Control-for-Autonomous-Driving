@@ -1,26 +1,26 @@
 diverse_start_lanes: 7,050 cases, fresh SUMO per case (SUMO seed 0), 24 workers
-worker_1: 250/294
-worker_0: 250/294
-worker_22: 250/293
-worker_2: 250/294
 worker_13: 250/294
-worker_4: 250/294
-worker_21: 250/293
+worker_1: 250/294
 worker_6: 250/294
-worker_15: 250/294
-worker_3: 250/294
-worker_8: 250/294
-worker_18: 250/293
+worker_2: 250/294
 worker_7: 250/294
+worker_8: 250/294
+worker_10: 250/294
+worker_18: 250/293
 worker_16: 250/294
+worker_22: 250/293
+worker_11: 250/294
+worker_4: 250/294
+worker_12: 250/294
+worker_0: 250/294
 worker_5: 250/294
+worker_21: 250/293
+worker_3: 250/294
 worker_9: 250/294
-worker_17: 250/294
+worker_14: 250/294
+worker_15: 250/294
 worker_20: 250/293
 worker_19: 250/293
-worker_14: 250/294
-worker_12: 250/294
-worker_10: 250/294
 worker_23: 250/293
-worker_11: 250/294
-diverse_start_lanes: {'arrival': 6348, 'collision': 183, 'wrong_lane': 290, 'red_light': 204, 'timeout': 25} · /home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/BC/evaluation_diverse_start_lanes
+worker_17: 250/294
+diverse_start_lanes: {'arrival': 6439, 'red_light': 317, 'collision': 82, 'wrong_lane': 200, 'timeout': 12} · /home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/BC/evaluation_diverse_start_lanes

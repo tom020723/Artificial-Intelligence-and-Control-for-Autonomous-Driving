@@ -15,7 +15,7 @@ from utils.bc_policy import evaluation_context
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITE = ROOT / "results/final/suite_diverse_test"
-MODEL = ROOT / "results/final/PPO/eval_runs/iter100/model.pt"
+MODEL = ROOT / "results/final/PPO/eval_runs/iter080/model.pt"
 # Cases whose outcome changed with case order in the previous shared-SUMO mode.
 CASES = (632, 3253, 6925, 681)
 

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-11-26T02:15:25.792676+09:00 by Eclipse SUMO netconvert 1.28.0
+<!-- generated on 2026-11-26T15:11:53.871004+09:00 by Eclipse SUMO netconvert 1.28.0
 <netconvertConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/netconvertConfiguration.xsd">
 
     <input>
-        <node-files value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes/sumo/highway.nod.xml"/>
-        <edge-files value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes/sumo/highway.edg.xml"/>
-        <connection-files value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes/sumo/highway.con.xml"/>
+        <node-files value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/suite_fixed_routes/sumo/highway.nod.xml"/>
+        <edge-files value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/suite_fixed_routes/sumo/highway.edg.xml"/>
+        <connection-files value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/suite_fixed_routes/sumo/highway.con.xml"/>
     </input>
 
     <output>
-        <output-file value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes/sumo/highway.net.xml"/>
+        <output-file value="/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/suite_fixed_routes/sumo/highway.net.xml"/>
     </output>
 
     <processing>
@@ -383,21 +383,21 @@
     </edge>
 
     <tlLogic id="nC" type="static" programID="0" offset="0">
-    <phase duration="20" state="rrrrrrrrrrrrrrGGGGGGgrrrrrrr" name="A1_green" />
-    <phase duration="3" state="rrrrrrrrrrrrrryyyyyyyrrrrrrr" name="A1_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrr" name="A1_clearance" />
-    <phase duration="20" state="GGGGrrrrrrrrrrrrrrrrrrrrrrgr" name="A2_green" />
-    <phase duration="3" state="yyyyrrrrrrrrrrrrrrrrrrrrrryr" name="A2_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrr" name="A2_clearance" />
-    <phase duration="20" state="rrrrrrrGGGGGGgrrrrrrrrrrrrrr" name="A3_green" />
+    <phase duration="20" state="GGGrrrrGrrrrrrGGGGGrrrrrrrrr" name="A1A2_through_green" />
+    <phase duration="3" state="yyyrrrrGrrrrrrGyyyyrrrrrrrrr" name="A1A2_through_yellow" />
+    <phase duration="2" state="rrrrrrrGrrrrrrGrrrrrrrrrrrrr" name="A1A2_through_clearance" />
+    <phase duration="17" state="rrrGrrrGrrrrrrGrrrrGgrrrrrgr" name="A1A2_left_green" />
+    <phase duration="3" state="rrryrrrGrrrrrryrrrryyrrrrryr" name="A1A2_left_yellow" />
+    <phase duration="2" state="rrrrrrrGrrrrrrrrrrrrrrrrrrrr" name="A1A2_left_clearance" />
+    <phase duration="18" state="rrrrrrrGGGGGGgrrrrrrrrrrrrrr" name="A3_green" />
     <phase duration="3" state="rrrrrrryyyyyyyrrrrrrrrrrrrrr" name="A3_yellow" />
     <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrr" name="A3_clearance" />
+    <phase duration="20" state="rrrrGGGrrrrrrrGrrrrrrrrrrrrg" name="A5_green" />
+    <phase duration="3" state="rrrryyyrrrrrrryrrrrrrrrrrrry" name="A5_yellow" />
+    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrr" name="A5_clearance" />
     <phase duration="20" state="rrrrrrrrrrrrrrrrrrrrrGGGGGrr" name="A4_green" />
     <phase duration="3" state="rrrrrrrrrrrrrrrrrrrrryyyyyrr" name="A4_yellow" />
     <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrr" name="A4_clearance" />
-    <phase duration="20" state="rrrrGGGrrrrrrrrrrrrrrrrrrrrg" name="A5_green" />
-    <phase duration="3" state="rrrryyyrrrrrrrrrrrrrrrrrrrry" name="A5_yellow" />
-    <phase duration="2" state="rrrrrrrrrrrrrrrrrrrrrrrrrrrr" name="A5_clearance" />
 </tlLogic>
 
     <junction id="nC" type="traffic_light" x="0.00" y="0.00" incLanes="A2_in_0 A2_in_1 A2_in_2 A2_in_3 A2_in_4 A5_in_0 A5_in_1 A5_in_2 A3_in_0 A3_in_1 A3_in_2 A3_in_3 A3_in_4 A1_in_0 A1_in_1 A1_in_2 A1_in_3 A1_in_4 A4_in_0 A4_in_1 A4_in_2" intLanes=":nC_0_0 :nC_1_0 :nC_1_1 :nC_1_2 :nC_27_0 :nC_5_0 :nC_5_1 :nC_7_0 :nC_8_0 :nC_9_0 :nC_9_1 :nC_11_0 :nC_11_1 :nC_13_0 :nC_28_0 :nC_15_0 :nC_16_0 :nC_17_0 :nC_17_1 :nC_17_2 :nC_29_0 :nC_30_0 :nC_22_0 :nC_22_1 :nC_24_0 :nC_24_1 :nC_26_0" shape="36.33,39.45 48.36,48.24 62.76,23.30 49.13,17.28 49.63,15.77 51.97,-3.29 21.99,-18.66 -5.69,-26.59 -6.68,-24.69 -7.38,-24.23 -8.20,-24.09 -9.14,-24.29 -10.22,-24.81 -23.41,-2.87 -21.18,-1.41 -19.54,-0.05 -18.48,1.22 -18.00,2.38 -18.11,3.44 -18.79,4.39 -7.88,16.10 43.82,40.65 42.59,43.61" customShape="1">

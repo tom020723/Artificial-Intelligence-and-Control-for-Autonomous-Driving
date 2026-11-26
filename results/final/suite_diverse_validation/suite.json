@@ -1,5 +1,5 @@
 {
-  "traffic_vph": 4740,
+  "traffic_vph": 4700,
   "adaptive_traffic": false,
   "uniform_idm_vph": 0,
   "traffic_seed": 0,
@@ -32,7 +32,7 @@
   ],
   "settings": {
     "initial_vph": 0,
-    "max_vph": 4740,
+    "max_vph": 4700,
     "success_increment": 50,
     "failure_decrement": 150,
     "ring_traffic": true,
@@ -186,5 +186,5 @@
   ],
   "snapshot_count": 30,
   "route_lane_combinations": 94,
-  "snapshot_source": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes"
+  "snapshot_source": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/final3/suite_fixed_routes"
 }

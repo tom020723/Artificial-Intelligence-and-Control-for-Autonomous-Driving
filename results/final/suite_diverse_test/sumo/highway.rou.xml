@@ -27,28 +27,28 @@
     <route id="r_A5_A1" edges="A5_in1 A5_in A1_out A1_out1 A1_out2" />
     <route id="r_A5_A3" edges="A5_in1 A5_in A3_out A3_out1" />
     <route id="r_A5_A5" edges="A5_in1 A5_out1" />
-    <flow id="f_A1_A1" type="carDist" route="r_A1_A1" begin="0" end="100000" period="93.453230313990" departLane="random" departSpeed="8.0" />
-    <flow id="lf_RING_A2_A4" type="carDist" from="A2_in1" to="A4_out2" via="RING_A2_A4" begin="0" end="100000" period="15.402180509797" departLane="random" departSpeed="8.0" />
-    <flow id="lf_RING_A4_A1" type="carDist" from="A4_in2" to="A1_out2" via="RING_A4_A1" begin="0" end="100000" period="14.170734017679" departLane="random" departSpeed="8.0" />
-    <flow id="lf_RING_A1_A3" type="carDist" from="A1_in2" to="A3_out1" via="RING_A1_A3" begin="0" end="100000" period="14.170734017679" departLane="random" departSpeed="8.0" />
-    <flow id="lf_RING_A3_A5" type="carDist" from="A3_in1" to="A5_out1" via="RING_A3_A5" begin="0" end="100000" period="13.036048431480" departLane="random" departSpeed="8.0" />
-    <flow id="lf_RING_A5_A2" type="carDist" from="A5_in1" to="A2_out1" via="RING_A5_A2" begin="0" end="100000" period="14.170734017679" departLane="random" departSpeed="8.0" />
-    <flow id="f_A1_A2" type="carDist" route="r_A1_A2" begin="3.15789" end="100000" period="7.124652212057" departLane="random" departSpeed="8.0" />
-    <flow id="f_A1_A3" type="carDist" route="r_A1_A3" begin="6.31579" end="100000" period="20.536240679729" departLane="random" departSpeed="8.0" />
-    <flow id="f_A1_A4" type="carDist" route="r_A1_A4" begin="9.47368" end="100000" period="42.986252892337" departLane="random" departSpeed="8.0" />
-    <flow id="f_A1_A5" type="carDist" route="r_A1_A5" begin="12.6316" end="100000" period="21.164408041698" departLane="random" departSpeed="8.0" />
-    <flow id="f_A2_A1" type="carDist" route="r_A2_A1" begin="15.7895" end="100000" period="7.701090254899" departLane="random" departSpeed="8.0" />
-    <flow id="f_A2_A2" type="carDist" route="r_A2_A2" begin="18.9474" end="100000" period="93.453230313990" departLane="random" departSpeed="8.0" />
-    <flow id="f_A2_A3" type="carDist" route="r_A2_A3" begin="22.1053" end="100000" period="36.826503245533" departLane="random" departSpeed="8.0" />
-    <flow id="f_A3_A1" type="carDist" route="r_A3_A1" begin="25.2632" end="100000" period="42.986252892337" departLane="random" departSpeed="8.0" />
-    <flow id="f_A3_A2" type="carDist" route="r_A3_A2" begin="28.4211" end="100000" period="11.502395674836" departLane="random" departSpeed="8.0" />
-    <flow id="f_A3_A3" type="carDist" route="r_A3_A3" begin="31.5789" end="100000" period="93.453230313990" departLane="random" departSpeed="8.0" />
-    <flow id="f_A3_A4" type="carDist" route="r_A3_A4" begin="34.7368" end="100000" period="11.674073222221" departLane="random" departSpeed="8.0" />
-    <flow id="f_A3_A5" type="carDist" route="r_A3_A5" begin="37.8947" end="100000" period="20.536240679729" departLane="random" departSpeed="8.0" />
-    <flow id="f_A4_A2" type="carDist" route="r_A4_A2" begin="41.0526" end="100000" period="30.439503951680" departLane="random" departSpeed="8.0" />
-    <flow id="f_A4_A3" type="carDist" route="r_A4_A3" begin="44.2105" end="100000" period="13.587422081150" departLane="random" departSpeed="8.0" />
-    <flow id="f_A4_A5" type="carDist" route="r_A4_A5" begin="47.3684" end="100000" period="25.003122773375" departLane="random" departSpeed="8.0" />
-    <flow id="f_A5_A1" type="carDist" route="r_A5_A1" begin="50.5263" end="100000" period="12.130645202591" departLane="random" departSpeed="8.0" />
-    <flow id="f_A5_A3" type="carDist" route="r_A5_A3" begin="53.6842" end="100000" period="36.379670041341" departLane="random" departSpeed="8.0" />
-    <flow id="f_A5_A5" type="carDist" route="r_A5_A5" begin="56.8421" end="100000" period="72.832983139446" departLane="random" departSpeed="8.0" />
+    <flow id="f_A1_A1" type="carDist" route="r_A1_A1" begin="0" end="100000" period="110.377757472915" departLane="random" departSpeed="8.0" />
+    <flow id="lf_RING_A2_A4" type="carDist" from="A2_in1" to="A4_out2" via="RING_A2_A4" begin="0" end="100000" period="15.403745263771" departLane="random" departSpeed="8.0" />
+    <flow id="lf_RING_A4_A1" type="carDist" from="A4_in2" to="A1_out2" via="RING_A4_A1" begin="0" end="100000" period="14.172173665290" departLane="random" departSpeed="8.0" />
+    <flow id="lf_RING_A1_A3" type="carDist" from="A1_in2" to="A3_out1" via="RING_A1_A3" begin="0" end="100000" period="14.172173665290" departLane="random" departSpeed="8.0" />
+    <flow id="lf_RING_A3_A5" type="carDist" from="A3_in1" to="A5_out1" via="RING_A3_A5" begin="0" end="100000" period="13.037372802960" departLane="random" departSpeed="8.0" />
+    <flow id="lf_RING_A5_A2" type="carDist" from="A5_in1" to="A2_out1" via="RING_A5_A2" begin="0" end="100000" period="14.172173665290" departLane="random" departSpeed="8.0" />
+    <flow id="f_A1_A2" type="carDist" route="r_A1_A2" begin="3.15789" end="100000" period="7.125376026964" departLane="random" departSpeed="8.0" />
+    <flow id="f_A1_A3" type="carDist" route="r_A1_A3" begin="6.31579" end="100000" period="20.538327018362" departLane="random" departSpeed="8.0" />
+    <flow id="f_A1_A4" type="carDist" route="r_A1_A4" begin="9.47368" end="100000" period="50.823656689506" departLane="random" departSpeed="8.0" />
+    <flow id="f_A1_A5" type="carDist" route="r_A1_A5" begin="12.6316" end="100000" period="21.166558197747" departLane="random" departSpeed="8.0" />
+    <flow id="f_A2_A1" type="carDist" route="r_A2_A1" begin="15.7895" end="100000" period="7.701872631886" departLane="random" departSpeed="8.0" />
+    <flow id="f_A2_A2" type="carDist" route="r_A2_A2" begin="18.9474" end="100000" period="101.647313379012" departLane="random" departSpeed="8.0" />
+    <flow id="f_A2_A3" type="carDist" route="r_A2_A3" begin="22.1053" end="100000" period="40.025749650912" departLane="random" departSpeed="8.0" />
+    <flow id="f_A3_A1" type="carDist" route="r_A3_A1" begin="25.2632" end="100000" period="46.731362254767" departLane="random" departSpeed="8.0" />
+    <flow id="f_A3_A2" type="carDist" route="r_A3_A2" begin="28.4211" end="100000" period="11.503564237906" departLane="random" departSpeed="8.0" />
+    <flow id="f_A3_A3" type="carDist" route="r_A3_A3" begin="31.5789" end="100000" period="101.647313379012" departLane="random" departSpeed="8.0" />
+    <flow id="f_A3_A4" type="carDist" route="r_A3_A4" begin="34.7368" end="100000" period="11.675259226532" departLane="random" departSpeed="8.0" />
+    <flow id="f_A3_A5" type="carDist" route="r_A3_A5" begin="37.8947" end="100000" period="20.538327018362" departLane="random" departSpeed="8.0" />
+    <flow id="f_A4_A2" type="carDist" route="r_A4_A2" begin="41.0526" end="100000" period="30.442596392699" departLane="random" departSpeed="8.0" />
+    <flow id="f_A4_A3" type="carDist" route="r_A4_A3" begin="44.2105" end="100000" period="13.588802468342" departLane="random" departSpeed="8.0" />
+    <flow id="f_A4_A5" type="carDist" route="r_A4_A5" begin="47.3684" end="100000" period="25.005662916032" departLane="random" departSpeed="8.0" />
+    <flow id="f_A5_A1" type="carDist" route="r_A5_A1" begin="50.5263" end="100000" period="12.131877591426" departLane="random" departSpeed="8.0" />
+    <flow id="f_A5_A3" type="carDist" route="r_A5_A3" begin="53.6842" end="100000" period="36.383365961749" departLane="random" departSpeed="8.0" />
+    <flow id="f_A5_A5" type="carDist" route="r_A5_A5" begin="56.8421" end="100000" period="72.840382461883" departLane="random" departSpeed="8.0" />
 </routes>

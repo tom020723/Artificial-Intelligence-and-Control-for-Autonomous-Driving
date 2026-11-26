@@ -198,6 +198,8 @@ def main():
     (a.out_dir/'config.json').write_text(json.dumps(config,indent=2)+'\n');np.savez(a.out_dir/'normalization.npz',mean=mean,std=std)
     for source in ['env/road_config.py','env/mdp_config.py','train.py','scripts/train_bc_shards.py','env/ring_observation.py']:
         shutil.copy2(source,a.out_dir/Path(source).name)
+    # Evaluation needs the collection settings; keep them with the model so it works without the dataset.
+    shutil.copy2(a.data_dir/'config.json',a.out_dir/'collection_config.json')
     with (a.out_dir/'mdp_config.py').open('a') as snapshot:
         snapshot.write('\nOBSERVATION = '+repr(collection['observation'])+'\nSIMULATION = '+repr(collection['simulation'])+'\n')
     history=[];best=float('inf');best_epoch=0;start=time.monotonic();deadline=start+a.wall_seconds

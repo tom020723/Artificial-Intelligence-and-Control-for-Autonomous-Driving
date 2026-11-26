@@ -88,9 +88,9 @@ stage diverse_suites bash -c "
 stage bc_eval "$PY" scripts/evaluate_diverse_start_lanes.py evaluate "$TEST_SUITE" \
   --model "$BC/training/model.pt" --output "$BC/evaluation_diverse_start_lanes" "${EVAL[@]}"
 
-# 4. Anchored PPO fine-tuning from the BC actor.
+# 4. Anchored PPO fine-tuning from the BC actor; each executed lane change costs 0.01.
 stage ppo "$PPO_PY" -u -m scripts.finetune_bc_ppo "$BC/training/model.pt" "$SUITE" \
-  --init-std 0.05 --lane-sharpness 2 --lr 5e-5 --anchor-coef 0.03 --overspeed-penalty 0 --seed 0 \
+  --init-std 0.05 --lane-sharpness 2 --lr 5e-5 --anchor-coef 0.03 --overspeed-penalty 0 --lane-change-penalty 0.01 --seed 0 \
   --output "$PPO" "${FINETUNE[@]}"
 
 # 5. Pick the checkpoint on the validation suite, then evaluate it on the test suite.

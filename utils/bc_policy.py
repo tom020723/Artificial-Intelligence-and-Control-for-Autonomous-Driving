@@ -30,7 +30,11 @@ def evaluation_context(run, context, data_dir=None, *, max_vph=3000):
         raise ValueError("Use a BC result folder (scripts/train_bc_shards.py); legacy regression BC is unsupported")
     data_dir = Path(data_dir) if data_dir else (
         Path(config["dataset_directory"]) if config.get("dataset_directory") else Path(config["data"]).parent)
-    collection = json.loads((data_dir / "config.json").read_text())
+    collection_file = data_dir / "config.json"
+    if not collection_file.is_file() and (run / "collection_config.json").is_file():
+        # The dataset is not on this machine: use the copy of its config saved beside the model.
+        collection_file = run / "collection_config.json"
+    collection = json.loads(collection_file.read_text())
     if collection.get("observation", {}).get("layout") not in ("bc43", "bc49"):
         raise ValueError("The dataset must use the bc43 or bc49 observation layout")
     expert_spawn_protect = float(collection.get("expert_control_timing", {}).get("spawn_protect", 0.0))

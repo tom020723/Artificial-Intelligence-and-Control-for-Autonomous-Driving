@@ -21,6 +21,7 @@ from pathlib import Path
 import shutil
 
 BC_FILES = ("config.json", "mdp_config.py", "normalization.npz", "road_config.py", "train.py")
+OPTIONAL_BC_FILES = ("collection_config.json",)   # copied when present (older BC runs lack it)
 
 
 def export(run, iterations):
@@ -37,6 +38,9 @@ def export(run, iterations):
         target.mkdir(parents=True, exist_ok=True)
         for name in BC_FILES:
             shutil.copy2(bc / name, target / name)
+        for name in OPTIONAL_BC_FILES:
+            if (bc / name).is_file():
+                shutil.copy2(bc / name, target / name)
         shutil.copy2(checkpoint, target / "model.pt")
         exported.append(target)
         print(target / "model.pt", flush=True)

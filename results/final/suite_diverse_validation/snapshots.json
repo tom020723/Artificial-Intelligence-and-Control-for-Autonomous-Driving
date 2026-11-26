@@ -3,210 +3,210 @@
     "id": 1,
     "source_seed": 62101,
     "source_time_s": 457.5,
-    "signal_tick": 79,
-    "vehicles": 126
+    "signal_tick": 112,
+    "vehicles": 106
   },
   {
     "id": 2,
     "source_seed": 62101,
     "source_time_s": 1093.5,
-    "signal_tick": 101,
-    "vehicles": 174
+    "signal_tick": 184,
+    "vehicles": 160
   },
   {
     "id": 3,
     "source_seed": 62101,
     "source_time_s": 2571.0,
-    "signal_tick": 56,
-    "vehicles": 158
+    "signal_tick": 19,
+    "vehicles": 141
   },
   {
     "id": 4,
     "source_seed": 62102,
     "source_time_s": 136.0,
-    "signal_tick": 165,
-    "vehicles": 94
+    "signal_tick": 169,
+    "vehicles": 91
   },
   {
     "id": 5,
     "source_seed": 62102,
     "source_time_s": 1253.0,
-    "signal_tick": 149,
-    "vehicles": 149
+    "signal_tick": 3,
+    "vehicles": 151
   },
   {
     "id": 6,
     "source_seed": 62102,
     "source_time_s": 2530.0,
-    "signal_tick": 203,
-    "vehicles": 125
+    "signal_tick": 157,
+    "vehicles": 133
   },
   {
     "id": 7,
     "source_seed": 62103,
     "source_time_s": 144.5,
-    "signal_tick": 58,
-    "vehicles": 107
+    "signal_tick": 67,
+    "vehicles": 100
   },
   {
     "id": 8,
     "source_seed": 62103,
     "source_time_s": 1224.0,
-    "signal_tick": 217,
-    "vehicles": 160
+    "signal_tick": 66,
+    "vehicles": 163
   },
   {
     "id": 9,
     "source_seed": 62103,
     "source_time_s": 3296.0,
-    "signal_tick": 111,
-    "vehicles": 200
+    "signal_tick": 130,
+    "vehicles": 189
   },
   {
     "id": 10,
     "source_seed": 62104,
     "source_time_s": 453.0,
-    "signal_tick": 191,
-    "vehicles": 117
+    "signal_tick": 220,
+    "vehicles": 116
   },
   {
     "id": 11,
     "source_seed": 62104,
     "source_time_s": 1554.5,
-    "signal_tick": 144,
-    "vehicles": 168
+    "signal_tick": 23,
+    "vehicles": 160
   },
   {
     "id": 12,
     "source_seed": 62104,
     "source_time_s": 3355.0,
-    "signal_tick": 245,
-    "vehicles": 236
+    "signal_tick": 24,
+    "vehicles": 196
   },
   {
     "id": 13,
     "source_seed": 62105,
     "source_time_s": 575.5,
-    "signal_tick": 99,
-    "vehicles": 126
+    "signal_tick": 141,
+    "vehicles": 125
   },
   {
     "id": 14,
     "source_seed": 62105,
     "source_time_s": 1438.0,
-    "signal_tick": 74,
-    "vehicles": 194
+    "signal_tick": 186,
+    "vehicles": 170
   },
   {
     "id": 15,
     "source_seed": 62105,
     "source_time_s": 2425.5,
-    "signal_tick": 49,
-    "vehicles": 170
+    "signal_tick": 1,
+    "vehicles": 174
   },
   {
     "id": 16,
     "source_seed": 62106,
     "source_time_s": 596.5,
-    "signal_tick": 128,
-    "vehicles": 128
+    "signal_tick": 170,
+    "vehicles": 112
   },
   {
     "id": 17,
     "source_seed": 62106,
     "source_time_s": 1392.5,
-    "signal_tick": 220,
-    "vehicles": 159
+    "signal_tick": 82,
+    "vehicles": 146
   },
   {
     "id": 18,
     "source_seed": 62106,
     "source_time_s": 3116.5,
-    "signal_tick": 168,
-    "vehicles": 138
+    "signal_tick": 170,
+    "vehicles": 117
   },
   {
     "id": 19,
     "source_seed": 62107,
     "source_time_s": 349.0,
-    "signal_tick": 187,
-    "vehicles": 131
+    "signal_tick": 207,
+    "vehicles": 134
   },
   {
     "id": 20,
     "source_seed": 62107,
     "source_time_s": 1492.5,
-    "signal_tick": 224,
-    "vehicles": 177
+    "signal_tick": 94,
+    "vehicles": 145
   },
   {
     "id": 21,
     "source_seed": 62107,
     "source_time_s": 3413.5,
-    "signal_tick": 66,
-    "vehicles": 181
+    "signal_tick": 96,
+    "vehicles": 143
   },
   {
     "id": 22,
     "source_seed": 62108,
     "source_time_s": 253.5,
-    "signal_tick": 88,
-    "vehicles": 134
+    "signal_tick": 105,
+    "vehicles": 115
   },
   {
     "id": 23,
     "source_seed": 62108,
     "source_time_s": 1522.0,
-    "signal_tick": 125,
-    "vehicles": 122
+    "signal_tick": 2,
+    "vehicles": 126
   },
   {
     "id": 24,
     "source_seed": 62108,
     "source_time_s": 2640.5,
-    "signal_tick": 112,
-    "vehicles": 175
+    "signal_tick": 79,
+    "vehicles": 156
   },
   {
     "id": 25,
     "source_seed": 62109,
     "source_time_s": 145.5,
-    "signal_tick": 40,
+    "signal_tick": 50,
     "vehicles": 97
   },
   {
     "id": 26,
     "source_seed": 62109,
     "source_time_s": 1683.0,
-    "signal_tick": 115,
-    "vehicles": 205
+    "signal_tick": 5,
+    "vehicles": 186
   },
   {
     "id": 27,
     "source_seed": 62109,
     "source_time_s": 2802.0,
-    "signal_tick": 103,
-    "vehicles": 195
+    "signal_tick": 83,
+    "vehicles": 199
   },
   {
     "id": 28,
     "source_seed": 62110,
     "source_time_s": 560.0,
-    "signal_tick": 22,
-    "vehicles": 190
+    "signal_tick": 66,
+    "vehicles": 169
   },
   {
     "id": 29,
     "source_seed": 62110,
     "source_time_s": 1603.5,
-    "signal_tick": 109,
-    "vehicles": 186
+    "signal_tick": 233,
+    "vehicles": 156
   },
   {
     "id": 30,
     "source_seed": 62110,
     "source_time_s": 3226.0,
-    "signal_tick": 104,
-    "vehicles": 208
+    "signal_tick": 118,
+    "vehicles": 178
   }
 ]
