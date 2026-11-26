@@ -10,6 +10,7 @@ import shutil
 from tempfile import TemporaryDirectory
 import unittest
 
+from env import mdp_config, road_builder, road_config
 from scripts.evaluate_fixed_routes import case_sumo_seed, evaluate_worker, read_json, run
 from utils.bc_policy import evaluation_context
 
@@ -33,6 +34,10 @@ class CaseSeedTests(unittest.TestCase):
 class IsolatedEvaluationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # In-process evaluation loads the model's saved settings into these modules
+        # (utils/saved_configs.py); restore them so later tests see the defaults.
+        cls.settings = {module: {k: v for k, v in vars(module).items() if k.isupper()}
+                        for module in (road_config, mdp_config, road_builder)}
         cls.tmp = TemporaryDirectory(prefix="isolated-eval-test-")
         cls.root = Path(cls.tmp.name)
         cls.context = cls.root / "context"
@@ -44,6 +49,11 @@ class IsolatedEvaluationTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.tmp.cleanup()
+        for module, saved in cls.settings.items():
+            for name in [k for k in vars(module) if k.isupper() and k not in saved]:
+                delattr(module, name)
+            for name, value in saved.items():
+                setattr(module, name, value)
 
     def evaluate(self, name, cases, **kw):
         rows = evaluate_worker(SUITE, self.context, self.root / name, cases, None, 1, [], 0.0,

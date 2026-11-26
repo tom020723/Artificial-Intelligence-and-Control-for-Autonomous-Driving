@@ -550,12 +550,118 @@ def plot_bc_training(fig, grid, run, evaluated_epoch=None):
         ax.grid(alpha=.25)
 
 
+def _ppo_run(model_run):
+    """(PPO run folder, iteration) when `model_run` is a PPO checkpoint folder eval_runs/iterNNN."""
+    if not model_run:
+        return None
+    model_run = Path(model_run)
+    run = model_run.parent.parent
+    rows = read_csv(run / "training_log.csv") if (run / "training_log.csv").exists() else []
+    if model_run.parent.name != "eval_runs" or not model_run.name.startswith("iter") or not rows \
+            or "arrival_rate" not in rows[0]:
+        return None
+    return run, int(model_run.name.removeprefix("iter"))
+
+
+def _smoothed(ax, x, y, label, color, window=5):
+    """Raw per-iteration values (faint) and their trailing mean over `window` iterations."""
+    y = np.asarray(y, float)
+    mean = np.array([np.nanmean(y[max(0, i - window + 1):i + 1]) for i in range(len(y))])
+    ax.plot(x, y, color=color, alpha=.25, linewidth=1)
+    ax.plot(x, mean, color=color, linewidth=2, label=label)
+
+
+def plot_ppo_training(fig, grid, run, evaluated_iteration):
+    """PPO training curves of `run` by iteration and validation success of its checkpoints."""
+    rows = read_csv(run / "training_log.csv")
+    it = [int(r["iteration"]) for r in rows]
+    def col(key):
+        return [float(r[key]) if r.get(key) not in (None, "") else np.nan for r in rows]
+    mark = dict(color="#64748b", linestyle=":", linewidth=1, label="Evaluated checkpoint")
+    axes = [fig.add_subplot(grid[i // 2, i % 2]) for i in range(6)]
+
+    ax = axes[0]
+    for key, label, status in (("arrival_rate", "Arrival", "arrival"),
+                               ("collision_or_red_light_rate", "Collision or red light", "collision"),
+                               ("wrong_lane_or_timeout_rate", "Wrong lane or timeout", "wrong_lane")):
+        _smoothed(ax, it, 100 * np.array(col(key)), label, OUTCOMES[status][2])
+    ax.set(title="Training rollout outcomes (episodes ended per iteration; line = 5-iteration mean)",
+           ylabel="Share (%)", ylim=(0, 100))
+
+    ax = axes[1]
+    selected = None
+    if (run / "selection.json").exists():
+        selected = Path(json.loads((run / "selection.json").read_text())["best"]["model"]).parent.name
+    for folder, label, style in (("evaluation_validation", "Validation", "-o"),
+                                 ("evaluation_validation_no_junction_check", "Validation, no junction check", "--s")):
+        points = []
+        for summary_path in sorted((run / "eval_runs").glob(f"iter*/{folder}/evaluation_summary.json")):
+            summary = json.loads(summary_path.read_text())
+            points.append((int(summary_path.parent.parent.name.removeprefix("iter")),
+                           100 * summary["overall"]["success_rate"],
+                           summary.get("junction_collisions", False)))
+        if points:
+            x, y, checked = zip(*points)
+            if folder == "evaluation_validation":
+                label += " (junction check on)" if all(checked) else " (junction check off)"
+            ax.plot(x, y, style, label=label, markersize=5, linewidth=1.5,
+                    color="#1d4ed8" if style == "-o" else "#94a3b8")
+            if selected and folder == "evaluation_validation":
+                for xi, yi in zip(x, y):
+                    if f"iter{xi:03d}" == selected:
+                        ax.annotate(f"selected {yi:.2f}%", (xi, yi), textcoords="offset points",
+                                    xytext=(0, -16), ha="center", fontsize=9, color="#1d4ed8")
+    if not ax.lines:
+        ax.text(.5, .5, "No checkpoint validation found", ha="center", va="center", transform=ax.transAxes)
+    ax.margins(y=.25)
+    ax.set(title="Checkpoint success on the validation suite", ylabel="Success (%)")
+
+    _smoothed(axes[2], it, col("ep_rew_mean"), "Episode return", "#0f766e")
+    axes[2].set(title="Mean episode return (training rollouts)")
+    axes[3].plot(it, col("anchor_accel_kl"), label="Acceleration", color="#1d4ed8")
+    axes[3].plot(it, col("anchor_lane_kl"), label="Lane", color="#ea580c")
+    axes[3].set(title="KL divergence to the BC policy (anchor)")
+    axes[4].plot(it, col("std"), label="Acceleration std", color="#7c3aed")
+    axes[4].set(title="Policy acceleration standard deviation", ylim=(0, None))
+    axes[5].plot(it, 100 * np.array(col("p_lane_change")), label="Lane change", color="#be185d")
+    axes[5].set(title="Mean lane-change probability per step", ylabel="%", ylim=(0, None))
+    for ax in axes:
+        ax.axvline(evaluated_iteration, **mark)
+        ax.set(xlabel="PPO iteration")
+        ax.legend(fontsize=7)
+        ax.grid(alpha=.25)
+
+
+def _has_bc_log(run):
+    """Whether `run` holds a BC training log (a PPO checkpoint folder does not)."""
+    rows = read_csv(Path(run) / "training_log.csv") if run else []
+    return bool(rows) and "val_loss" in rows[0]
+
+
+def _plot_overall(ax, counts, total):
+    """Every outcome over all runs, with count and share."""
+    names = [OUTCOMES[s][0] for s in STATUSES]
+    shares = [100 * counts.get(s, 0) / total for s in STATUSES]
+    ax.barh(names, shares, color=[OUTCOMES[s][2] for s in STATUSES], height=.65)
+    for i, s in enumerate(STATUSES):
+        ax.text(shares[i] + .6, i, f"{counts.get(s, 0):,}  ({shares[i]:.2f}%)", va="center", fontsize=11)
+    ax.invert_yaxis()
+    ax.set(xlim=(0, 112), xlabel="Share of all runs (%)", title=f"All runs (n = {total:,})")
+    ax.tick_params(axis="y", labelsize=11)
+    ax.grid(axis="x", alpha=.25)
+
+
 def plot_summary(out, label, rows, summary, routes, model_run):
-    fig = plt.figure(figsize=(24, 14 if model_run else 11), layout="constrained")
-    outer = fig.add_gridspec(3 if model_run else 2, 1,
-                             height_ratios=(1.6, 4.4, 1) if model_run else (4.4, 1))
-    if model_run:
+    ppo = _ppo_run(model_run)
+    training = ppo is not None or _has_bc_log(model_run)
+    heights = ((3.6,) if training else ()) + (1.3, 4.4, 1)
+    fig = plt.figure(figsize=(24, sum(heights) * 1.75 + 1), layout="constrained")
+    outer = fig.add_gridspec(len(heights), 1, height_ratios=heights)
+    if ppo is not None:
+        plot_ppo_training(fig, outer[0].subgridspec(3, 2), *ppo)
+    elif training:
         plot_bc_training(fig, outer[0].subgridspec(3, 2), model_run, evaluated_epoch=summary["evaluated_epoch"])
+    _plot_overall(fig.add_subplot(outer[-3]), summary["overall"]["statuses"], len(rows))
     charts = outer[-2].subgridspec(1, 2, width_ratios=(1, 2))
     bars, heat = (fig.add_subplot(charts[i]) for i in range(2))
     routes = sorted(routes, key=lambda route: (summary["by_route"][route]["success_rate"], route))
@@ -594,9 +700,9 @@ def plot_summary(out, label, rows, summary, routes, model_run):
         if stat["n"]:
             med, low, high = (stat[k] for k in ("median_m", "q1_m", "q3_m"))
             ax.errorbar(med, 0, xerr=[[med-low], [high-med]], marker="o", capsize=5)
-            ax.set_title(f"{title} · median {med:.2f} m · n={stat['n']}")
+            ax.set_title(f"Red-light stops behind the {title.lower()} · median {med:.2f} m · n={stat['n']}")
         else:
-            ax.set_title(f"{title} · no qualifying stops")
+            ax.set_title(f"Red-light stops behind the {title.lower()} · none")
         ax.set(xlabel="Clearance (m), median and 25th–75th percentiles", yticks=[])
         ax.set_xlim(left=0)
     counts = summary["overall"]["statuses"]
@@ -626,6 +732,20 @@ def _plot_snapshot_arrivals(fig, heat, rows, summary, routes, labels):
     heat.set_yticks(range(len(routes)), labels)
     heat.set(xlabel="Saved simulation time (s)", title="Arrivals by saved state")
     fig.colorbar(raster, ax=heat, ticks=range(max_arrivals + 1), label=f"Arrivals / {max_arrivals}")
+
+
+def replot_summary(evaluation, model_run=None):
+    """Redraw summary.png from evaluation_summary.json and route_evaluation.csv."""
+    summary = read_json(evaluation / "evaluation_summary.json")
+    rows = read_csv(evaluation / "route_evaluation.csv")
+    for row in rows:
+        time = float(row["snapshot_time_s"])
+        row["snapshot_time_s"] = int(time) if time.is_integer() else time
+    if model_run is None and (evaluation.parent / "model.pt").exists():
+        model_run = evaluation.parent          # the model folder the evaluation sits in
+    elif model_run is None and summary.get("checkpoint"):
+        model_run = Path(summary["checkpoint"]).parent
+    plot_summary(evaluation, summary["label"], rows, summary, list(summary["by_route"]), model_run)
 
 
 def run(*args, junction_check=True, **kwargs):
@@ -771,6 +891,10 @@ def main():
     init.add_argument("--idm-only-speed-gain", action="store_true",
                       help="Keep the mixed background but let only IDM vehicles change lanes for speed "
                            "(lcSpeedGain 1.0 for IDM, 0.0 otherwise); used by the final suite")
+    replot = sub.add_parser("replot", help="Redraw summary.png from a finished evaluation without rerunning it")
+    replot.add_argument("evaluation", type=Path, help="Folder with evaluation_summary.json and route_evaluation.csv")
+    replot.add_argument("--model-run", type=Path,
+                        help="BC training folder for the training panels (default: the recorded checkpoint's folder)")
     evaluate = sub.add_parser("evaluate")
     evaluate.add_argument("suite", type=Path)
     evaluate.add_argument("label", nargs="?",
@@ -797,6 +921,9 @@ def main():
     evaluate.add_argument('--trace-failures-from', type=Path,
                           help='Replay every case in its original order, logging failed case steps from this result directory')
     args = parser.parse_args()
+    if args.command == "replot":
+        replot_summary(args.evaluation.resolve(strict=True), args.model_run)
+        return
     suite = args.suite.resolve()
     if args.command == "prepare":
         if args.traffic_vph < 1:
