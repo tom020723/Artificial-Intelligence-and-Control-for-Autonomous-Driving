@@ -17,6 +17,7 @@ import re
 import xml.etree.ElementTree as ET
 
 from sumolib import checkBinary  # SUMO 실행파일(sumo, netconvert 등) 경로를 찾아주는 유틸
+from env import signal_plan
 from env.mdp_config import SIMULATION
 from env.collision_detection import configure_collision_gaps
 try:
@@ -859,14 +860,17 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
             raise RuntimeError("U-turn netconvert failed:\n" + result.stderr)
 
     if cfg.get("signal_plan"):
-        _write_approach_signals(os.path.join(out_dir, "highway.net.xml"), cfg)
+        stages = _signal_stages(cfg)
+        _write_central_signals(os.path.join(out_dir, "highway.net.xml"), cfg, stages,
+                               {aid: (in_edge(aid, k), out_edge(aid, 0)) for aid, k in central_splits.items()})
         for aid, turn in upstream_uturns.items():
             if aid in central_uturns:
                 continue
             k = splits[aid].index(float(turn["radius"]))
             _write_upstream_uturn_signals(os.path.join(out_dir, "highway.net.xml"),
-                                          cfg, aid, node_at(aid, turn["radius"]),
-                                          in_edge(aid, k + 1), out_edge(aid, k + 1))
+                                          aid, node_at(aid, turn["radius"]),
+                                          in_edge(aid, k + 1), out_edge(aid, k + 1),
+                                          {name for name, _, _, uturns in stages if aid in uturns})
 
     if cfg.get("all_signals_green", False):
         net_path = os.path.join(out_dir, "highway.net.xml")
@@ -897,12 +901,14 @@ def _build_nohyeong(road: dict, ego: dict, traffic: dict, out_dir: str) -> str:
     return cfg_path
 
 
-def _write_upstream_uturn_signals(net_path, cfg, aid, node_id, source, destination):
-    """Synchronize the separate U-turn light with the central approach phase.
+def _write_upstream_uturn_signals(net_path, aid, node_id, source, destination, stages):
+    """Synchronize the separate U-turn light with the central stages named in `stages`.
 
     Through traffic continues to the main stop line. U-turns yield to outbound
-    traffic and receive permissive green only during this approach's phase.
+    traffic and receive permissive green only during those stages.
     """
+    if not stages:
+        raise ValueError(f"No signal stage turns on the upstream U-turn of {aid}")
     with open(net_path, encoding="utf-8") as f:
         text = f.read()
     root = ET.fromstring(text)
@@ -915,7 +921,8 @@ def _write_upstream_uturn_signals(net_path, cfg, aid, node_id, source, destinati
     program = ET.Element("tlLogic", id=node_id, type="static", programID="0", offset="0")
     for phase in root.find("tlLogic[@id='nC']").findall("phase"):
         state = ["G"] * count
-        turn_state = "g" if phase.get("name") == f"{aid}_green" else ("y" if phase.get("name") == f"{aid}_yellow" else "r")
+        stage, _, kind = phase.get("name").rpartition("_")
+        turn_state = {"green": "g", "yellow": "y"}.get(kind, "r") if stage in stages else "r"
         for i in turn_links:
             state[i] = turn_state
         ET.SubElement(program, "phase", duration=phase.get("duration"),
@@ -963,51 +970,50 @@ def _prepare_departure_lanes(out_dir):
     tree.write(route_path, encoding="utf-8", xml_declaration=True)
 
 
-def _write_approach_signals(net_path, cfg):
-    """Replace the generated central program using actual connection indices."""
+def _signal_stages(cfg):
+    """signal_plan as stages: (name, green seconds, {arm: lanes or None for all}, upstream U-turn arms)."""
     plan = cfg["signal_plan"]
-    order = plan["order"]
-    arm_ids = {a["id"] for a in cfg["arms"]}
-    if len(order) != len(arm_ids) or set(order) != arm_ids:
-        raise ValueError("signal_plan.order must contain every approach exactly once")
+    kind = plan.get("type", "sequential")   # plans saved before "type" existed are sequential
+    if kind == "sequential":
+        order = plan["order"]
+        arm_ids = {a["id"] for a in cfg["arms"]}
+        if len(order) != len(arm_ids) or set(order) != arm_ids:
+            raise ValueError("signal_plan.order must contain every approach exactly once")
+        stages = [(arm, float(plan["green_seconds"][arm]), {arm: None}, [arm]) for arm in order]
+    elif kind == "grouped":
+        stages = [(stage["name"], float(stage["seconds"]),
+                   {arm: None if lanes == "all" else list(lanes) for arm, lanes in stage["lanes"].items()},
+                   list(stage.get("uturns", []))) for stage in plan["stages"]]
+    else:
+        raise ValueError(f"Unknown signal_plan.type: {kind}")
+    if len({name for name, *_ in stages}) != len(stages):
+        raise ValueError("Signal stage names must be unique")
+    return stages
+
+
+def _write_central_signals(net_path, cfg, stages, uturn_edges):
+    """Replace the generated central program using actual connection indices.
+
+    uturn_edges: {arm: (incoming edge of its upstream U-turn, junction exit of that arm)}
+    for the U-turns this light controls. Conflicting greens in one stage are an error.
+    """
+    plan = cfg["signal_plan"]
     yellow = float(plan["yellow_seconds"])
     clearance = float(plan["all_red_seconds"])
-    durations = {a: float(plan["green_seconds"][a]) for a in order}
-    if any(not math.isfinite(t) or t <= 0 for t in [yellow, clearance, *durations.values()]):
+    if any(not math.isfinite(t) or t <= 0 for t in [yellow, clearance, *(s[1] for s in stages)]):
         raise ValueError("Signal durations must be finite and positive")
     with open(net_path, encoding="utf-8") as f:
         text = f.read()
-    root = ET.fromstring(text)
-    connections = [c for c in root.findall("connection") if c.get("tl") == "nC"]
-    if not connections:
-        raise ValueError("Sequential signal plan requires traffic_light junction nC")
-    count = max(int(c.get("linkIndex")) for c in connections) + 1
-    upstream_arms = {a for a, turn in cfg.get("upstream_uturns", {}).items()
-                     if turn.get("signal_control") == "central"}
-    program = ET.Element("tlLogic", id="nC", type="static", programID="0", offset="0")
-    for arm in order:
-        state = ["r"] * count
-        protected_targets = set()
-        for c in connections:
-            upstream_turn = (arm in upstream_arms
-                             and c.get("from", "").startswith(f"{arm}_in")
-                             and c.get("to", "").startswith(f"{arm}_out"))
-            if c.get("from") == f"{arm}_in" or upstream_turn:
-                # U-turns and a second stream merging into the same target lane
-                # yield rather than receiving conflicting protected greens.
-                target_lane = (c.get("to"), c.get("toLane"))
-                yields = c.get("dir") == "t" or target_lane in protected_targets
-                state[int(c.get("linkIndex"))] = "g" if yields else "G"
-                if not yields:
-                    protected_targets.add(target_lane)
-        if not any(s in "Gg" for s in state):
-            raise ValueError(f"No signal connections found for {arm}")
-        ET.SubElement(program, "phase", duration=f"{durations[arm]:g}",
-                      state="".join(state), name=f"{arm}_green")
-        ET.SubElement(program, "phase", duration=f"{yellow:g}",
-                      state="".join("y" if s in "Gg" else "r" for s in state), name=f"{arm}_yellow")
-        ET.SubElement(program, "phase", duration=f"{clearance:g}",
-                      state="r" * count, name=f"{arm}_clearance")
+    links = signal_plan.junction_links(ET.fromstring(text), "nC")
+    if not links:
+        raise ValueError("Signal plan requires traffic_light junction nC")
+    uturn_exits = dict(uturn_edges.values())
+    timed = [(name, seconds,
+              [(f"{arm}_in", lanes) for arm, lanes in arms.items()]
+              + [(uturn_edges[arm][0], None) for arm in uturns if arm in uturn_edges])
+             for name, seconds, arms, uturns in stages]
+    program, greens = signal_plan.program(links, timed, yellow, clearance, uturn_exits, "nC")
+    signal_plan.check(links, timed, greens, uturn_exits)
     ET.indent(program, space="    ")
     replacement = ET.tostring(program, encoding="unicode")
     text, replaced = re.subn(r'<tlLogic\b[^>]*\bid="nC"[^>]*>.*?</tlLogic>',

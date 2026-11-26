@@ -18,7 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from env.collision_detection import junction_collisions, sumo_collision_options
 from env.parallel_sumo import _signal_schedule, libsumo
 from scripts.evaluate_fixed_routes import (
-    FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, prepare_road, read_json, run, write_json,
+    DEMAND, FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, prepare_road, read_json, run,
+    write_json,
 )
 
 DEFAULT_SEEDS = tuple(range(52101, 52126))
@@ -94,8 +95,8 @@ def departure_combinations(source, routes):
 
 def prepare(source, suite, seeds):
     spec = read_json(source / "suite.json")
-    if spec.get("adaptive_traffic") or spec["traffic_vph"] != 4740:
-        raise ValueError("Use the calibrated 4,740 veh/h fixed-demand suite as the road template")
+    if spec.get("adaptive_traffic") or spec["traffic_vph"] != DEMAND:
+        raise ValueError(f"Use the calibrated {DEMAND:,} veh/h fixed-demand suite as the road template")
     combinations = departure_combinations(source, spec["routes"])
     center_lanes = {row["route"]: row["start_lane"] for row in read_json(source / "cases.json")}
     suite.mkdir(parents=True)

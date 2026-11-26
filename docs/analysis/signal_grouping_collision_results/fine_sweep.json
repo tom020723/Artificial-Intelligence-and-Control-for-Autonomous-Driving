@@ -1,0 +1,1524 @@
+{
+  "through_seconds": 20,
+  "cycle_seconds": 120,
+  "model_sha256": "45acd07e2537650427256953a45719ba9c4ac98020cedb1d1dccd5894b934595",
+  "traffic_vph": 4740,
+  "cases_per_candidate": 7050,
+  "snapshot_seeds": [
+    52101,
+    52102,
+    52103,
+    52104,
+    52105,
+    52106,
+    52107,
+    52108,
+    52109,
+    52110,
+    52111,
+    52112,
+    52113,
+    52114,
+    52115,
+    52116,
+    52117,
+    52118,
+    52119,
+    52120,
+    52121,
+    52122,
+    52123,
+    52124,
+    52125
+  ],
+  "paired_case_definitions_equal_except_worker": true,
+  "geometry_equal_except_signals": true,
+  "pending": [],
+  "results": [
+    {
+      "left_seconds": 15,
+      "a3_seconds": 20,
+      "through_seconds": 20,
+      "cycle_seconds": 120,
+      "overall": {
+        "episodes": 7050,
+        "statuses": {
+          "arrival": 6849,
+          "wrong_lane": 112,
+          "red_light": 20,
+          "collision": 17,
+          "timeout": 52
+        },
+        "success_rate": 0.9714893617021276,
+        "collision_rate": 0.0024113475177304964,
+        "wrong_lane_rate": 0.015886524822695036,
+        "timeout_rate": 0.007375886524822695,
+        "red_light_violation_rate": 0.0028368794326241137
+      },
+      "by_route": {
+        "ego_d_A1_A1": {
+          "episodes": 375,
+          "success_rate": 0.944,
+          "statuses": {
+            "arrival": 354,
+            "timeout": 20,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A2": {
+          "episodes": 375,
+          "success_rate": 0.992,
+          "statuses": {
+            "arrival": 372,
+            "red_light": 2,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9706666666666667,
+          "statuses": {
+            "arrival": 364,
+            "red_light": 11
+          }
+        },
+        "ego_d_A1_A4": {
+          "episodes": 375,
+          "success_rate": 0.944,
+          "statuses": {
+            "arrival": 354,
+            "timeout": 20,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A5": {
+          "episodes": 375,
+          "success_rate": 0.952,
+          "statuses": {
+            "arrival": 357,
+            "wrong_lane": 17,
+            "collision": 1
+          }
+        },
+        "ego_d_A2_A1": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "collision": 1,
+            "red_light": 2
+          }
+        },
+        "ego_d_A2_A2": {
+          "episodes": 300,
+          "success_rate": 0.98,
+          "statuses": {
+            "arrival": 294,
+            "wrong_lane": 5,
+            "collision": 1
+          }
+        },
+        "ego_d_A2_A3": {
+          "episodes": 300,
+          "success_rate": 0.8833333333333333,
+          "statuses": {
+            "arrival": 265,
+            "wrong_lane": 35
+          }
+        },
+        "ego_d_A3_A1": {
+          "episodes": 300,
+          "success_rate": 0.9766666666666667,
+          "statuses": {
+            "arrival": 293,
+            "collision": 2,
+            "red_light": 1,
+            "timeout": 4
+          }
+        },
+        "ego_d_A3_A2": {
+          "episodes": 300,
+          "success_rate": 0.9766666666666667,
+          "statuses": {
+            "arrival": 293,
+            "wrong_lane": 7
+          }
+        },
+        "ego_d_A3_A3": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "collision": 1,
+            "timeout": 8
+          }
+        },
+        "ego_d_A3_A4": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "wrong_lane": 2,
+            "collision": 1
+          }
+        },
+        "ego_d_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9933333333333333,
+          "statuses": {
+            "arrival": 298,
+            "collision": 1,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A4_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        },
+        "ego_d_A4_A3": {
+          "episodes": 225,
+          "success_rate": 0.9066666666666666,
+          "statuses": {
+            "arrival": 204,
+            "wrong_lane": 19,
+            "collision": 2
+          }
+        },
+        "ego_d_A4_A5": {
+          "episodes": 225,
+          "success_rate": 0.9822222222222222,
+          "statuses": {
+            "arrival": 221,
+            "red_light": 2,
+            "wrong_lane": 2
+          }
+        },
+        "ego_d_A5_A1": {
+          "episodes": 225,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "wrong_lane": 4,
+            "arrival": 219,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A3": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_d_A5_A5": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A1_A3_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.984,
+          "statuses": {
+            "arrival": 369,
+            "wrong_lane": 6
+          }
+        },
+        "ego_r_RING_A2_A4_A2_A4": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "collision": 3,
+            "wrong_lane": 7
+          }
+        },
+        "ego_r_RING_A3_A5_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9933333333333333,
+          "statuses": {
+            "arrival": 298,
+            "collision": 2
+          }
+        },
+        "ego_r_RING_A4_A1_A4_A1": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A5_A2_A5_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        }
+      },
+      "queues": {
+        "a1_left_window0": 2.44,
+        "a1_through_window0": 6.04,
+        "a3_window0": 8.44,
+        "a1_left_window1": 3.36,
+        "a1_through_window1": 9.24,
+        "a3_window1": 7.72,
+        "a1_left_window2": 4.2,
+        "a1_through_window2": 6.6,
+        "a3_window2": 9.6
+      },
+      "elapsed_seconds": 280.39,
+      "background_mean": {
+        "arrived": 4573.6,
+        "loss": 45.025999999999996,
+        "wait": 28.25,
+        "collisions": 0.0,
+        "teleports": 0.0
+      }
+    },
+    {
+      "left_seconds": 16,
+      "a3_seconds": 19,
+      "through_seconds": 20,
+      "cycle_seconds": 120,
+      "overall": {
+        "episodes": 7050,
+        "statuses": {
+          "arrival": 6886,
+          "wrong_lane": 95,
+          "red_light": 15,
+          "collision": 18,
+          "timeout": 36
+        },
+        "success_rate": 0.9767375886524823,
+        "collision_rate": 0.002553191489361702,
+        "wrong_lane_rate": 0.01347517730496454,
+        "timeout_rate": 0.005106382978723404,
+        "red_light_violation_rate": 0.002127659574468085
+      },
+      "by_route": {
+        "ego_d_A1_A1": {
+          "episodes": 375,
+          "success_rate": 0.968,
+          "statuses": {
+            "arrival": 363,
+            "timeout": 12
+          }
+        },
+        "ego_d_A1_A2": {
+          "episodes": 375,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 370,
+            "collision": 2,
+            "red_light": 2,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9813333333333333,
+          "statuses": {
+            "arrival": 368,
+            "red_light": 7
+          }
+        },
+        "ego_d_A1_A4": {
+          "episodes": 375,
+          "success_rate": 0.968,
+          "statuses": {
+            "arrival": 363,
+            "timeout": 11,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A5": {
+          "episodes": 375,
+          "success_rate": 0.96,
+          "statuses": {
+            "arrival": 360,
+            "wrong_lane": 15
+          }
+        },
+        "ego_d_A2_A1": {
+          "episodes": 300,
+          "success_rate": 0.9933333333333333,
+          "statuses": {
+            "arrival": 298,
+            "red_light": 2
+          }
+        },
+        "ego_d_A2_A2": {
+          "episodes": 300,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 292,
+            "wrong_lane": 8
+          }
+        },
+        "ego_d_A2_A3": {
+          "episodes": 300,
+          "success_rate": 0.9333333333333333,
+          "statuses": {
+            "arrival": 280,
+            "wrong_lane": 20
+          }
+        },
+        "ego_d_A3_A1": {
+          "episodes": 300,
+          "success_rate": 0.9766666666666667,
+          "statuses": {
+            "arrival": 293,
+            "collision": 2,
+            "timeout": 5
+          }
+        },
+        "ego_d_A3_A2": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "wrong_lane": 5
+          }
+        },
+        "ego_d_A3_A3": {
+          "episodes": 300,
+          "success_rate": 0.9633333333333334,
+          "statuses": {
+            "arrival": 289,
+            "collision": 3,
+            "timeout": 8
+          }
+        },
+        "ego_d_A3_A4": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "wrong_lane": 5
+          }
+        },
+        "ego_d_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9933333333333333,
+          "statuses": {
+            "arrival": 298,
+            "wrong_lane": 2
+          }
+        },
+        "ego_d_A4_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        },
+        "ego_d_A4_A3": {
+          "episodes": 225,
+          "success_rate": 0.9111111111111111,
+          "statuses": {
+            "arrival": 205,
+            "wrong_lane": 18,
+            "collision": 2
+          }
+        },
+        "ego_d_A4_A5": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "red_light": 2,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A5_A1": {
+          "episodes": 225,
+          "success_rate": 0.9777777777777777,
+          "statuses": {
+            "wrong_lane": 3,
+            "arrival": 220,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A3": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_d_A5_A5": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A1_A3_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.984,
+          "statuses": {
+            "arrival": 369,
+            "wrong_lane": 6
+          }
+        },
+        "ego_r_RING_A2_A4_A2_A4": {
+          "episodes": 300,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 292,
+            "collision": 2,
+            "wrong_lane": 6
+          }
+        },
+        "ego_r_RING_A3_A5_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.98,
+          "statuses": {
+            "arrival": 294,
+            "collision": 6
+          }
+        },
+        "ego_r_RING_A4_A1_A4_A1": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A5_A2_A5_A2": {
+          "episodes": 225,
+          "success_rate": 0.9911111111111112,
+          "statuses": {
+            "arrival": 223,
+            "wrong_lane": 2
+          }
+        }
+      },
+      "queues": {
+        "a1_left_window0": 2.24,
+        "a1_through_window0": 6.28,
+        "a3_window0": 9.16,
+        "a1_left_window1": 2.8,
+        "a1_through_window1": 9.16,
+        "a3_window1": 8.12,
+        "a1_left_window2": 3.0,
+        "a1_through_window2": 6.48,
+        "a3_window2": 10.48
+      },
+      "elapsed_seconds": 1734.41,
+      "background_mean": {
+        "arrived": 4574.9,
+        "loss": 44.969,
+        "wait": 28.163999999999998,
+        "collisions": 0.0,
+        "teleports": 0.0
+      }
+    },
+    {
+      "left_seconds": 17,
+      "a3_seconds": 18,
+      "through_seconds": 20,
+      "cycle_seconds": 120,
+      "overall": {
+        "episodes": 7050,
+        "statuses": {
+          "arrival": 6886,
+          "wrong_lane": 94,
+          "red_light": 17,
+          "collision": 14,
+          "timeout": 39
+        },
+        "success_rate": 0.9767375886524823,
+        "collision_rate": 0.0019858156028368795,
+        "wrong_lane_rate": 0.013333333333333334,
+        "timeout_rate": 0.005531914893617021,
+        "red_light_violation_rate": 0.0024113475177304964
+      },
+      "by_route": {
+        "ego_d_A1_A1": {
+          "episodes": 375,
+          "success_rate": 0.968,
+          "statuses": {
+            "arrival": 363,
+            "timeout": 12
+          }
+        },
+        "ego_d_A1_A2": {
+          "episodes": 375,
+          "success_rate": 0.9946666666666667,
+          "statuses": {
+            "arrival": 373,
+            "wrong_lane": 1,
+            "red_light": 1
+          }
+        },
+        "ego_d_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9813333333333333,
+          "statuses": {
+            "arrival": 368,
+            "red_light": 7
+          }
+        },
+        "ego_d_A1_A4": {
+          "episodes": 375,
+          "success_rate": 0.9653333333333334,
+          "statuses": {
+            "arrival": 362,
+            "wrong_lane": 1,
+            "timeout": 11,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A5": {
+          "episodes": 375,
+          "success_rate": 0.952,
+          "statuses": {
+            "arrival": 357,
+            "wrong_lane": 18
+          }
+        },
+        "ego_d_A2_A1": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "red_light": 3
+          }
+        },
+        "ego_d_A2_A2": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "wrong_lane": 4,
+            "collision": 1
+          }
+        },
+        "ego_d_A2_A3": {
+          "episodes": 300,
+          "success_rate": 0.9433333333333334,
+          "statuses": {
+            "arrival": 283,
+            "wrong_lane": 17
+          }
+        },
+        "ego_d_A3_A1": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "collision": 1,
+            "timeout": 8,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A3_A2": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "wrong_lane": 3
+          }
+        },
+        "ego_d_A3_A3": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "collision": 1,
+            "timeout": 8
+          }
+        },
+        "ego_d_A3_A4": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "wrong_lane": 3
+          }
+        },
+        "ego_d_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "wrong_lane": 2,
+            "red_light": 1
+          }
+        },
+        "ego_d_A4_A2": {
+          "episodes": 225,
+          "success_rate": 0.9822222222222222,
+          "statuses": {
+            "arrival": 221,
+            "wrong_lane": 3,
+            "collision": 1
+          }
+        },
+        "ego_d_A4_A3": {
+          "episodes": 225,
+          "success_rate": 0.9022222222222223,
+          "statuses": {
+            "arrival": 203,
+            "wrong_lane": 20,
+            "collision": 2
+          }
+        },
+        "ego_d_A4_A5": {
+          "episodes": 225,
+          "success_rate": 0.9822222222222222,
+          "statuses": {
+            "arrival": 221,
+            "red_light": 2,
+            "wrong_lane": 2
+          }
+        },
+        "ego_d_A5_A1": {
+          "episodes": 225,
+          "success_rate": 0.9777777777777777,
+          "statuses": {
+            "wrong_lane": 3,
+            "arrival": 220,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A3": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_d_A5_A5": {
+          "episodes": 225,
+          "success_rate": 0.9911111111111112,
+          "statuses": {
+            "arrival": 223,
+            "red_light": 1,
+            "collision": 1
+          }
+        },
+        "ego_r_RING_A1_A3_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.992,
+          "statuses": {
+            "arrival": 372,
+            "wrong_lane": 3
+          }
+        },
+        "ego_r_RING_A2_A4_A2_A4": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "wrong_lane": 9,
+            "collision": 1
+          }
+        },
+        "ego_r_RING_A3_A5_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "collision": 5
+          }
+        },
+        "ego_r_RING_A4_A1_A4_A1": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A5_A2_A5_A2": {
+          "episodes": 225,
+          "success_rate": 0.9822222222222222,
+          "statuses": {
+            "arrival": 221,
+            "wrong_lane": 4
+          }
+        }
+      },
+      "queues": {
+        "a1_left_window0": 1.88,
+        "a1_through_window0": 6.08,
+        "a3_window0": 9.52,
+        "a1_left_window1": 2.08,
+        "a1_through_window1": 8.84,
+        "a3_window1": 8.76,
+        "a1_left_window2": 2.76,
+        "a1_through_window2": 6.6,
+        "a3_window2": 11.8
+      },
+      "elapsed_seconds": 1720.3,
+      "background_mean": {
+        "arrived": 4574.7,
+        "loss": 45.225,
+        "wait": 28.367,
+        "collisions": 0.1,
+        "teleports": 0.0
+      }
+    },
+    {
+      "left_seconds": 18,
+      "a3_seconds": 17,
+      "through_seconds": 20,
+      "cycle_seconds": 120,
+      "overall": {
+        "episodes": 7050,
+        "statuses": {
+          "arrival": 6868,
+          "wrong_lane": 85,
+          "collision": 32,
+          "red_light": 18,
+          "timeout": 47
+        },
+        "success_rate": 0.9741843971631206,
+        "collision_rate": 0.0045390070921985815,
+        "wrong_lane_rate": 0.012056737588652482,
+        "timeout_rate": 0.006666666666666667,
+        "red_light_violation_rate": 0.002553191489361702
+      },
+      "by_route": {
+        "ego_d_A1_A1": {
+          "episodes": 375,
+          "success_rate": 0.9573333333333334,
+          "statuses": {
+            "arrival": 359,
+            "timeout": 15,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A2": {
+          "episodes": 375,
+          "success_rate": 0.992,
+          "statuses": {
+            "arrival": 372,
+            "red_light": 2,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9813333333333333,
+          "statuses": {
+            "arrival": 368,
+            "red_light": 7
+          }
+        },
+        "ego_d_A1_A4": {
+          "episodes": 375,
+          "success_rate": 0.9573333333333334,
+          "statuses": {
+            "arrival": 359,
+            "timeout": 15,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A5": {
+          "episodes": 375,
+          "success_rate": 0.9466666666666667,
+          "statuses": {
+            "arrival": 355,
+            "wrong_lane": 20
+          }
+        },
+        "ego_d_A2_A1": {
+          "episodes": 300,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 296,
+            "red_light": 4
+          }
+        },
+        "ego_d_A2_A2": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "wrong_lane": 5,
+            "collision": 4
+          }
+        },
+        "ego_d_A2_A3": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "wrong_lane": 10
+          }
+        },
+        "ego_d_A3_A1": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "collision": 2,
+            "timeout": 8
+          }
+        },
+        "ego_d_A3_A2": {
+          "episodes": 300,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 296,
+            "wrong_lane": 3,
+            "collision": 1
+          }
+        },
+        "ego_d_A3_A3": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "collision": 1,
+            "timeout": 8
+          }
+        },
+        "ego_d_A3_A4": {
+          "episodes": 300,
+          "success_rate": 0.9766666666666667,
+          "statuses": {
+            "arrival": 293,
+            "wrong_lane": 4,
+            "red_light": 2,
+            "timeout": 1
+          }
+        },
+        "ego_d_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "wrong_lane": 2,
+            "collision": 3
+          }
+        },
+        "ego_d_A4_A2": {
+          "episodes": 225,
+          "success_rate": 0.9911111111111112,
+          "statuses": {
+            "arrival": 223,
+            "wrong_lane": 2
+          }
+        },
+        "ego_d_A4_A3": {
+          "episodes": 225,
+          "success_rate": 0.8933333333333333,
+          "statuses": {
+            "arrival": 201,
+            "wrong_lane": 21,
+            "collision": 2,
+            "red_light": 1
+          }
+        },
+        "ego_d_A4_A5": {
+          "episodes": 225,
+          "success_rate": 0.9955555555555555,
+          "statuses": {
+            "arrival": 224,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A5_A1": {
+          "episodes": 225,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "wrong_lane": 4,
+            "arrival": 219,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A3": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_d_A5_A5": {
+          "episodes": 225,
+          "success_rate": 0.9955555555555555,
+          "statuses": {
+            "arrival": 224,
+            "collision": 1
+          }
+        },
+        "ego_r_RING_A1_A3_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9786666666666667,
+          "statuses": {
+            "arrival": 367,
+            "collision": 5,
+            "wrong_lane": 3
+          }
+        },
+        "ego_r_RING_A2_A4_A2_A4": {
+          "episodes": 300,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 292,
+            "collision": 2,
+            "wrong_lane": 6
+          }
+        },
+        "ego_r_RING_A3_A5_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "collision": 9,
+            "wrong_lane": 1
+          }
+        },
+        "ego_r_RING_A4_A1_A4_A1": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A5_A2_A5_A2": {
+          "episodes": 225,
+          "success_rate": 0.9911111111111112,
+          "statuses": {
+            "arrival": 223,
+            "wrong_lane": 2
+          }
+        }
+      },
+      "queues": {
+        "a1_left_window0": 1.68,
+        "a1_through_window0": 6.2,
+        "a3_window0": 10.2,
+        "a1_left_window1": 1.88,
+        "a1_through_window1": 9.08,
+        "a3_window1": 9.96,
+        "a1_left_window2": 2.56,
+        "a1_through_window2": 6.52,
+        "a3_window2": 14.28
+      },
+      "elapsed_seconds": 1759.54,
+      "background_mean": {
+        "arrived": 4574.9,
+        "loss": 46.024,
+        "wait": 28.984,
+        "collisions": 0.0,
+        "teleports": 0.0
+      }
+    },
+    {
+      "left_seconds": 19,
+      "a3_seconds": 16,
+      "through_seconds": 20,
+      "cycle_seconds": 120,
+      "overall": {
+        "episodes": 7050,
+        "statuses": {
+          "arrival": 6872,
+          "wrong_lane": 81,
+          "red_light": 24,
+          "collision": 22,
+          "timeout": 51
+        },
+        "success_rate": 0.9747517730496454,
+        "collision_rate": 0.003120567375886525,
+        "wrong_lane_rate": 0.01148936170212766,
+        "timeout_rate": 0.00723404255319149,
+        "red_light_violation_rate": 0.003404255319148936
+      },
+      "by_route": {
+        "ego_d_A1_A1": {
+          "episodes": 375,
+          "success_rate": 0.96,
+          "statuses": {
+            "arrival": 360,
+            "timeout": 15
+          }
+        },
+        "ego_d_A1_A2": {
+          "episodes": 375,
+          "success_rate": 0.9893333333333333,
+          "statuses": {
+            "arrival": 371,
+            "wrong_lane": 2,
+            "red_light": 2
+          }
+        },
+        "ego_d_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 365,
+            "red_light": 10
+          }
+        },
+        "ego_d_A1_A4": {
+          "episodes": 375,
+          "success_rate": 0.9706666666666667,
+          "statuses": {
+            "arrival": 364,
+            "timeout": 11
+          }
+        },
+        "ego_d_A1_A5": {
+          "episodes": 375,
+          "success_rate": 0.9493333333333334,
+          "statuses": {
+            "arrival": 356,
+            "wrong_lane": 19
+          }
+        },
+        "ego_d_A2_A1": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "red_light": 3
+          }
+        },
+        "ego_d_A2_A2": {
+          "episodes": 300,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 292,
+            "wrong_lane": 4,
+            "collision": 2,
+            "red_light": 2
+          }
+        },
+        "ego_d_A2_A3": {
+          "episodes": 300,
+          "success_rate": 0.9766666666666667,
+          "statuses": {
+            "arrival": 293,
+            "wrong_lane": 6,
+            "red_light": 1
+          }
+        },
+        "ego_d_A3_A1": {
+          "episodes": 300,
+          "success_rate": 0.9566666666666667,
+          "statuses": {
+            "arrival": 287,
+            "collision": 1,
+            "timeout": 12
+          }
+        },
+        "ego_d_A3_A2": {
+          "episodes": 300,
+          "success_rate": 0.9933333333333333,
+          "statuses": {
+            "arrival": 298,
+            "red_light": 1,
+            "collision": 1
+          }
+        },
+        "ego_d_A3_A3": {
+          "episodes": 300,
+          "success_rate": 0.9566666666666667,
+          "statuses": {
+            "arrival": 287,
+            "collision": 1,
+            "timeout": 12
+          }
+        },
+        "ego_d_A3_A4": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "collision": 1,
+            "wrong_lane": 6,
+            "timeout": 1,
+            "red_light": 1
+          }
+        },
+        "ego_d_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9966666666666667,
+          "statuses": {
+            "arrival": 299,
+            "collision": 1
+          }
+        },
+        "ego_d_A4_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        },
+        "ego_d_A4_A3": {
+          "episodes": 225,
+          "success_rate": 0.8844444444444445,
+          "statuses": {
+            "wrong_lane": 23,
+            "arrival": 199,
+            "collision": 3
+          }
+        },
+        "ego_d_A4_A5": {
+          "episodes": 225,
+          "success_rate": 0.9911111111111112,
+          "statuses": {
+            "arrival": 223,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A1": {
+          "episodes": 225,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "wrong_lane": 4,
+            "arrival": 219,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A3": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_d_A5_A5": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A1_A3_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.984,
+          "statuses": {
+            "arrival": 369,
+            "wrong_lane": 5,
+            "collision": 1
+          }
+        },
+        "ego_r_RING_A2_A4_A2_A4": {
+          "episodes": 300,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 292,
+            "collision": 2,
+            "wrong_lane": 6
+          }
+        },
+        "ego_r_RING_A3_A5_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "collision": 9
+          }
+        },
+        "ego_r_RING_A4_A1_A4_A1": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A5_A2_A5_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        }
+      },
+      "queues": {
+        "a1_left_window0": 1.56,
+        "a1_through_window0": 6.16,
+        "a3_window0": 11.52,
+        "a1_left_window1": 1.6,
+        "a1_through_window1": 9.2,
+        "a3_window1": 14.12,
+        "a1_left_window2": 2.4,
+        "a1_through_window2": 6.56,
+        "a3_window2": 19.64
+      },
+      "elapsed_seconds": 1782.34,
+      "background_mean": {
+        "arrived": 4567.9,
+        "loss": 48.195,
+        "wait": 30.526999999999997,
+        "collisions": 0.1,
+        "teleports": 0.0
+      }
+    },
+    {
+      "left_seconds": 20,
+      "a3_seconds": 15,
+      "through_seconds": 20,
+      "cycle_seconds": 120,
+      "overall": {
+        "episodes": 7050,
+        "statuses": {
+          "arrival": 6876,
+          "wrong_lane": 75,
+          "collision": 19,
+          "timeout": 53,
+          "red_light": 27
+        },
+        "success_rate": 0.9753191489361702,
+        "collision_rate": 0.0026950354609929076,
+        "wrong_lane_rate": 0.010638297872340425,
+        "timeout_rate": 0.007517730496453901,
+        "red_light_violation_rate": 0.003829787234042553
+      },
+      "by_route": {
+        "ego_d_A1_A1": {
+          "episodes": 375,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 365,
+            "timeout": 10
+          }
+        },
+        "ego_d_A1_A2": {
+          "episodes": 375,
+          "success_rate": 0.9973333333333333,
+          "statuses": {
+            "arrival": 374,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.968,
+          "statuses": {
+            "arrival": 363,
+            "red_light": 11,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A4": {
+          "episodes": 375,
+          "success_rate": 0.96,
+          "statuses": {
+            "arrival": 360,
+            "wrong_lane": 1,
+            "timeout": 13,
+            "collision": 1
+          }
+        },
+        "ego_d_A1_A5": {
+          "episodes": 375,
+          "success_rate": 0.9653333333333334,
+          "statuses": {
+            "arrival": 362,
+            "wrong_lane": 13
+          }
+        },
+        "ego_d_A2_A1": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "red_light": 5
+          }
+        },
+        "ego_d_A2_A2": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "wrong_lane": 5,
+            "collision": 2,
+            "red_light": 2
+          }
+        },
+        "ego_d_A2_A3": {
+          "episodes": 300,
+          "success_rate": 0.9566666666666667,
+          "statuses": {
+            "arrival": 287,
+            "wrong_lane": 9,
+            "red_light": 4
+          }
+        },
+        "ego_d_A3_A1": {
+          "episodes": 300,
+          "success_rate": 0.9666666666666667,
+          "statuses": {
+            "arrival": 290,
+            "timeout": 9,
+            "collision": 1
+          }
+        },
+        "ego_d_A3_A2": {
+          "episodes": 300,
+          "success_rate": 0.9833333333333333,
+          "statuses": {
+            "arrival": 295,
+            "red_light": 2,
+            "wrong_lane": 2,
+            "collision": 1
+          }
+        },
+        "ego_d_A3_A3": {
+          "episodes": 300,
+          "success_rate": 0.9433333333333334,
+          "statuses": {
+            "arrival": 283,
+            "timeout": 16,
+            "collision": 1
+          }
+        },
+        "ego_d_A3_A4": {
+          "episodes": 300,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "arrival": 292,
+            "collision": 2,
+            "timeout": 5,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.99,
+          "statuses": {
+            "arrival": 297,
+            "collision": 2,
+            "red_light": 1
+          }
+        },
+        "ego_d_A4_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        },
+        "ego_d_A4_A3": {
+          "episodes": 225,
+          "success_rate": 0.8933333333333333,
+          "statuses": {
+            "wrong_lane": 22,
+            "arrival": 201,
+            "collision": 2
+          }
+        },
+        "ego_d_A4_A5": {
+          "episodes": 225,
+          "success_rate": 0.9955555555555555,
+          "statuses": {
+            "arrival": 224,
+            "wrong_lane": 1
+          }
+        },
+        "ego_d_A5_A1": {
+          "episodes": 225,
+          "success_rate": 0.9733333333333334,
+          "statuses": {
+            "wrong_lane": 4,
+            "arrival": 219,
+            "red_light": 2
+          }
+        },
+        "ego_d_A5_A3": {
+          "episodes": 225,
+          "success_rate": 0.9955555555555555,
+          "statuses": {
+            "arrival": 224,
+            "collision": 1
+          }
+        },
+        "ego_d_A5_A5": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A1_A3_A1_A3": {
+          "episodes": 375,
+          "success_rate": 0.9893333333333333,
+          "statuses": {
+            "arrival": 371,
+            "collision": 1,
+            "wrong_lane": 3
+          }
+        },
+        "ego_r_RING_A2_A4_A2_A4": {
+          "episodes": 300,
+          "success_rate": 0.97,
+          "statuses": {
+            "arrival": 291,
+            "collision": 2,
+            "wrong_lane": 7
+          }
+        },
+        "ego_r_RING_A3_A5_A3_A5": {
+          "episodes": 300,
+          "success_rate": 0.9933333333333333,
+          "statuses": {
+            "arrival": 298,
+            "collision": 2
+          }
+        },
+        "ego_r_RING_A4_A1_A4_A1": {
+          "episodes": 225,
+          "success_rate": 1.0,
+          "statuses": {
+            "arrival": 225
+          }
+        },
+        "ego_r_RING_A5_A2_A5_A2": {
+          "episodes": 225,
+          "success_rate": 0.9866666666666667,
+          "statuses": {
+            "arrival": 222,
+            "wrong_lane": 3
+          }
+        }
+      },
+      "queues": {
+        "a1_left_window0": 1.56,
+        "a1_through_window0": 6.16,
+        "a3_window0": 13.68,
+        "a1_left_window1": 1.44,
+        "a1_through_window1": 8.92,
+        "a3_window1": 21.12,
+        "a1_left_window2": 2.4,
+        "a1_through_window2": 6.48,
+        "a3_window2": 33.88
+      },
+      "elapsed_seconds": 299.18,
+      "background_mean": {
+        "arrived": 4549.8,
+        "loss": 55.891999999999996,
+        "wait": 35.919,
+        "collisions": 0.0,
+        "teleports": 0.0
+      }
+    }
+  ],
+  "recommendation": {
+    "through_seconds": 20,
+    "left_seconds": 17,
+    "a3_seconds": 18,
+    "a5_seconds": 20,
+    "a4_seconds": 20,
+    "cycle_seconds": 120,
+    "reason": "Joint highest observed policy success rate; fewest policy collisions among the tested one-second allocations; moderate A3 queue. One background collision in ten hours remains.",
+    "production_default_applied": true,
+    "gui_changed": false
+  }
+}

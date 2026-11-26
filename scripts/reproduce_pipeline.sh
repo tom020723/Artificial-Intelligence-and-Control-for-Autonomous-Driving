@@ -70,10 +70,11 @@ stage() {
   touch "$OUT/.done_$name"
 }
 
-# 0. Fixed-route suite: road, 4,740 veh/h background, saved traffic states. Built only from
+# 0. Fixed-route suite: road, background at CALIBRATED_VPH (env/background_demand.py), saved
+#    traffic states. Built only from
 #    the repository code (env/, train.py) and benchmark/.
 stage suite "$PY" scripts/evaluate_fixed_routes.py prepare "$SUITE" \
-  --traffic-vph 4740 --idm-only-speed-gain
+  --idm-only-speed-gain
 
 # 1-2. IDM expert collection, BC training, and the built-in fixed-route evaluation.
 stage bc "$PY" -u scripts/measure_calibrated_idm_coverage.py "$SUITE" "$BC" \

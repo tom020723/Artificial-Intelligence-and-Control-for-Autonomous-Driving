@@ -62,7 +62,8 @@ class ParallelSumoTests(unittest.TestCase):
             env = ParallelSumo(2, kwargs, root / "parallel", seed=0, randomize_signals=True)
             route = "ego_d_A1_A2"
             rngs = [np.random.default_rng(seed) for seed in np.random.SeedSequence(0).spawn(2)]
-            ends = np.cumsum([40, 6, 4] * 5)
+            # Ticks of 0.5 s: green 20/17/18/20/20 s; each transition takes 5 s.
+            ends = np.cumsum([40, 6, 4, 34, 6, 4, 36, 6, 4] + [40, 6, 4] * 2)
 
             def signal_state(index):
                 light = f"r{index}_nC"
@@ -70,7 +71,7 @@ class ParallelSumoTests(unittest.TestCase):
                         libsumo.trafficlight.getNextSwitch(light) - libsumo.simulation.getTime())
 
             def expected(index):
-                offset = rngs[index].integers(250)
+                offset = rngs[index].integers(ends[-1])
                 phase = np.searchsorted(ends, offset, side="right")
                 return phase, (ends[phase] - offset) * .5
 
@@ -189,6 +190,61 @@ class ParallelSumoTests(unittest.TestCase):
                 self.assertGreater(gap, 0)
                 self.assertLess(gap, second.visibility)
                 self.assertIsNone(first._neighbor(0, leader=True))
+            finally:
+                env.close()
+
+    def test_phase2_restores_traffic_at_the_requested_signal_tick(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            road = runpy.run_path(str(Path(road_builder.__file__).with_name("road_config.py")))
+            road["configure_parallel_training"](2)
+            with patch.object(road_builder, "NOHYEONG", road["NOHYEONG"]):
+                config = road_builder.build(road["ROAD"], road["EGO"], road["TRAFFIC"],
+                                            str(root / "base"))
+            kwargs = dict(cfg_path=config, road=road["ROAD"], ego=road["EGO"],
+                          mdp_sim=SIMULATION, mdp_obs=OBSERVATION, action=ACTION,
+                          reward=REWARD, traffic=road["TRAFFIC"])
+            curriculum = TrafficCurriculum(total_vph=True, snapshot_warmup_seconds=125,
+                                           max_depart_delay_seconds=125)
+            env = ParallelSumo(2, kwargs, root / "parallel", seed=0, randomize_signals=True,
+                               traffic_curriculum=curriculum, fixed_traffic_vph=1500)
+            route = "ego_r_RING_A1_A3_A1_A3"
+            try:
+                self.assertAlmostEqual(sum(flow.rate_per_central_vph for flow in env.traffic_flows), 1)
+                env._find_departures()
+                self.assertEqual(set(env.departures), set(env.route_entries))
+                for name, options in env.departures.items():
+                    lane, position, index = options[0]
+                    self.assertEqual(lane, f"{env.route_entries[name]}_{index}")
+                    self.assertGreaterEqual(position, 0)
+                env.reset([route, route], signal_ticks=[20, 95])
+                first, second = env.egos
+                self.assertTrue(first.background.ids)
+                self.assertTrue(second.background.ids)
+                self.assertEqual(libsumo.simulation.getTime(), 0)
+                old_first, old_second = set(first.background.ids), set(second.background.ids)
+                env._live_background = set(libsumo.vehicle.getIDList())
+                other_phase = libsumo.trafficlight.getPhase(second.prefix("nC"))
+                env._respawn(first, route, traffic_vph=1500, signal_tick=50)
+                self.assertEqual(libsumo.trafficlight.getPhase(first.prefix("nC")), 3)
+                # At 25 s, the 17 s left-turn green starts.
+                self.assertEqual(libsumo.trafficlight.getNextSwitch(first.prefix("nC")), 17)
+                self.assertEqual(libsumo.trafficlight.getPhase(second.prefix("nC")), other_phase)
+                active = set(libsumo.vehicle.getIDList())
+                self.assertTrue(first.background.ids <= active)
+                self.assertTrue(old_second <= active)
+                self.assertFalse(old_first & active)
+
+                # Snapshot resets are followed by ordinary movement planning.
+                # Native adjacent-neighbor queries can cache cars just before
+                # an ego completes and its background vehicles are removed.
+                with patch.object(libsumo.vehicle, "getNeighbors",
+                                  side_effect=AssertionError("unsafe native neighbor query")):
+                    first.max_steps = 2
+                    for _ in range(4):
+                        env.step([[0, 0], [0, 0]])
+                self.assertEqual(first.episode, 4)
+                self.assertEqual(second.episode, 1)
             finally:
                 env.close()
 
