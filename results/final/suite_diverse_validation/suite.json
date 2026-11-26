@@ -1,0 +1,190 @@
+{
+  "traffic_vph": 4740,
+  "adaptive_traffic": false,
+  "uniform_idm_vph": 0,
+  "traffic_seed": 0,
+  "current_road": true,
+  "routes": [
+    "ego_d_A1_A1",
+    "ego_d_A1_A2",
+    "ego_d_A1_A3",
+    "ego_d_A1_A4",
+    "ego_d_A1_A5",
+    "ego_d_A2_A1",
+    "ego_d_A2_A2",
+    "ego_d_A2_A3",
+    "ego_d_A3_A1",
+    "ego_d_A3_A2",
+    "ego_d_A3_A3",
+    "ego_d_A3_A4",
+    "ego_d_A3_A5",
+    "ego_d_A4_A2",
+    "ego_d_A4_A3",
+    "ego_d_A4_A5",
+    "ego_d_A5_A1",
+    "ego_d_A5_A3",
+    "ego_d_A5_A5",
+    "ego_r_RING_A1_A3_A1_A3",
+    "ego_r_RING_A2_A4_A2_A4",
+    "ego_r_RING_A3_A5_A3_A5",
+    "ego_r_RING_A4_A1_A4_A1",
+    "ego_r_RING_A5_A2_A5_A2"
+  ],
+  "settings": {
+    "initial_vph": 0,
+    "max_vph": 4740,
+    "success_increment": 50,
+    "failure_decrement": 150,
+    "ring_traffic": true,
+    "total_vph": true,
+    "snapshot_warmup_seconds": 800,
+    "max_depart_delay_seconds": null,
+    "ring_reference_vph": 800
+  },
+  "vehicle_types": {
+    "krauss": {
+      "probability": 0.35,
+      "carFollowModel": "Krauss",
+      "accel": 2.0,
+      "decel": 4.5,
+      "tau": 1.0,
+      "min_gap": 2.5,
+      "sigma": 0.3,
+      "max_speed": 14.0,
+      "speed_dev": 0.15,
+      "color": "1,1,0",
+      "keep_lane": false
+    },
+    "idm": {
+      "probability": 0.3,
+      "carFollowModel": "IDM",
+      "accel": 1.8,
+      "decel": 3.5,
+      "tau": 1.2,
+      "min_gap": 2.0,
+      "max_speed": 16.0,
+      "speed_dev": 0.1,
+      "color": "0,1,1",
+      "keep_lane": false
+    },
+    "eidm": {
+      "probability": 0.2,
+      "carFollowModel": "EIDM",
+      "accel": 2.0,
+      "decel": 4.0,
+      "tau": 1.1,
+      "min_gap": 2.0,
+      "max_speed": 16.5,
+      "speed_dev": 0.1,
+      "color": "1,0.6,0",
+      "keep_lane": false
+    },
+    "acc": {
+      "probability": 0.15,
+      "carFollowModel": "ACC",
+      "accel": 2.0,
+      "decel": 4.0,
+      "tau": 1.5,
+      "min_gap": 2.0,
+      "max_speed": 19.0,
+      "speed_dev": 0.05,
+      "color": "1,0,1",
+      "keep_lane": false
+    }
+  },
+  "collision_detection": {
+    "ego_type": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.5,
+      "collision_min_gap_factor": 0.08
+    },
+    "car_krauss": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.5,
+      "collision_min_gap_factor": 0.08
+    },
+    "car_idm": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.0,
+      "collision_min_gap_factor": 0.1
+    },
+    "car_eidm": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.0,
+      "collision_min_gap_factor": 0.1
+    },
+    "car_acc": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.0,
+      "collision_min_gap_factor": 0.1
+    }
+  },
+  "simulation_step_seconds": 0.5,
+  "max_seconds": 500,
+  "max_replicas_per_worker": 64,
+  "workers": 4,
+  "seeds_per_snapshot": 1,
+  "spawn_protect_m": 0,
+  "background_lc_speed_gain": {
+    "car_idm": 1.0,
+    "car_krauss": 0.0,
+    "car_eidm": 0.0,
+    "car_acc": 0.0
+  },
+  "all_start_lanes": true,
+  "center_lanes": {
+    "ego_d_A1_A1": 2,
+    "ego_d_A1_A2": 2,
+    "ego_d_A1_A3": 2,
+    "ego_d_A1_A4": 2,
+    "ego_d_A1_A5": 2,
+    "ego_d_A2_A1": 2,
+    "ego_d_A2_A2": 2,
+    "ego_d_A2_A3": 2,
+    "ego_d_A3_A1": 2,
+    "ego_d_A3_A2": 2,
+    "ego_d_A3_A3": 2,
+    "ego_d_A3_A4": 2,
+    "ego_d_A3_A5": 2,
+    "ego_d_A4_A2": 1,
+    "ego_d_A4_A3": 1,
+    "ego_d_A4_A5": 1,
+    "ego_d_A5_A1": 1,
+    "ego_d_A5_A3": 1,
+    "ego_d_A5_A5": 1,
+    "ego_r_RING_A1_A3_A1_A3": 2,
+    "ego_r_RING_A2_A4_A2_A4": 2,
+    "ego_r_RING_A3_A5_A3_A5": 2,
+    "ego_r_RING_A4_A1_A4_A1": 1,
+    "ego_r_RING_A5_A2_A5_A2": 1
+  },
+  "snapshot_seeds": [
+    62101,
+    62102,
+    62103,
+    62104,
+    62105,
+    62106,
+    62107,
+    62108,
+    62109,
+    62110
+  ],
+  "snapshot_capture_windows_s": [
+    [
+      120,
+      600
+    ],
+    [
+      900,
+      1800
+    ],
+    [
+      2400,
+      3500
+    ]
+  ],
+  "snapshot_count": 30,
+  "route_lane_combinations": 94,
+  "snapshot_source": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/suite_fixed_routes"
+}

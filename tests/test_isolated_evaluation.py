@@ -1,7 +1,7 @@
 """Isolated (fresh SUMO per case) evaluation gives order- and batch-independent outcomes.
 
 Run: python -m unittest tests/test_isolated_evaluation.py
-The end-to-end tests need the local diverse start-lane suite (results/ is not tracked).
+The end-to-end tests use the tracked final outputs in results/final.
 """
 import csv
 import json
@@ -14,8 +14,8 @@ from scripts.evaluate_fixed_routes import case_sumo_seed, evaluate_worker, read_
 from utils.bc_policy import evaluation_context
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITE = ROOT / "results/eval_diverse_start_lanes_4740_20261123_172237"
-MODEL = ROOT / "results/PPO_overspeed_20261124_c00/eval_runs/iter100/model.pt"
+SUITE = ROOT / "results/final/suite_diverse_test"
+MODEL = ROOT / "results/final/PPO/eval_runs/iter100/model.pt"
 # Cases whose outcome changed with case order in the previous shared-SUMO mode.
 CASES = (632, 3253, 6925, 681)
 

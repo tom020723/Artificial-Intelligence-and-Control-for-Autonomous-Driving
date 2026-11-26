@@ -140,12 +140,14 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 
 ## 최종 결과물
 
+`results/final`은 `OUT=results/final`로 이 절차를 돌린 출력이다(2026-11-26). git에는 세트, 모델, 설정, 평가 요약과 사례별 결과만 넣었고 수집 원본과 데이터셋은 넣지 않았다.
+
 | 항목 | 경로 |
 |---|---|
-| 고정 경로 평가 세트 | `results/eval_fixed_routes_4740_idm_only_speedgain_20261121_013051` (git 밖) |
-| 무작위 출발 차선 테스트 세트 | `results/eval_diverse_start_lanes_4740_20261123_172237` (git 밖) |
-| 최종 BC | `results/BC_20261122_220742_calibrated_4740_signed_gaps_spawn20/training/model.pt` |
-| 최종 PPO | `results/PPO_overspeed_20261124_c00/model.pt` |
+| 고정 경로 평가 세트 | `results/final/suite_fixed_routes` |
+| 무작위 출발 차선 테스트·검증 세트 | `results/final/suite_diverse_test`, `results/final/suite_diverse_validation` |
+| 최종 BC | `results/final/BC/training/model.pt` (테스트 90.04%) |
+| 최종 PPO | `results/final/PPO/eval_runs/iter100/model.pt` (반복 100, 테스트 97.06%) |
 
 ## 정리된 파일
 

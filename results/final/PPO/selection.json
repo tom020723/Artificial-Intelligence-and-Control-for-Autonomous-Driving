@@ -1,0 +1,47 @@
+{
+  "evaluation": "evaluation_validation",
+  "best": {
+    "iteration": 70,
+    "success_rate": 0.9641843971631205,
+    "episodes": 2820,
+    "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter070/model.pt"
+  },
+  "candidates": [
+    {
+      "iteration": 50,
+      "success_rate": 0.95,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter050/model.pt"
+    },
+    {
+      "iteration": 60,
+      "success_rate": 0.951063829787234,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter060/model.pt"
+    },
+    {
+      "iteration": 70,
+      "success_rate": 0.9641843971631205,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter070/model.pt"
+    },
+    {
+      "iteration": 80,
+      "success_rate": 0.9482269503546099,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter080/model.pt"
+    },
+    {
+      "iteration": 90,
+      "success_rate": 0.9563829787234043,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter090/model.pt"
+    },
+    {
+      "iteration": 100,
+      "success_rate": 0.9638297872340426,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-BC-traffic-calibration/results/final/PPO/eval_runs/iter100/model.pt"
+    }
+  ]
+}
