@@ -192,54 +192,6 @@ class ParallelSumoTests(unittest.TestCase):
             finally:
                 env.close()
 
-    def test_phase2_restores_traffic_at_the_requested_signal_tick(self):
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            road = runpy.run_path(str(Path(road_builder.__file__).with_name("road_config.py")))
-            road["configure_parallel_training"](2)
-            with patch.object(road_builder, "NOHYEONG", road["NOHYEONG"]):
-                config = road_builder.build(road["ROAD"], road["EGO"], road["TRAFFIC"],
-                                            str(root / "base"))
-            kwargs = dict(cfg_path=config, road=road["ROAD"], ego=road["EGO"],
-                          mdp_sim=SIMULATION, mdp_obs=OBSERVATION, action=ACTION,
-                          reward=REWARD, traffic=road["TRAFFIC"])
-            curriculum = TrafficCurriculum(total_vph=True, snapshot_warmup_seconds=125,
-                                           max_depart_delay_seconds=125)
-            env = ParallelSumo(2, kwargs, root / "parallel", seed=0, randomize_signals=True,
-                               traffic_curriculum=curriculum, fixed_traffic_vph=1500)
-            route = "ego_r_RING_A1_A3_A1_A3"
-            try:
-                self.assertAlmostEqual(sum(flow.rate_per_central_vph for flow in env.traffic_flows), 1)
-                env.reset([route, route], signal_ticks=[20, 95])
-                first, second = env.egos
-                self.assertTrue(first.background.ids)
-                self.assertTrue(second.background.ids)
-                self.assertEqual(libsumo.simulation.getTime(), 0)
-                old_first, old_second = set(first.background.ids), set(second.background.ids)
-                env._live_background = set(libsumo.vehicle.getIDList())
-                other_phase = libsumo.trafficlight.getPhase(second.prefix("nC"))
-                env._respawn(first, route, traffic_vph=1500, signal_tick=50)
-                self.assertEqual(libsumo.trafficlight.getPhase(first.prefix("nC")), 3)
-                self.assertEqual(libsumo.trafficlight.getNextSwitch(first.prefix("nC")), 20)
-                self.assertEqual(libsumo.trafficlight.getPhase(second.prefix("nC")), other_phase)
-                active = set(libsumo.vehicle.getIDList())
-                self.assertTrue(first.background.ids <= active)
-                self.assertTrue(old_second <= active)
-                self.assertFalse(old_first & active)
-
-                # Snapshot resets are followed by ordinary movement planning.
-                # Native adjacent-neighbor queries can cache cars just before
-                # an ego completes and its background vehicles are removed.
-                with patch.object(libsumo.vehicle, "getNeighbors",
-                                  side_effect=AssertionError("unsafe native neighbor query")):
-                    first.max_steps = 2
-                    for _ in range(4):
-                        env.step([[0, 0], [0, 0]])
-                self.assertEqual(first.episode, 4)
-                self.assertEqual(second.episode, 1)
-            finally:
-                env.close()
-
     def test_replica_matches_single_ego_and_respawns_without_an_extra_tick(self):
         with TemporaryDirectory() as directory:
             root = Path(directory)

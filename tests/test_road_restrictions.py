@@ -69,22 +69,6 @@ class RoadRestrictionTests(unittest.TestCase):
         self.assertFalse(any(f.get("id").startswith("lr_") for f in self.traffic.findall("flow")))
         self.assertEqual(len([f for f in self.traffic.findall("flow") if f.get("id").startswith("lf_")]), 5)
 
-    def test_A1_lane_map_preserves_order_into_three_lane_A2_exit(self):
-        for lane in range(1, 4):
-            links = [c for c in self.connections if c.get("from") == "A1_in"
-                     and c.get("fromLane") == str(lane)]
-            self.assertEqual({(c.get("to"), int(c.get("toLane"))) for c in links},
-                             {("A2_out", lane-1), ("A5_out", min(lane, 2))})
-        right = [c for c in self.connections if c.get("from") == "A1_in" and c.get("fromLane") == "0"]
-        self.assertEqual({(c.get("to"), c.get("toLane")) for c in right}, {("A3_out", "0")})
-        left = [c for c in self.connections if c.get("from") == "A1_in" and c.get("fromLane") == "4"]
-        self.assertEqual({(c.get("to"), c.get("toLane")) for c in left},
-                         {("A4_out", "1"), ("A1_out", "0")})
-        green = self.net.find("tlLogic[@id='nC']/phase[@name='A1_green']").get("state")
-        merging = [c for c in self.connections if c.get("from") == "A1_in"
-                   and c.get("to") == "A5_out" and c.get("toLane") == "2"]
-        self.assertEqual(sorted(green[int(c.get("linkIndex"))] for c in merging), ["G", "g"])
-
     def test_A2_A5_upstream_uturns_share_their_central_signal_phase(self):
         nodes = {e.get("id"): e.get("to") for e in self.net.findall("edge")
                  if e.get("function") != "internal"}

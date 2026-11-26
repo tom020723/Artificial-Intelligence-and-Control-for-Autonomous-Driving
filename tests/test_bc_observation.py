@@ -1,7 +1,6 @@
 """BC43 layout and live SUMO distances; run from repository root."""
 import math
 import unittest
-from pathlib import Path
 from unittest.mock import Mock, patch
 import xml.etree.ElementTree as ET
 
@@ -10,13 +9,12 @@ from env.sumo_env import SumoHighwayEnv
 from env.route_guidance import choice_geometry, navigation_observation
 from env.road_config import ROAD, EGO, TRAFFIC
 from env.mdp_config import SIMULATION, OBSERVATION, ACTION, REWARD
-
-BASE = Path(__file__).resolve().parents[1]
+from tests.road_fixture import road_files
 
 
 class NavigationTests(unittest.TestCase):
     def setUp(self):
-        self.geometry = choice_geometry(ET.parse(BASE / 'env/sumo/highway.net.xml').getroot())
+        self.geometry = choice_geometry(ET.parse(road_files()[1]).getroot())
         self.vehicle = Mock()
         self.vehicle.getRoute.return_value = ('A1_in2', 'A1_in1', 'A1_in', 'A5_out')
         self.vehicle.getRouteIndex.return_value = 0
@@ -52,7 +50,7 @@ class NavigationTests(unittest.TestCase):
 class BCObservationTests(unittest.TestCase):
     def setUp(self):
         sim = dict(SIMULATION, warmup_steps=0, warmup_seconds=0)
-        self.env = SumoHighwayEnv(str(BASE/'env/sumo/highway.sumocfg'), ROAD, EGO,
+        self.env = SumoHighwayEnv(str(road_files()[0]), ROAD, EGO,
                                  sim, OBSERVATION, ACTION, REWARD, traffic=TRAFFIC)
 
     def tearDown(self):
@@ -73,7 +71,7 @@ class BCObservationTests(unittest.TestCase):
         config = dict(OBSERVATION, layout="legacy", connectivity_half_width=4,
                       lookahead_connectivity_enabled=True, destination_enabled=True,
                       signal_count=2)
-        env = SumoHighwayEnv(str(BASE/'env/sumo/highway.sumocfg'), ROAD, EGO,
+        env = SumoHighwayEnv(str(road_files()[0]), ROAD, EGO,
                             SIMULATION, config, ACTION, REWARD, traffic=TRAFFIC)
         self.assertEqual(env.obs_dim, 59)
         self.assertEqual(env._signal_observation(None), [1,0,0,0,1])
@@ -101,7 +99,7 @@ class BCObservationTests(unittest.TestCase):
         # Basic connectivity must not query the route-matching helper.
         with patch.object(env, '_lane_follows_route', side_effect=AssertionError('route leak')):
             env._lane_connectivity(0)
-        net = ET.parse(BASE/'env/sumo/highway.net.xml').getroot()
+        net = ET.parse(road_files()[1]).getroot()
         connection = next(c for c in net.findall('connection')
                           if c.get('from') == 'A1_in' and c.get('to') == 'A5_out'
                           and c.get('tl') is not None)

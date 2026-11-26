@@ -62,7 +62,7 @@ python -u scripts/measure_calibrated_idm_coverage.py OUT/suite_fixed_routes OUT/
   --connected-lane-bumper-gaps --signed-adjacent-gaps --idm-spawn-protect-m 20
 ```
 
-- 알고리즘은 `docs/final_BC_trianing.md`. 그 문서의 처음 표는 기본 설정이고, 최종 BC는 개선 사항 1, 3, 4, 5를 더한 것이다.
+- 알고리즘은 `reproducible-pipeline` 브랜치의 `docs/final_BC_trianing.md`. 그 문서의 처음 표는 기본 설정이고, 최종 BC는 개선 사항 1, 3, 4, 5를 더한 것이다.
 
   | 옵션 | 개선 사항 |
   |---|---|
@@ -85,7 +85,7 @@ python scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 ```
 
 - 테스트 세트는 최종 판단에만 쓰고, 검증 세트는 PPO 체크포인트를 고르는 데 쓴다.
-- 평가는 사례마다 SUMO를 새로 시작한다(`docs/ppo_finetuning.md`의 "평가 재현성").
+- 평가는 사례마다 SUMO를 새로 시작한다(`reproducible-pipeline` 브랜치 `docs/ppo_finetuning.md`의 "평가 재현성").
 
 ### 4. PPO 파인튜닝
 
@@ -95,7 +95,7 @@ PPO_PY -m scripts.finetune_bc_ppo OUT/BC/training/model.pt OUT/suite_fixed_route
   --output OUT/PPO
 ```
 
-방법과 보상은 `docs/ppo_finetuning.md`. 10회 반복마다 `model_iterNNN.pt`를 저장한다.
+방법과 보상은 `reproducible-pipeline` 브랜치의 `docs/ppo_finetuning.md`. 10회 반복마다 `model_iterNNN.pt`를 저장한다.
 
 ### 5. 체크포인트 선택, PPO 평가
 
@@ -151,7 +151,7 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 
 ## 정리된 파일
 
-최종 과정에 쓰지 않는 이전 실험 스크립트와 문서는 `archive/`로 옮겼다(`archive/README.md`). 최종 과정은 이전 실험 스크립트를 하나도 불러오지 않는다. 이전 스크립트에서 가져다 쓰던 함수는 아래로 옮겼다.
+이 브랜치(`final2`)에는 최종 과정이 쓰는 파일과 그 테스트만 남겼다. 이전 실험 스크립트, 문서, 결과는 `reproducible-pipeline` 브랜치와 git 기록에 있다. 이전 스크립트에서 가져다 쓰던 함수는 아래로 옮겼다.
 
 | 함수 | 지금 위치 |
 |---|---|
@@ -159,7 +159,7 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 | 결과 집계 `summarize`, 상태 라벨 `OUTCOMES` | `utils/evaluation_summary.py` |
 | BC 학습 곡선 `plot_bc_training`, 세트 도로 준비 `prepare_road` | `scripts/evaluate_fixed_routes.py` |
 | DAgger 전문가 작업자 `native_expert_worker` | `scripts/measure_calibrated_idm_coverage.py` |
-| 저장된 설정 복원 `load_saved_configs` | `utils/saved_configs.py` (`test.py`도 여기서 가져온다) |
+| 저장된 설정 복원 `load_saved_configs` | `utils/saved_configs.py` |
 | BC 학습 함수 `epoch`, `lane_class`, `export_policy`, `initialize_from_raw_policy` | `scripts/train_bc_shards.py` |
 
 `SMOKE=1`로 돌렸을 때 저장소에서 쓰이는 파일은 아래 44개다(Python 파일이 연 파일을 모두 기록해 확인). `results/`, `data/`, `archive/`, `docs/`, `tests/`는 쓰지 않는다.

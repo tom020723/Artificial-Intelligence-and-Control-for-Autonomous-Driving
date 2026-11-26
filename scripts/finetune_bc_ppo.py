@@ -2,8 +2,8 @@
 
 Run as a module: ``python -m scripts.finetune_bc_ppo CHECKPOINT SUITE``.
 
-Compared with ``archive/scripts/train_bc_ppo.py`` (the first PPO) this trains without the ego speed
-cap (the cap is a rule outside the policy, and the previous run learned to
+Compared with the first PPO (scripts/train_bc_ppo.py, in git history) this trains without the ego
+speed cap (the cap is a rule outside the policy, and the previous run learned to
 lean on it), and uses ``algorithms.anchored_ppo.AnchoredPPO``: a separate
 critic with warm-up, a KL anchor to the BC policy, a small acceleration
 exploration std and sharper sampled lane choices. The reward is the event
@@ -78,7 +78,7 @@ def main():
                         help="Relative excess over the lane limit that is not penalized "
                              "(default 0.1 = 10%%, the IDM expert's speed spread)")
     parser.add_argument("--ego-speed-cap", action="store_true",
-                        help="Clamp the ego speed to the limit as in archive/scripts/train_bc_ppo.py")
+                        help="Clamp the ego speed to the lane limit (a rule outside the policy; off by default)")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
