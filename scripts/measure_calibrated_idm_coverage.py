@@ -16,6 +16,7 @@ import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from collect_background_data import BackgroundObserver, collect_episode, libsumo, save_json
+from env.collision_detection import junction_collisions, sumo_collision_options
 from env.control_timing import lane_change_timing_allowed
 from env.background_demand import FLOW_SHARES
 from env.parallel_traffic import TrafficCurriculum, TrafficSchedule, parse_traffic_flows
@@ -27,7 +28,7 @@ def native_expert_worker(pipe, config, state_file, step_length, traffic_options,
     try:
         libsumo.start(["sumo", "-c", config, "--step-length", str(step_length),
                        "--collision.action", "warn", "--no-warnings", "true",
-                       "--no-step-log", "true", *traffic_options])
+                       "--no-step-log", "true", *traffic_options, *sumo_collision_options()])
         while request := pipe.recv():
             try:
                 libsumo.simulation.loadState(state_file)
@@ -198,6 +199,8 @@ def select_dataset(source, destination, ids, assignments, quotas, metadata):
         np.savez_compressed(destination / name, **data)
     save_json(destination / "manifest.json", dict(shards=shards, samples=count, obs_dim=obs_dim,
                                                    validation_indices=validation))
+    if junction_collisions():
+        metadata = dict(metadata, junction_collisions=True)
     save_json(destination / "config.json", metadata)
     save_json(destination / "selection.json", dict(assignments=assignments, quotas=quotas,
                                                     by_route_and_time=histogram, pairs=count))

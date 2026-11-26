@@ -26,7 +26,7 @@ from env.road_config import ROAD, EGO, TRAFFIC, _CENTRAL_BACKGROUND_VPH, _RING_B
 from env.mdp_config import SIMULATION, OBSERVATION, ACTION, REWARD
 from env.control_timing import lane_change_timing_allowed
 from env.background_demand import sample_background_demand
-from env.collision_detection import configure_collision_gaps
+from env.collision_detection import configure_collision_gaps, junction_collisions, sumo_collision_options
 import libsumo
 
 
@@ -137,7 +137,7 @@ def collect_episode(env, episode, seed, args, directory, extra_routes=None, traf
     command = ['sumo', '-c', str(env.cfg_path), '--step-length', str(env.step_length),
                '--seed', str(seed), '--no-step-log', 'true', '--no-warnings', 'true',
                '--collision.action', 'remove', '--lanechange-output', str(lc_path),
-               '--log', str(directory / f'sumo_{episode:03d}.log')]
+               '--log', str(directory / f'sumo_{episode:03d}.log'), *sumo_collision_options()]
     rows, bad_vehicles = [], set()
     counts = Counter()
     route_paths = {}
@@ -479,6 +479,8 @@ def main():
                                for name in ['collect_background_data.py', 'env/sumo_env.py',
                                             'env/route_guidance.py', 'env/ring_observation.py', 'env/road_config.py', 'env/mdp_config.py',
                                             'env/road_builder.py', 'env/collision_detection.py']}
+    if junction_collisions():
+        config['junction_collisions'] = True
     save_json(directory/'config.json', config)
     reports = []
     collection_start = time.monotonic()

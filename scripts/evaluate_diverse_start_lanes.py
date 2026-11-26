@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from env.collision_detection import junction_collisions, sumo_collision_options
 from env.parallel_sumo import _signal_schedule, libsumo
 from scripts.evaluate_fixed_routes import (
     FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, prepare_road, read_json, run, write_json,
@@ -41,7 +42,8 @@ def capture_traffic(cfg, flows, lanes, controllers, vph, seed):
     schedule = FixedTrafficSchedule(flows, controllers, lanes)
     captures = []
     libsumo.start(["sumo", "-c", str(cfg), "--seed", str(seed), "--step-length", str(STEP),
-                   "--collision.action", "remove", "--no-warnings", "true", "--no-step-log", "true"])
+                   "--collision.action", "remove", "--no-warnings", "true", "--no-step-log", "true",
+                   *sumo_collision_options()])
     try:
         for signal in signals:
             libsumo.trafficlight.setPhase(signal, phase)
@@ -132,6 +134,8 @@ def prepare(source, suite, seeds):
                 route_lane_combinations=len(combinations), snapshot_source=str(source), spawn_protect_m=0)
     for obsolete in ("snapshot_times_seconds", "warmup_seconds"):
         spec.pop(obsolete, None)
+    if junction_collisions():
+        spec["junction_collisions"] = True
     write_json(suite / "suite.json", spec)
     write_json(suite / "cases.json", cases)
     write_json(suite / "snapshots.json", metadata)

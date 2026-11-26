@@ -16,6 +16,7 @@ import numpy as np
 def _generate(config, directory, curriculum, reference_vph, levels, step, seed, refresh, ready, stop,
               capture_steps=None, adaptive=False, uniform_idm_vph=0):
     # Import inside the spawned process: the caller may already own a libsumo instance.
+    from env.collision_detection import sumo_collision_options
     from env.parallel_sumo import _build_replicas, _replica_id, libsumo
     from env.parallel_traffic import TrafficSchedule
 
@@ -28,7 +29,7 @@ def _generate(config, directory, curriculum, reference_vph, levels, step, seed, 
         libsumo.start(["sumo", "-c", snapshot_config, "--step-length", str(step),
                        "--seed", str(seed), "--collision.action", "remove",
                        "--no-warnings", "true", "--no-step-log", "true",
-                       *curriculum.sumo_options()])
+                       *curriculum.sumo_options(), *sumo_collision_options()])
         if adaptive:
             from env.adaptive_traffic_schedule import adaptive_schedule_factory
             factory = adaptive_schedule_factory(config, directory, flows, lights, uniform_idm_vph)

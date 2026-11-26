@@ -1,5 +1,6 @@
-"""Explicit physical collision gaps, independent of car-following minGap."""
+"""Explicit physical collision gaps, independent of car-following minGap, and SUMO collision options."""
 import math
+import os
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
@@ -33,3 +34,24 @@ def configure_collision_gaps(config, *, ego_gap_m=None, background_gap_m=None):
     if ego_gap_m is not None and 'ego_type' not in settings:
         raise ValueError('Missing ego_type in collision configuration')
     return settings
+
+
+JUNCTION_COLLISIONS_VARIABLE = "SUMO_CHECK_JUNCTIONS"
+
+
+def junction_collisions():
+    """Whether SUMO also detects collisions inside junctions (environment SUMO_CHECK_JUNCTIONS=1).
+
+    Off by default, as when the final models were built. The setting is read
+    from the environment so every SUMO a run starts, including spawned worker
+    processes, uses the same rule.
+    """
+    value = os.environ.get(JUNCTION_COLLISIONS_VARIABLE, "0")
+    if value not in ("0", "1"):
+        raise ValueError(f"{JUNCTION_COLLISIONS_VARIABLE} must be 0 or 1, got {value!r}")
+    return value == "1"
+
+
+def sumo_collision_options():
+    """Extra SUMO collision options for every simulation start; empty by default."""
+    return ["--collision.check-junctions", "true"] if junction_collisions() else []

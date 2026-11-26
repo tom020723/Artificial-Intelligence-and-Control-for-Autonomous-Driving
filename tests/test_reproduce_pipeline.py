@@ -11,6 +11,8 @@ import xml.etree.ElementTree as ET
 
 from scripts.evaluate_fixed_routes import IDM_ONLY_SPEED_GAIN, set_background_speed_gain, write_benchmark_context
 from scripts.ppo_checkpoints import BC_FILES, export, select
+from env.collision_detection import sumo_collision_options
+from unittest.mock import patch
 
 ROUTES = """<routes>
     <vTypeDistribution id="background">
@@ -57,6 +59,17 @@ class BenchmarkContextTests(unittest.TestCase):
         self.assertEqual(safety["spawn_protect"], 0.0)
         self.assertTrue(curriculum.total_vph)
         self.assertEqual(curriculum.ring_reference_vph, 800)
+
+
+class JunctionCollisionOptionTests(unittest.TestCase):
+    def test_off_by_default_and_on_with_the_variable(self):
+        with patch.dict("os.environ", {}, clear=True):
+            self.assertEqual(sumo_collision_options(), [])
+        with patch.dict("os.environ", {"SUMO_CHECK_JUNCTIONS": "1"}):
+            self.assertEqual(sumo_collision_options(), ["--collision.check-junctions", "true"])
+        with patch.dict("os.environ", {"SUMO_CHECK_JUNCTIONS": "yes"}):
+            with self.assertRaises(ValueError):
+                sumo_collision_options()
 
 
 class PpoCheckpointTests(unittest.TestCase):

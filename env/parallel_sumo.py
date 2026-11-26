@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 
+from env.collision_detection import sumo_collision_options
 from env.ego_routes import group_unique_ego_routes
 from env.ring_observation import prefix_geometry
 from env.sumo_env import SumoHighwayEnv
@@ -230,7 +231,8 @@ class ParallelSumo:
         libsumo.start(["sumo-gui" if show_gui else "sumo", "-c", config,
                        "--step-length", str(self.prototype.step_length),
                        "--seed", str(self.seed), "--collision.action", "remove",
-                       "--no-warnings", "true", "--no-step-log", "true", *traffic_options, *gui_options])
+                       "--no-warnings", "true", "--no-step-log", "true", *traffic_options, *gui_options,
+                       *sumo_collision_options()])
         self.started = True
 
     def _find_departures(self):

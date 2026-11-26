@@ -27,7 +27,7 @@ from env import road_builder
 from env.adaptive_traffic_schedule import AdaptiveTrafficSchedule, adaptive_schedule_factory
 from env.background_demand import CALIBRATED_VPH, set_weighted_od_flow_rates
 from env.bc_ppo_reward import STOP_AMPLITUDE, STOP_SIGMA_M, STEP_REWARD, TERMINAL_REWARDS, StopRewardProbe
-from env.collision_detection import configure_collision_gaps
+from env.collision_detection import configure_collision_gaps, junction_collisions
 from env.control_timing import lane_change_timing_allowed
 from env.ego_routes import read_ego_route_groups
 from env.parallel_sumo import ParallelSumo, libsumo
@@ -213,6 +213,8 @@ def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
         spawn_protect_m=0)
     if background_lc_speed_gain is not None:
         spec["background_lc_speed_gain"] = dict(background_lc_speed_gain)
+    if junction_collisions():
+        spec["junction_collisions"] = True
     write_json(suite / "suite.json", spec)
     print(f"Prepared {len(cases):,} cases in {suite}", flush=True)
 
@@ -720,6 +722,8 @@ def run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, 
                       for row in rows if previous[row['case_id']]['status'] != row['status']]
         summary['audit_replay'] = dict(source=str(trace_failures_from), traced_cases=len(trace_ids),
                                       status_mismatches=mismatches)
+    if junction_collisions():
+        summary["junction_collisions"] = True
     write_json(out / "evaluation_summary.json", summary)
     with (out / "route_evaluation.csv").open("w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=list(rows[0]), lineterminator="\n")

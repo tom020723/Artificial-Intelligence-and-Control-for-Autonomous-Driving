@@ -22,6 +22,7 @@ import numpy as np
 import torch
 
 from algorithms.anchored_ppo import AnchoredPPO
+from env.collision_detection import junction_collisions
 from env.bc_ppo_reward import OVERSPEED_TOLERANCE, STEP_REWARD, STOP_AMPLITUDE, STOP_SIGMA_M, TERMINAL_REWARDS
 from env.parallel_sumo import ParallelSumo, ShardedParallelSumo
 from env.parallel_traffic import TrafficCurriculum
@@ -123,6 +124,8 @@ def main():
                         stop_sigma_m=STOP_SIGMA_M, 
                         algorithm="AnchoredPPO", **{k: v for k, v in vars(args).items()
                                                     if k not in ("checkpoint", "traffic_suite", "output")})
+        if junction_collisions():
+            metadata["junction_collisions"] = True
         (output / "run.json").write_text(json.dumps(metadata, indent=2, default=str) + "\n")
         print(f"{output} | {agent.device} | {rollout} steps/iteration", flush=True)
         start = perf_counter()

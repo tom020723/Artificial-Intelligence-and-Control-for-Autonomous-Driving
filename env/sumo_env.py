@@ -25,6 +25,7 @@ import numpy as np
 import gymnasium as gym
 from gymnasium import spaces
 
+from env.collision_detection import sumo_collision_options
 from env.control_timing import lane_change_timing_allowed
 from env.bc_ppo_reward import (OVERSPEED_TOLERANCE, STEP_REWARD, TERMINAL_REWARDS, StopRewardProbe,
                                 overspeed_penalty)
@@ -375,6 +376,7 @@ class SumoHighwayEnv(gym.Env):
             "--no-step-log", "true",   # 스텝 로그 끄기
             # 매 에피소드 다른 시드 → 배경 교통 패턴이 달라져서 과적합 방지
             "--seed", str(np.random.randint(0, 100000)),
+            *sumo_collision_options(),
         ]
         if self.gui:
             cmd += ["--quit-on-end"]      # 에피소드 종료 시 창 정리

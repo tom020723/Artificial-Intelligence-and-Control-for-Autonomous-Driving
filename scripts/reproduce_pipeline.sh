@@ -13,6 +13,8 @@
 #            the last bits, which makes PPO training diverge (docs/REPRODUCE.md).
 #   SUMO_HOME SUMO install whose tools/ go on PYTHONPATH (default /usr/share/sumo)
 #   WORKERS  collection processes (default 12)
+#   SUMO_CHECK_JUNCTIONS  1 = SUMO also detects collisions inside junctions, in every stage
+#            (default 0, as when the final models were built)
 #
 # Each finished stage leaves OUT/.done_<stage>; rerunning with the same OUT resumes
 # after the last finished stage. docs/REPRODUCE.md describes every stage.
@@ -55,6 +57,8 @@ else
 fi
 
 mkdir -p "$OUT"
+export SUMO_CHECK_JUNCTIONS="${SUMO_CHECK_JUNCTIONS:-0}"
+echo "SUMO_CHECK_JUNCTIONS=$SUMO_CHECK_JUNCTIONS" | tee -a "$OUT/settings.log"
 stage() {
   local name="$1"; shift
   if [[ -e "$OUT/.done_$name" ]]; then
