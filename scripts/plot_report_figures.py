@@ -1,9 +1,9 @@
 """Paper-style figures comparing BC alone, BC → PPO, and PPO alone on the diverse start-lane test.
 
-    python scripts/plot_report_figures.py --out results/figures \
-        --method bc="results/final3/BC/evaluation_diverse_start_lanes" \
-        --method bc_ppo="results/final3/PPO/eval_runs/iter100/evaluation_diverse_start_lanes" \
-        --training bc_ppo=results/final3/PPO --validation bc_ppo=results/final3/PPO
+    python scripts/plot_report_figures.py --out docs/report/figures \
+        --method bc=results/final/BC/evaluation_diverse_start_lanes \
+        --method bc_ppo=results/final/PPO/eval_runs/iter080/evaluation_diverse_start_lanes \
+        --training bc_ppo=results/final/PPO --validation bc_ppo=results/final/PPO
 
 Methods are keyed bc, bc_ppo, ppo; each keeps its color whether or not the others are given.
 Writes PDF and PNG figures and the same numbers as results_table.md / results_table.csv.
@@ -47,10 +47,15 @@ def wilson(successes, n, z=1.96):
     return centre - half, centre + half
 
 
+def _checked(results):
+    return "\njunction collisions counted" if all(r["junction"] for r in results.values()) else ""
+
+
 def read_overall(directory):
-    overall = json.loads((Path(directory) / "evaluation_summary.json").read_text())["overall"]
-    statuses = overall["statuses"]
+    data = json.loads((Path(directory) / "evaluation_summary.json").read_text())
+    overall, statuses = data["overall"], data["overall"]["statuses"]
     return dict(cases=overall["episodes"], arrival=statuses.get("arrival", 0),
+                junction=bool(data.get("junction_collisions")),
                 **{key: statuses.get(key, 0) for key, _ in FAILURES})
 
 
@@ -77,7 +82,7 @@ def plot_success(results, out):
     ax.set_xlim(5 * math.floor(lowest / 5 - .2), 100)
     ax.set_xlabel("Success rate (%)")
     ax.grid(axis="y", visible=False)
-    ax.set_title(f"Diverse start-lane test ({results[keys[0]]['cases']:,} cases, 95% CI)", loc="left")
+    ax.set_title(f"Diverse start-lane test ({results[keys[0]]['cases']:,} cases, 95% CI){_checked(results)}", loc="left")
     save(fig, out, "fig_success")
 
 
@@ -96,7 +101,7 @@ def plot_failures(results, out):
     ax.set_xlabel("Share of test cases (%)")
     ax.grid(axis="y", visible=False)
     ax.legend(frameon=False, loc="lower right")
-    ax.set_title("Failure outcomes", loc="left")
+    ax.set_title(f"Failure outcomes{_checked(results)}", loc="left")
     save(fig, out, "fig_failures")
 
 
@@ -123,12 +128,15 @@ def plot_training(training, out):
 
 def plot_validation(validation, out):
     fig, ax = plt.subplots(figsize=(3.4, 2.3))
+    suffix = ""
     for key, run in validation.items():
         points = []
         for directory in sorted((Path(run) / "eval_runs").glob("iter*")):
             summary = directory / "evaluation_validation" / "evaluation_summary.json"
             if summary.is_file():
-                overall = json.loads(summary.read_text())["overall"]
+                data = json.loads(summary.read_text())
+                overall = data["overall"]
+                suffix = "\njunction collisions counted" if data.get("junction_collisions") else ""
                 points.append((int(directory.name[4:]), 100 * overall["success_rate"]))
         if points:
             x, y = zip(*points)
@@ -136,13 +144,14 @@ def plot_validation(validation, out):
                     markeredgecolor="white", label=METHODS[key][0])
             best = max(points, key=lambda p: (p[1], p[0]))   # same rule as scripts/ppo_checkpoints.py
             ax.plot(*best, "o", markersize=10, markerfacecolor="none", markeredgecolor=INK, markeredgewidth=1)
-            ax.annotate(f"selected: iter {best[0]} ({best[1]:.2f}%)", best, xytext=(6, -12),
-                        textcoords="offset points", fontsize=7)
+            ax.annotate(f"selected: iter {best[0]} ({best[1]:.2f}%)", best, xytext=(0, 9),
+                        textcoords="offset points", fontsize=7, ha="center")
+            ax.margins(y=.18)
     ax.set_xlabel("PPO iteration")
     ax.set_ylabel("Validation success (%)")
     if len(validation) > 1:
         ax.legend(frameon=False, loc="lower right")
-    ax.set_title("Checkpoint selection (2,820 validation cases)", loc="left")
+    ax.set_title(f"Checkpoint selection (2,820 validation cases){suffix}", loc="left")
     save(fig, out, "fig_validation")
 
 
