@@ -366,6 +366,8 @@ class SumoHighwayEnv(gym.Env):
     def _start_sumo(self):
         # gui=True면 화면이 있는 sumo-gui, 아니면 화면 없는 sumo (학습용, 훨씬 빠름)
         binary = checkBinary("sumo-gui" if self.gui else "sumo")
+        # 데이터 재현용으로 실제 사용한 시드를 보관한다 (episodes.sumo_seed).
+        self.sumo_seed = int(np.random.randint(0, 100000))
         cmd = [
             binary, "-c", self.cfg_path,
             "--step-length", str(self.step_length),
@@ -375,7 +377,7 @@ class SumoHighwayEnv(gym.Env):
             "--no-warnings", "true",   # 콘솔 경고 끄기
             "--no-step-log", "true",   # 스텝 로그 끄기
             # 매 에피소드 다른 시드 → 배경 교통 패턴이 달라져서 과적합 방지
-            "--seed", str(np.random.randint(0, 100000)),
+            "--seed", str(self.sumo_seed),
             *sumo_collision_options(),
         ]
         if self.gui:
@@ -1735,9 +1737,12 @@ class SumoHighwayEnv(gym.Env):
                         "lane_id": self._api.vehicle.getLaneID(vid),
                         "road_id": self._api.vehicle.getRoadID(vid),
                         "lane_pos": float(self._api.vehicle.getLanePosition(vid)),
+                        "route_id": self._safe_call(self._api.vehicle.getRouteID, vid),
                     })
                 except self._api.TraCIException:
                     continue
+            signals = self._safe_call(self._upcoming_signals)
+            all_signals, signal_remaining_s = self._all_signals()
             return {
                 "ego_alive": True,
                 "ego_x": float(x),
@@ -1748,9 +1753,88 @@ class SumoHighwayEnv(gym.Env):
                 "ego_road_id": self._api.vehicle.getRoadID(self.ego_id),
                 "ego_lane_pos": float(self._api.vehicle.getLanePosition(self.ego_id)),
                 "vehicles": vehicles,
+                # 행동 전 시점 t의 자차 적용 신호 (정책 관측 범위와 동일). 조회 실패는 null.
+                "road_context": {
+                    "observed_signals": None if signals is None else [
+                        {"tls_id": s[0], "link_index": int(s[1]),
+                         "state": self._SIGNAL_STATE_CODES.get(s[3], -1.0),
+                         "distance": float(s[2])}
+                        for s in self._observed_signals(signals)],
+                    # 진입로 [A1..A5] 신호 색과 현재 현시가 바뀔 때까지 남은 시간(s).
+                    "all_signals": all_signals,
+                    "signal_remaining_s": signal_remaining_s,
+                },
             }
         except self._api.TraCIException:
             return {"ego_alive": False}
+
+    # 데이터 칼럼용 신호 색 코드 (SUMO 문자 → 숫자). 적 0, 황 0.5, 비보호 녹 0.75, 보호 녹 1.
+    # 그 밖의 SUMO 신호 문자(s, u, o, O 등)는 -1.
+    _SIGNAL_STATE_CODES = {"r": 0.0, "R": 0.0, "y": 0.5, "Y": 0.5, "g": 0.75, "G": 1.0}
+
+    # 충돌 상대 vType id → 데이터 칼럼 코드. 그 밖(ego_type 등)은 -1.
+    _PARTNER_TYPE_CODES = {"car_krauss": 0, "car_idm": 1, "car_eidm": 2, "car_acc": 3}
+
+    def _collision_partner(self, collided):
+        """직전 simulationStep의 자차 충돌 상대. 충돌이 없거나 조회 실패면 모두 None."""
+        partner = dict(collision_partner_id=None, collision_partner_type=None,
+                       collision_partner_speed=None, ego_is_collider=None)
+        if not collided:
+            return partner
+        try:
+            collisions = self._api.simulation.getCollisions()
+        except self._api.TraCIException:
+            return partner
+        for c in collisions:
+            if self.ego_id not in (c.collider, c.victim):
+                continue
+            is_collider = c.collider == self.ego_id
+            partner.update(
+                collision_partner_id=c.victim if is_collider else c.collider,
+                collision_partner_type=self._PARTNER_TYPE_CODES.get(
+                    c.victimType if is_collider else c.colliderType, -1),
+                collision_partner_speed=float(c.victimSpeed if is_collider else c.colliderSpeed),
+                ego_is_collider=is_collider)
+            break
+        return partner
+
+    def _all_signals(self):
+        """중앙 신호 nC의 진입로 A1~A5별 색 (적 0, 황 0.5, 녹 1)과 현재 현시 남은 시간(s).
+
+        진입로 색은 그 진입로(`Ai_in`) 차로에서 출발하는 제어 연결 중 가장 허용적인 색이다.
+        nC가 없거나 조회에 실패하면 (None, None).
+        """
+        try:
+            if "nC" not in self._api.trafficlight.getIDList():
+                return None, None
+            state = self._api.trafficlight.getRedYellowGreenState("nC")
+            links = self._api.trafficlight.getControlledLinks("nC")
+            remaining = (self._api.trafficlight.getNextSwitch("nC")
+                         - self._api.simulation.getTime())
+        except self._api.TraCIException:
+            return None, None
+        colors = {arm: 0.0 for arm in ("A1", "A2", "A3", "A4", "A5")}
+        for char, link in zip(state, links):
+            if not link:
+                continue
+            edge = link[0][0].rsplit("_", 1)[0]
+            arm = edge[:-3] if edge.endswith("_in") else None
+            if arm in colors:
+                value = 1.0 if char in "Gg" else 0.5 if char in "yY" else 0.0
+                colors[arm] = max(colors[arm], value)
+        return list(colors.values()), round(float(remaining), 3)
+
+    def _safe_call(self, fn, *args):
+        """조회 실패를 null로 기록하기 위한 래퍼."""
+        try:
+            return fn(*args)
+        except self._api.TraCIException:
+            return None
+
+    def get_vehicle_route(self, vehicle_id):
+        """차량의 실제 경유 edge 목록. 조회 실패는 None."""
+        edges = self._safe_call(self._api.vehicle.getRoute, vehicle_id)
+        return None if edges is None else list(edges)
 
     def step(self, action):
         state = self._prepare_step(action)
@@ -1809,6 +1893,8 @@ class SumoHighwayEnv(gym.Env):
         (accel_raw, lane_raw, lane_change, lane_change_applied, lane_before, speed_before,
          signals_before, route_connected_before, distance_before, early_lane_context) = state
         self.step_count += 1
+        # SUMO는 충돌로 제거된 차량도 arrived 목록에 넣는다. 충돌을 도착으로 세지 않는다.
+        arrived = arrived and not collided
         alive = self._ego_is_present()
         lane_after = int(self._api.vehicle.getLaneIndex(self.ego_id)) if alive else None
 
@@ -1967,6 +2053,7 @@ class SumoHighwayEnv(gym.Env):
             "overspeed_penalty": overspeed,
             "lane_speed_limit": lane_speed_limit,
             "collided": collided,
+            **self._collision_partner(collided),
             "arrived": arrived,
             "wrong_lane": wrong_lane,
             "early_lane_change_reward": early_lane_change_reward,

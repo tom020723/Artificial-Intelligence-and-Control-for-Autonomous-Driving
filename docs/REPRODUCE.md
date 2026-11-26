@@ -157,3 +157,22 @@ BC를 학습한 데이터셋(shard 2,268개와 `manifest.json`, `config.json`, �
 | BC 학습 함수 `epoch`, `lane_class`, `export_policy`, `initialize_from_raw_policy` | `scripts/train_bc_shards.py` |
 
 재현 스크립트가 쓰는 파일은 `scripts/`의 `reproduce_pipeline.sh`, `evaluate_fixed_routes.py`, `measure_calibrated_idm_coverage.py`, `train_bc_shards.py`, `evaluate_diverse_start_lanes.py`, `finetune_bc_ppo.py`, `ppo_checkpoints.py`와 최상위 `train.py`(보상·하이퍼파라미터), `collect_background_data.py`(IDM 관측 수집기), 그리고 `benchmark/`, `env/`, `algorithms/`, `utils/`다. `results/`, `data/`, `docs/`, `tests/`는 쓰지 않는다.
+
+## 제출용 주행 데이터 수집 (PR #7 통합)
+
+`collect_background_data.py`는 BC 학습용 IDM 전문가 수집기이고,
+`collect_pomdp_data.py`는 학습된 BC/PPO를 주행시켜 제출용 transition을 기록하는 별도 수집기다.
+
+```bash
+python collect_pomdp_data.py --model results/final/BC/training/model.pt --traffic-vph 4700 --episodes 10 --workers 2 --randomize-departures --name final_bc
+python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter080/model.pt --traffic-vph 4700 --episodes 10 --workers 2 --randomize-departures --name final_ppo
+```
+
+출력은 `data/<이름>.jsonl.gz`, `.npz`, `.metadata.json`, `.sumo/`다.
+충돌 상대, 신호, 경로, 시드와 종료 원인을 함께 기록한다. 칼럼 정의는
+`docs/data_columns_submission.md`에 있다. 최종 BC와 PPO를 자동 판별하며,
+PPO 평가용 폴더에서는 상위 PPO 실행의 설정을 읽어 사건 보상과 차선 변경 벌점을 보존한다.
+모델 수집은 ego 규칙 제한을 해제하고, 교차로 내부 충돌 검사도 기본으로 켠다
+(`--no-junction-check`로 끌 수 있다). `--traffic-vph`를 주면 예열 기본값은 250초이며
+`--warmup-seconds`로 바꿀 수 있다. 이 수집은 저장된 평가 스냅샷 대신 새 교통을 실행하므로
+최종 평가 성공률을 재현하는 명령은 아니다. 구형 `BCPolicy` 체크포인트는 지원하지 않는다.
