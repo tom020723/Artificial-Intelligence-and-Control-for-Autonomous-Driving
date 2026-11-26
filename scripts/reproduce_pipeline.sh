@@ -52,7 +52,7 @@ else
   TEST_SEEDS=($(seq 52101 52125))
   VALIDATION_SEEDS=($(seq 62101 62110))
   EVAL=()
-  FINETUNE=(--iterations 100)
+  FINETUNE=(--iterations 100 --workers 16)   # 16 SUMO processes x 32 replicas; 2.5x faster than 4 x 128
   ITERATIONS=(50 60 70 80 90 100)
 fi
 

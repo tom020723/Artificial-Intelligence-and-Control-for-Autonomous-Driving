@@ -92,8 +92,10 @@ python scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 ```bash
 PPO_PY -m scripts.finetune_bc_ppo OUT/BC/training/model.pt OUT/suite_fixed_routes \
   --iterations 100 --init-std 0.05 --lane-sharpness 2 --lr 5e-5 --anchor-coef 0.03 --overspeed-penalty 0 --seed 0 \
-  --output OUT/PPO
+  --workers 16 --output OUT/PPO
 ```
+
+- 환경 512개를 SUMO 프로세스 16개(프로세스당 32개)에 나눈다. 반복당 약 5.5초로 4개(13.5초)보다 2.5배 빠르다(2026-11-26 측정, GPU 사용률 1–3%). 작업자 수를 바꾸면 SUMO 난수 흐름이 달라져 결과가 seed를 바꾼 것처럼 달라진다. 이전 최종 모델은 작업자 4개로 학습했다.
 
 방법과 보상은 `reproducible-pipeline` 브랜치의 `docs/ppo_finetuning.md`. 10회 반복마다 `model_iterNNN.pt`를 저장한다.
 
