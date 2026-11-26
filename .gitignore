@@ -15,6 +15,7 @@ conda-meta/
 
 # Keep requirements.txt, environment.yml and conda-lock files tracked
 *.tex
+
 # Local experiment outputs; the already tracked Phase 1 baseline remains tracked.
 /results/
 /analysis/
