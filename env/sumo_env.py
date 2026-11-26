@@ -2013,6 +2013,10 @@ class SumoHighwayEnv(gym.Env):
                 reward += TERMINAL_REWARDS["timeout"]
             else:
                 reward += self._bc_stop_probe.observe(self, info) + early_lane_change_reward
+            # Optional shaping (off by default): each executed lane change costs a small amount.
+            lane_penalty = float(self.rw.get("bc_lane_change_penalty", 0.0))
+            if lane_penalty and lane_change != 0 and lane_change_applied:
+                reward -= lane_penalty
         return obs, float(reward), terminated, truncated, info
 
     # ==================================================================

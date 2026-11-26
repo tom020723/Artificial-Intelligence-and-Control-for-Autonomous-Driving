@@ -119,6 +119,33 @@ class AnchoredPPO(ParallelPPO):
             parameter.requires_grad_(False)
         self.anchor_std = float(init_std)
 
+    def init_from_scratch(self, normalization, init_std, lane_keep_prob):
+        """Start from a randomly initialized actor instead of BC; no anchor.
+
+        The dataset mean and std are folded into the first layer, so the actor
+        takes raw observations like the BC export (input scaling only, no expert
+        behavior). The lane head starts at ``lane_keep_prob`` for keep and an
+        equal share for left and right; its small random weights barely move that.
+        """
+        if not 0 < lane_keep_prob < 1:
+            raise ValueError("lane_keep_prob must be in (0, 1)")
+        mean = torch.as_tensor(normalization["mean"], dtype=torch.float32, device=self.device)
+        std = torch.as_tensor(normalization["std"], dtype=torch.float32, device=self.device)
+        with torch.no_grad():
+            first = self.policy.trunk[0]
+            first.weight.div_(std.unsqueeze(0))
+            first.bias.sub_(first.weight @ mean)
+            self.policy.log_std.fill_(float(np.log(init_std)))
+            keep = float(np.log(2 * lane_keep_prob / (1 - lane_keep_prob)))
+            self.policy.lane_head.bias.copy_(torch.tensor([0.0, keep, 0.0], device=self.device))
+            self.policy.v_head.weight.zero_()
+            self.policy.v_head.bias.zero_()
+        self.optimizer = torch.optim.Adam(
+            [p for name, p in self.policy.named_parameters() if not name.startswith("v_head")],
+            lr=self.optimizer.param_groups[0]["lr"])
+        self.anchor = None
+        self.anchor_coef = 0.0
+
     @torch.no_grad()
     def _act_batch(self, obs):
         obs = torch.as_tensor(obs, dtype=torch.float32, device=self.device)
@@ -131,6 +158,9 @@ class AnchoredPPO(ParallelPPO):
         return self.critic(obs).cpu().numpy()
 
     def _anchor_kl(self, obs, mu, logits):
+        if self.anchor is None:                       # trained from scratch: no anchor term
+            zero = mu.new_zeros(mu.shape[0])
+            return zero, zero
         with torch.no_grad():
             anchor_mu, _, anchor_logits, _ = self.anchor(obs)
         accel = ((mu - anchor_mu) ** 2).sum(-1) / (2 * self.anchor_std ** 2)
@@ -203,9 +233,12 @@ class AnchoredPPO(ParallelPPO):
         with torch.no_grad():
             out["p_lane_change"] = float(self.policy.lane_change_prob(obs_t).mean().item())
             # How often the deterministic lane choice differs from BC on the visited states.
-            _, _, logits, _ = self.policy(obs_t)
-            _, _, anchor_logits, _ = self.anchor(obs_t)
-            out["lane_argmax_changed"] = float((logits.argmax(-1) != anchor_logits.argmax(-1)).float().mean())
+            if self.anchor is not None:
+                _, _, logits, _ = self.policy(obs_t)
+                _, _, anchor_logits, _ = self.anchor(obs_t)
+                out["lane_argmax_changed"] = float((logits.argmax(-1) != anchor_logits.argmax(-1)).float().mean())
+            else:
+                out["lane_argmax_changed"] = float("nan")
         return out
 
     def learn_parallel(self, env, iterations, logger=None, on_iteration=None):
