@@ -7,13 +7,15 @@ import numpy as np
 # Demand split calibrated for the Nohyeong network: flow id -> veh/h at CALIBRATED_VPH total.
 # Found by scripts/tune_background_demand.py (background-only, Poisson arrivals, 5 seeds, 1 h each):
 # every flow finishes and waits at most about one signal cycle. Shares follow what each lane
-# group can discharge in its 20 s green; left-turn lanes shared with U-turns carry far less than
+# group can discharge in its green; left-turn lanes shared with U-turns carry far less than
 # through lanes. See docs/traffic_calibration.md. Set to None to use the uniform formula below.
-CALIBRATED_VPH = 4740
+# Recalibrated for the 120 s grouped signal (was 4,740 for the 125 s sequential signal): only the
+# left-turn and U-turn flows of A1, A2 and A3 were lowered; the other 18 flows keep their rates.
+CALIBRATED_VPH = 4700
 FLOW_SHARES = {
-    "f_A1_A1": 38.5, "f_A1_A2": 505.0, "f_A1_A3": 175.2, "f_A1_A4": 83.7, "f_A1_A5": 170.0,
-    "f_A2_A1": 467.2, "f_A2_A2": 38.5, "f_A2_A3": 97.7,
-    "f_A3_A1": 83.7, "f_A3_A2": 312.8, "f_A3_A3": 38.5, "f_A3_A4": 308.2, "f_A3_A5": 175.2,
+    "f_A1_A1": 32.6, "f_A1_A2": 505.0, "f_A1_A3": 175.2, "f_A1_A4": 70.8, "f_A1_A5": 170.0,
+    "f_A2_A1": 467.2, "f_A2_A2": 35.4, "f_A2_A3": 89.9,
+    "f_A3_A1": 77.0, "f_A3_A2": 312.8, "f_A3_A3": 35.4, "f_A3_A4": 308.2, "f_A3_A5": 175.2,
     "f_A4_A2": 118.2, "f_A4_A3": 264.8, "f_A4_A5": 143.9,
     "f_A5_A1": 296.6, "f_A5_A3": 98.9, "f_A5_A5": 49.4,
     "lf_RING_A1_A3": 253.9, "lf_RING_A2_A4": 233.6, "lf_RING_A3_A5": 276.0,

@@ -8,7 +8,8 @@ usage (repository root):
 TUNE_LIMITS="p95_wait,max_wait,p95_depart_delay" (seconds) overrides the health limits.
 
 Background-only SUMO runs with Poisson arrivals. A flow is unhealthy when its
-vehicles wait too long (p95 waiting > one 125 s signal cycle + margin), cannot be
+vehicles wait too long (p95 waiting > one signal cycle + 10 s, or any wait > two
+cycles + 10 s; the cycle is read from the suite's network), cannot be
 inserted (depart delay), or do not finish. Unhealthy flows are scaled down 8 %
 and the run repeats until every flow is healthy for all seeds.
 """
@@ -27,7 +28,13 @@ from sumolib import checkBinary  # noqa: E402
 from env.background_demand import FLOW_SHARES  # noqa: E402
 
 SUMO = checkBinary("sumo")
-WAIT_P95, WAIT_MAX, DELAY_P95 = (float(x) for x in os.environ.get("TUNE_LIMITS", "135,260,20").split(","))
+# Longest signal cycle in the suite's network (125 s sequential plan, 120 s grouped plan, ...).
+CYCLE = max(sum(float(phase.get("duration")) for phase in logic.findall("phase"))
+            for logic in ET.parse(suite / "sumo/highway.net.xml").getroot().findall("tlLogic"))
+WAIT_P95, WAIT_MAX, DELAY_P95 = (float(x) for x in os.environ.get(
+    "TUNE_LIMITS", f"{CYCLE + 10},{2 * CYCLE + 10},20").split(","))
+print(f"signal cycle {CYCLE:g} s; limits: p95 wait {WAIT_P95:g} s, max wait {WAIT_MAX:g} s, "
+      f"p95 depart delay {DELAY_P95:g} s", flush=True)
 work = Path(tempfile.mkdtemp(prefix="tune_"))
 shutil.copytree(suite / "sumo", work / "sumo")
 rou = work / "sumo" / "highway.rou.xml"

@@ -17,7 +17,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from env.parallel_sumo import _signal_schedule, libsumo
 from scripts.evaluate_fixed_routes import (
-    FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, read_json, run, write_json,
+    DEMAND, FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, read_json, run, write_json,
 )
 from scripts.evaluate_mixed_traffic import prepare_road
 
@@ -93,8 +93,8 @@ def departure_combinations(source, routes):
 
 def prepare(source, suite, seeds):
     spec = read_json(source / "suite.json")
-    if spec.get("adaptive_traffic") or spec["traffic_vph"] != 4740:
-        raise ValueError("Use the calibrated 4,740 veh/h fixed-demand suite as the road template")
+    if spec.get("adaptive_traffic") or spec["traffic_vph"] != DEMAND:
+        raise ValueError(f"Use the calibrated {DEMAND:,} veh/h fixed-demand suite as the road template")
     combinations = departure_combinations(source, spec["routes"])
     center_lanes = {row["route"]: row["start_lane"] for row in read_json(source / "cases.json")}
     suite.mkdir(parents=True)
