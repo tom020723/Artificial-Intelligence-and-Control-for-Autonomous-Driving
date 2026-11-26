@@ -37,3 +37,17 @@ class ClearanceReferenceTests(unittest.TestCase):
             self.assertIn('Stopped-leader',axes[2].get_title())
             fig.canvas.draw()
         finally:plt.close(fig)
+
+    def test_final_panels_accept_115_second_cycle_offsets(self):
+        from scripts.evaluate_quick_phase1 import _plot_final_panels
+        rows = [dict(route='route', signal_offset_s=tick * .5, status='arrival')
+                for tick in range(2, 230, 5)]
+        fig = plt.figure()
+        try:
+            with patch('scripts.evaluate_quick_phase1._plot_clearances'):
+                _plot_final_panels(fig, fig.add_gridspec(1, 1)[0], ['route'], rows, {})
+            self.assertEqual(fig.axes[1].images[0].get_array().shape, (1, 46))
+            self.assertLessEqual(fig.axes[1].get_xlim()[1], 115)
+            fig.canvas.draw()
+        finally:
+            plt.close(fig)

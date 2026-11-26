@@ -20,7 +20,7 @@ from env.ego_routes import read_ego_route_groups
 from env.parallel_traffic import TrafficCurriculum
 from env.traffic_snapshots import TrafficSnapshotBank
 from scripts.evaluate import OUTCOMES, _curve, _read_log, plt
-from scripts.evaluate_quick_phase1 import STEP, TICKS, _evaluate_worker, _plot_final_panels, summarize
+from scripts.evaluate_quick_phase1 import STEP, signal_offsets, _evaluate_worker, _plot_final_panels, summarize
 from test import load_saved_configs
 
 
@@ -106,7 +106,7 @@ def _plot_overview(run, out, routes, levels, summaries, *, training_plotter=None
         distance.set_xticks(x, [f"{level}\nn={n}" for level, n in zip(levels, counts)], fontsize=8)
         distance.legend(fontsize=7)
     fig.suptitle(f"{run.name} | {policy_label} quick evaluation · {len(levels)} traffic levels · "
-                 f"{len(routes) * len(TICKS):,} episodes per level")
+                 f"{summaries[levels[0]]['all']['episodes']:,} episodes per level")
     fig.savefig(out / "learning_curve.png", dpi=150)
     plt.close(fig)
 
@@ -137,8 +137,8 @@ def main():
     config_path = run / "parallel_config.json"
     if not model.is_file() or not config_path.is_file():
         parser.error("model.pt와 parallel_config.json이 있는 결과 폴더가 필요합니다.")
-    if not 1 <= args.num_workers <= len(TICKS):
-        parser.error(f"--num-workers는 1~{len(TICKS)} 사이여야 합니다.")
+    if args.num_workers < 1:
+        parser.error("--num-workers는 양수여야 합니다.")
     if args.traffic_step <= 0:
         parser.error("--traffic-step는 양수여야 합니다.")
 
@@ -174,6 +174,7 @@ def main():
     with TemporaryDirectory(prefix="sumo-quick-phase2-") as directory:
         root = Path(directory)
         config = road_builder.build(road["ROAD"], road["EGO"], road["TRAFFIC"], str(root / "base"))
+        cycle_ticks, ticks = signal_offsets(config)
         direct, ring = read_ego_route_groups(root / "base/highway.ego.rou.xml")
         if (len(direct), len(ring)) != (18, 5):
             parser.error("평가에는 Ring 미경유 18개와 Ring 경유 5개의 고유 경로가 필요합니다.")
@@ -183,7 +184,7 @@ def main():
         bank = (TrafficSnapshotBank(config, curriculum, road["TRAFFIC"]["vehs_per_hour"],
                                     positive, STEP, 0, refresh=False) if positive else None)
         try:
-            chunks = np.array_split(TICKS, max(2, args.num_workers))
+            chunks = np.array_split(ticks, min(len(ticks), max(2, args.num_workers)))
             with ProcessPoolExecutor(max_workers=args.num_workers, mp_context=get_context("spawn")) as pool:
                 jobs = {
                     pool.submit(_evaluate_worker, model, config, root / f"vph_{level}_{i}", saved, level,
@@ -194,7 +195,7 @@ def main():
                 for job in as_completed(jobs):
                     level = jobs[job]
                     rows[level].extend(job.result())
-                    if len(rows[level]) == len(routes) * len(TICKS):
+                    if len(rows[level]) == len(routes) * len(ticks):
                         rows[level].sort(key=lambda row: (row["route"], row["signal_offset_s"]))
                         summaries[level] = {
                             "all": summarize(rows[level]),
@@ -220,7 +221,8 @@ def main():
         "traffic_levels_vph": levels,
         "traffic_vph_definition": "Total requested background vehicles per hour, including ring traffic.",
         "randomize_departures": saved.get("randomize_departures", False),
-        "signal_offsets_s": [tick * STEP for tick in TICKS],
+        "signal_cycle_s": cycle_ticks * STEP,
+        "signal_offsets_s": [tick * STEP for tick in ticks],
         "deterministic": True,
         "elapsed_seconds": round(perf_counter() - start, 2),
         "by_traffic_vph": {level: summaries[level] for level in levels},

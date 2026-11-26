@@ -51,11 +51,11 @@ class GroupedSignalTests(unittest.TestCase):
                 if c["from"] == edge and int(c["fromLane"]) == lane}
 
     def test_default_road_gets_the_five_grouped_stages(self):
-        names = ["A1A2_through", "A1A2_left", "A3", "A4", "A5"]
+        names = ["A1A2_through", "A1A2_left", "A3", "A5", "A4"]
         self.assertEqual([name for name, _, _ in phases(self.net)],
                          [f"{name}_{part}" for name in names for part in ("green", "yellow", "clearance")])
         self.assertEqual([float(seconds) for _, seconds, _ in phases(self.net)],
-                         [20, 3, 2, 10, 3, 2, 20, 3, 2, 20, 3, 2, 20, 3, 2])
+                         [20, 3, 2, 17, 3, 2, 18, 3, 2, 20, 3, 2, 20, 3, 2])
         self.assertEqual(len(self.links), 28)
 
     def test_each_lane_is_green_in_its_stages(self):
@@ -74,9 +74,11 @@ class GroupedSignalTests(unittest.TestCase):
         for phase in ("A1A2_through_yellow", "A1A2_through_clearance",
                       "A1A2_left_yellow", "A1A2_left_clearance"):
             self.assertEqual(self.state(phase, "A3_in", 0), {"G"}, phase)
-        for phase in ("A5_yellow", "A5_clearance", "A1A2_through_yellow", "A1A2_through_clearance"):
+        for phase in ("A1A2_through_yellow", "A1A2_through_clearance"):
             self.assertEqual(self.state(phase, "A1_in", 0), {"G"}, phase)
         # ... and ends with yellow then red once the next stage does not include it.
+        self.assertEqual(self.state("A5_yellow", "A1_in", 0), {"y"})
+        self.assertEqual(self.state("A5_clearance", "A1_in", 0), {"r"})
         self.assertEqual(self.state("A1A2_left_yellow", "A1_in", 0), {"y"})
         self.assertEqual(self.state("A1A2_left_clearance", "A1_in", 0), {"r"})
         self.assertEqual(self.state("A3_yellow", "A3_in", 0), {"y"})
@@ -154,13 +156,57 @@ class SignalConflictTests(unittest.TestCase):
             build_net(drop)
 
         def forget(plan):
-            del plan["stages"][3]
+            plan["stages"] = [stage for stage in plan["stages"] if stage["name"] != "A4"]
         with self.assertRaisesRegex(ValueError, "A4_in_0>.* is never green"):
             build_net(forget)
 
     def test_unknown_plan_type_fails_the_build(self):
         with self.assertRaisesRegex(ValueError, "Unknown signal_plan.type"):
             build_net(lambda plan: plan.update(type="actuated"))
+
+
+class SignalOffsetTests(unittest.TestCase):
+    def test_offsets_follow_generated_cycles(self):
+        from scripts.evaluate_quick_phase1 import signal_offsets
+        for kind, through_seconds, left_seconds, a3_seconds, cycle, count in (
+                ("grouped", 20, 17, 18, 240, 48),
+                ("grouped", 15, 20, 20, 240, 48), ("grouped", 20, 15, 20, 240, 48),
+                ("grouped", 20, 10, 20, 230, 46), ("sequential", 20, 20, 20, 250, 50)):
+            with self.subTest(kind=kind), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                def change(plan):
+                    plan["type"] = kind
+                    next(stage for stage in plan["stages"] if stage["name"] == "A1A2_through")["seconds"] = through_seconds
+                    next(stage for stage in plan["stages"] if stage["name"] == "A1A2_left")["seconds"] = left_seconds
+                    next(stage for stage in plan["stages"] if stage["name"] == "A3")["seconds"] = a3_seconds
+                net = build_net(change)
+                ET.ElementTree(net).write(root / "road.net.xml")
+                config = root / "road.sumocfg"
+                config.write_text('<configuration><input><net-file value="road.net.xml"/></input></configuration>')
+                actual_cycle, ticks = signal_offsets(config)
+                self.assertEqual(actual_cycle, cycle)
+                self.assertEqual(len(ticks), count)
+                self.assertEqual(ticks[0], 2)
+                self.assertLess(ticks[-1], cycle)
+
+    def test_dagger_samples_stay_inside_each_cycle_and_exclude_eval_offsets(self):
+        from scripts.run_bc51_dagger import COMBOS, plan_round
+        combos = [(f"route_{i}", 0) for i in range(COMBOS)]
+        for cycle in (230, 240, 250):
+            cases, _ = plan_round(combos, [], 0, 1, cycle_ticks=cycle)
+            ticks = {case["tick"] for case in cases}
+            self.assertTrue(all(0 <= tick < cycle for tick in ticks))
+            self.assertFalse(ticks.intersection(range(2, cycle, 5)))
+
+    def test_a3_uturn_has_an_intervening_stage_before_a4(self):
+        net = build_net()
+        times, clock = {}, 0
+        for name, seconds, _ in phases(net):
+            times[name] = clock
+            clock += float(seconds)
+        # A3 last permitted entry (end of yellow) to A4 green: 2 + 20 + 3 + 2 s.
+        self.assertEqual(times["A4_green"] - times["A3_clearance"], 27)
+        self.assertEqual(clock, 120)
 
 
 if __name__ == "__main__":

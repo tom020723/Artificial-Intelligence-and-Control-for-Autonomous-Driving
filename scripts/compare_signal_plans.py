@@ -13,6 +13,7 @@ them. U-turns only get a permissive green (they yield). The programs come from
 env/signal_plan.py, the same code road_builder uses for the road itself.
 """
 import argparse
+import json
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -41,18 +42,24 @@ SEQUENTIAL = [
 # Nohyeong-ro (A1/A2) runs both ways at once, then its left turns together.
 # The right-turn lanes of A3 and A1 keep green wherever nothing crosses them.
 A3_RIGHT, A1_RIGHT = ("A3_in", [0]), ("A1_in", [0])
-GROUPED = [
+GROUPED_ORIGINAL = [
     ("A1A2_through", [("A1_in", [0, 1, 2, 3]), ("A2_in", [1, 2, 3]), A3_RIGHT]),
     ("A1A2_left", [("A1_in", [4]), ("A2_in", [4]), ("A2_in1", None), A3_RIGHT, A1_RIGHT]),
     ("A3", [("A3_in", None)]),
     ("A4", [("A4_in", None)]),
     ("A5", [("A5_in", None), ("A5_in1", None), A1_RIGHT]),
 ]
+# A5 separates the slow A3 U-turn from conflicting A4 traffic.
+GROUPED = [GROUPED_ORIGINAL[i] for i in (0, 1, 2, 4, 3)]
+
 PLANS = {
     "current": (SEQUENTIAL, [20, 20, 20, 20, 20]),
     "current_weighted": (SEQUENTIAL, [25, 17, 23, 19, 16]),
-    "grouped": (GROUPED, [20, 10, 20, 20, 20]),
-    "grouped_weighted": (GROUPED, [23, 12, 21, 18, 16]),
+    "grouped_original": (GROUPED_ORIGINAL, [20, 10, 20, 20, 20]),
+    "grouped_10s": (GROUPED, [20, 10, 20, 20, 20]),
+    "grouped_15s": (GROUPED, [20, 15, 20, 20, 20]),
+    "grouped": (GROUPED, [20, 17, 18, 20, 20]),
+    "grouped_weighted": (GROUPED, [23, 12, 21, 16, 18]),
     "current_short": (SEQUENTIAL, [15, 15, 15, 15, 15]),
     "grouped_short": (GROUPED, [15, 8, 15, 15, 15]),
 }
@@ -78,6 +85,7 @@ def simulate(sumo_dir, plan_file, seed, seconds, out):
          "--step-length", "0.5", "--seed", str(seed), "--end", str(seconds),
          "--max-depart-delay", "125", "--collision.action", "warn", "--collision.check-junctions", "true",
          "--no-step-log", "true", "--no-warnings", "true", "--duration-log.statistics", "true",
+         "--collision-output", str(out / f"{plan_file.stem}_{seed}.collisions.xml"),
          "--statistic-output", str(stats)], check=True, capture_output=True)
     s = ET.parse(stats).getroot()
     trips = s.find("vehicleTripStatistics")
@@ -93,6 +101,7 @@ def main():
     parser.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3])
     parser.add_argument("--seconds", type=int, default=3600)
     parser.add_argument("--keep", type=Path, help="Folder to keep the plan files in (default: temporary)")
+    parser.add_argument("--plans", nargs="+", choices=PLANS, default=list(PLANS))
     args = parser.parse_args()
     sumo_dir = args.sumo_dir.resolve(strict=True)
     links = signal_plan.junction_links(ET.parse(sumo_dir / "highway.net.xml").getroot(), TLS)
@@ -101,7 +110,8 @@ def main():
         out = args.keep.resolve() if args.keep else Path(work)
         out.mkdir(parents=True, exist_ok=True)
         files = {}
-        for name, (stages, greens) in PLANS.items():
+        for name in args.plans:
+            stages, greens = PLANS[name]
             logic = plan_program(links, name)
             ET.indent(logic, space="    ")
             wrapper = ET.Element("additional")
@@ -111,9 +121,11 @@ def main():
             cycle = sum(greens) + len(greens) * (YELLOW + ALL_RED)
             print(f"{name}: green {greens}, cycle {cycle} s")
 
-        jobs = [(name, seed) for name in PLANS for seed in args.seeds]
+        jobs = [(name, seed) for name in args.plans for seed in args.seeds]
         with ThreadPoolExecutor(max_workers=6) as pool:
             results = list(pool.map(lambda job: simulate(sumo_dir, files[job[0]], job[1], args.seconds, out), jobs))
+        (out / "results.json").write_text(json.dumps([dict(plan=name, seed=seed, **result)
+            for (name, seed), result in zip(jobs, results)], indent=2) + "\n")
         by_plan = defaultdict(list)
         for (name, _), result in zip(jobs, results):
             by_plan[name].append(result)

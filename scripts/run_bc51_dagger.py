@@ -26,7 +26,7 @@ from env.parallel_sumo import ParallelSumo, libsumo
 from env.parallel_traffic import TrafficCurriculum
 from env.traffic_snapshots import TrafficSnapshotBank
 from scripts.evaluate_quick_bc import evaluate, prepare_context
-from scripts.evaluate_quick_phase1 import STEP, TICKS
+from scripts.evaluate_quick_phase1 import STEP, signal_offsets
 from test import load_saved_configs
 
 COMBOS = 89
@@ -274,14 +274,14 @@ def collect(cases, checkpoint, context_model, cfg, work, settings, snapshot, out
         env.close()
 
 
-def plan_round(combos, history, seed, number, extra_episodes=384):
+def plan_round(combos, history, seed, number, extra_episodes=384, *, cycle_ticks):
     rng = np.random.default_rng([seed, number])
     recent = [case for round_cases in history[-3:] for case in round_cases]
     attempts = np.bincount([c["combo"] for c in recent], minlength=COMBOS)
     failures = np.bincount([c["combo"] for c in recent if c["status"] != "arrival"], minlength=COMBOS)
     scores = (failures + 2) / (attempts + 4)
     probabilities = scores / scores.sum()
-    ticks = np.setdiff1d(np.arange(250), TICKS)
+    ticks = np.setdiff1d(np.arange(cycle_ticks), range(2, cycle_ticks, 5))
     quarters = np.array_split(ticks, 4)
     draws = [(i, int(rng.choice(part))) for i in range(COMBOS) for part in quarters]
     rng.shuffle(draws)
@@ -433,7 +433,8 @@ def main():
         started = perf_counter()
         folder = output / f"round_{number:02d}"
         folder.mkdir()
-        cases, probabilities = plan_round(combos, history, args.seed, number, args.extra_episodes)
+        cases, probabilities = plan_round(combos, history, args.seed, number, args.extra_episodes,
+                                         cycle_ticks=signal_offsets(cfg)[0])
         (folder / "sampling.json").write_text(json.dumps(dict(probabilities=probabilities, cases=cases), indent=2))
         print(f"Round {number}: {len(cases)} episodes, extra probability range "
               f"{min(probabilities):.4f}–{max(probabilities):.4f}", flush=True)

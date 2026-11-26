@@ -62,8 +62,8 @@ class ParallelSumoTests(unittest.TestCase):
             env = ParallelSumo(2, kwargs, root / "parallel", seed=0, randomize_signals=True)
             route = "ego_d_A1_A2"
             rngs = [np.random.default_rng(seed) for seed in np.random.SeedSequence(0).spawn(2)]
-            # Ticks of 0.5 s: 20 s green, 3 s yellow, 2 s all-red; the second stage has 10 s green.
-            ends = np.cumsum([40, 6, 4, 20, 6, 4] + [40, 6, 4] * 3)
+            # Ticks of 0.5 s: green 20/17/18/20/20 s; each transition takes 5 s.
+            ends = np.cumsum([40, 6, 4, 34, 6, 4, 36, 6, 4] + [40, 6, 4] * 2)
 
             def signal_state(index):
                 light = f"r{index}_nC"
@@ -211,6 +211,12 @@ class ParallelSumoTests(unittest.TestCase):
             route = "ego_r_RING_A1_A3_A1_A3"
             try:
                 self.assertAlmostEqual(sum(flow.rate_per_central_vph for flow in env.traffic_flows), 1)
+                env._find_departures()
+                self.assertEqual(set(env.departures), set(env.route_entries))
+                for name, options in env.departures.items():
+                    lane, position, index = options[0]
+                    self.assertEqual(lane, f"{env.route_entries[name]}_{index}")
+                    self.assertGreaterEqual(position, 0)
                 env.reset([route, route], signal_ticks=[20, 95])
                 first, second = env.egos
                 self.assertTrue(first.background.ids)
@@ -221,7 +227,8 @@ class ParallelSumoTests(unittest.TestCase):
                 other_phase = libsumo.trafficlight.getPhase(second.prefix("nC"))
                 env._respawn(first, route, traffic_vph=1500, signal_tick=50)
                 self.assertEqual(libsumo.trafficlight.getPhase(first.prefix("nC")), 3)
-                self.assertEqual(libsumo.trafficlight.getNextSwitch(first.prefix("nC")), 20)
+                # At 25 s, the 17 s left-turn green starts.
+                self.assertEqual(libsumo.trafficlight.getNextSwitch(first.prefix("nC")), 17)
                 self.assertEqual(libsumo.trafficlight.getPhase(second.prefix("nC")), other_phase)
                 active = set(libsumo.vehicle.getIDList())
                 self.assertTrue(first.background.ids <= active)

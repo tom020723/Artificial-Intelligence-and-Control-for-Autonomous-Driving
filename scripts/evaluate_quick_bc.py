@@ -25,7 +25,7 @@ from env.ego_routes import read_ego_route_groups
 from env.parallel_traffic import TrafficCurriculum
 from env.traffic_snapshots import TrafficSnapshotBank
 from scripts.evaluate import _read_log
-from scripts.evaluate_quick_phase1 import STEP, TICKS, _evaluate_worker, summarize
+from scripts.evaluate_quick_phase1 import STEP, signal_offsets, _evaluate_worker, summarize
 from scripts.evaluate_quick_phase2 import _plot_overview, _plot_level
 from test import load_saved_configs
 
@@ -159,6 +159,7 @@ def evaluate(run, out, num_workers, data_dir=None, checkpoint=None, ego_collisio
         elif road['TRAFFIC'].get('origin_lane_proportional'):
             from collect_background_data import rebalance_origin_flows
             rebalance_origin_flows(root/'base', 3000)
+        cycle_ticks, ticks = signal_offsets(config)
         direct, ring = read_ego_route_groups(root / 'base/highway.ego.rou.xml')
         if (len(direct), len(ring)) != (18, 5):
             raise ValueError('Expected 18 non-ring and 5 ring routes')
@@ -166,7 +167,7 @@ def evaluate(run, out, num_workers, data_dir=None, checkpoint=None, ego_collisio
         bank = TrafficSnapshotBank(config, curriculum, road['TRAFFIC']['vehs_per_hour'],
                                    tuple(v for v in levels if v), STEP, 0, refresh=False)
         try:
-            chunks = np.array_split(TICKS, max(2, num_workers))
+            chunks = np.array_split(ticks, min(len(ticks), max(2, num_workers)))
             with ProcessPoolExecutor(max_workers=num_workers, mp_context=get_context('spawn')) as pool:
                 jobs = {
                     pool.submit(_evaluate_worker, model, config, root / f'vph_{level}_{i}', saved, level,
@@ -177,7 +178,7 @@ def evaluate(run, out, num_workers, data_dir=None, checkpoint=None, ego_collisio
                 for job in as_completed(jobs):
                     level = jobs[job]
                     rows[level].extend(job.result())
-                    if len(rows[level]) == len(routes) * len(TICKS):
+                    if len(rows[level]) == len(routes) * len(ticks):
                         rows[level].sort(key=lambda r: (r['route'], r['signal_offset_s']))
                         summaries[level] = dict(all=summarize(rows[level]), by_route={
                             route: summarize([r for r in rows[level] if r['route'] == route]) for route in routes})
@@ -192,7 +193,7 @@ def evaluate(run, out, num_workers, data_dir=None, checkpoint=None, ego_collisio
                    traffic_demand_profile=road['TRAFFIC'].get('demand_profile', 'default'),
                    randomize_departures=saved.get('randomize_departures', True), deterministic=True,
                    observation_neighbor_distance_mode=mdp['OBSERVATION'].get('neighbor_distance_mode', 'legacy'),
-                   signal_offsets_s=[tick * STEP for tick in TICKS], episodes_per_level=len(routes) * len(TICKS),
+                   signal_cycle_s=cycle_ticks * STEP, signal_offsets_s=[tick * STEP for tick in ticks], episodes_per_level=len(routes) * len(ticks),
                    elapsed_seconds=round(perf_counter() - start, 2), by_traffic_vph=summaries)
     summary['collision_detection'] = collision_settings
     if 'ppo_training' in saved:
@@ -244,8 +245,8 @@ def main():
         run = run.parent
     if not all((run / name).is_file() for name in ('model.pt', 'config.json', 'road_config.py', 'mdp_config.py', 'train.py')):
         parser.error('Need the BC actor checkpoint, config.json and saved environment/training snapshots')
-    if not 1 <= args.num_workers <= len(TICKS):
-        parser.error(f'num-workers must be 1..{len(TICKS)}')
+    if args.num_workers < 1:
+        parser.error('num-workers must be positive')
     for name in ('ego_collision_gap_m', 'background_collision_gap_m'):
         value = getattr(args, name)
         if value is not None and (not math.isfinite(value) or value < 0):

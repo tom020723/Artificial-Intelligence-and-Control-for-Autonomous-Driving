@@ -1,0 +1,727 @@
+{
+  "signal_order": {
+    "original": [
+      "A1A2_through",
+      "A1A2_left",
+      "A3",
+      "A4",
+      "A5"
+    ],
+    "reordered": [
+      "A1A2_through",
+      "A1A2_left",
+      "A3",
+      "A5",
+      "A4"
+    ],
+    "green_seconds": [
+      20,
+      10,
+      20,
+      20,
+      20
+    ],
+    "cycle_seconds": 115,
+    "seconds_per_seed": 3600,
+    "seeds": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "background_fixed": [
+      {
+        "plan": "current",
+        "seed": 1,
+        "inserted": 4723,
+        "arrived": 4613,
+        "wait": 27.74,
+        "loss": 43.04,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 2,
+        "inserted": 4723,
+        "arrived": 4613,
+        "wait": 27.68,
+        "loss": 43.17,
+        "collisions": 11,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 3,
+        "inserted": 4723,
+        "arrived": 4614,
+        "wait": 27.99,
+        "loss": 43.38,
+        "collisions": 13,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 4,
+        "inserted": 4723,
+        "arrived": 4612,
+        "wait": 27.54,
+        "loss": 43.42,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 5,
+        "inserted": 4723,
+        "arrived": 4616,
+        "wait": 27.47,
+        "loss": 43.04,
+        "collisions": 6,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 6,
+        "inserted": 4723,
+        "arrived": 4612,
+        "wait": 27.43,
+        "loss": 42.65,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 7,
+        "inserted": 4723,
+        "arrived": 4613,
+        "wait": 27.43,
+        "loss": 42.69,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 8,
+        "inserted": 4723,
+        "arrived": 4612,
+        "wait": 27.59,
+        "loss": 43.19,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 9,
+        "inserted": 4723,
+        "arrived": 4614,
+        "wait": 27.78,
+        "loss": 42.97,
+        "collisions": 12,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 10,
+        "inserted": 4723,
+        "arrived": 4617,
+        "wait": 27.33,
+        "loss": 42.53,
+        "collisions": 1,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 1,
+        "inserted": 4723,
+        "arrived": 4575,
+        "wait": 32.81,
+        "loss": 47.9,
+        "collisions": 2,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 2,
+        "inserted": 4723,
+        "arrived": 4579,
+        "wait": 32.65,
+        "loss": 48.47,
+        "collisions": 5,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 3,
+        "inserted": 4723,
+        "arrived": 4578,
+        "wait": 34.27,
+        "loss": 50.4,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 4,
+        "inserted": 4723,
+        "arrived": 4570,
+        "wait": 33.95,
+        "loss": 49.94,
+        "collisions": 1,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 5,
+        "inserted": 4723,
+        "arrived": 4572,
+        "wait": 34.08,
+        "loss": 49.95,
+        "collisions": 1,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 6,
+        "inserted": 4723,
+        "arrived": 4567,
+        "wait": 33.23,
+        "loss": 49.35,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 7,
+        "inserted": 4723,
+        "arrived": 4571,
+        "wait": 33.37,
+        "loss": 49.08,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 8,
+        "inserted": 4723,
+        "arrived": 4573,
+        "wait": 33.87,
+        "loss": 49.6,
+        "collisions": 11,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 9,
+        "inserted": 4723,
+        "arrived": 4569,
+        "wait": 34.58,
+        "loss": 50.63,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 10,
+        "inserted": 4723,
+        "arrived": 4573,
+        "wait": 34.21,
+        "loss": 50.05,
+        "collisions": 10,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 1,
+        "inserted": 4723,
+        "arrived": 4579,
+        "wait": 34.43,
+        "loss": 50.04,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 2,
+        "inserted": 4723,
+        "arrived": 4581,
+        "wait": 32.09,
+        "loss": 47.61,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 3,
+        "inserted": 4723,
+        "arrived": 4576,
+        "wait": 33.67,
+        "loss": 49.75,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 4,
+        "inserted": 4723,
+        "arrived": 4557,
+        "wait": 34.72,
+        "loss": 50.86,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 5,
+        "inserted": 4723,
+        "arrived": 4577,
+        "wait": 34.19,
+        "loss": 50.03,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 6,
+        "inserted": 4723,
+        "arrived": 4573,
+        "wait": 33.76,
+        "loss": 50.06,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 7,
+        "inserted": 4723,
+        "arrived": 4577,
+        "wait": 32.17,
+        "loss": 47.72,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 8,
+        "inserted": 4723,
+        "arrived": 4579,
+        "wait": 33.27,
+        "loss": 48.82,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 9,
+        "inserted": 4723,
+        "arrived": 4572,
+        "wait": 34.11,
+        "loss": 50.05,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 10,
+        "inserted": 4723,
+        "arrived": 4577,
+        "wait": 34.05,
+        "loss": 49.59,
+        "collisions": 0,
+        "teleports": 0
+      }
+    ],
+    "background_poisson": [
+      {
+        "plan": "current",
+        "seed": 1,
+        "inserted": 4746,
+        "arrived": 4616,
+        "wait": 31.98,
+        "loss": 50.66,
+        "collisions": 14,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 2,
+        "inserted": 4618,
+        "arrived": 4489,
+        "wait": 30.27,
+        "loss": 47.92,
+        "collisions": 8,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 3,
+        "inserted": 4767,
+        "arrived": 4633,
+        "wait": 32.6,
+        "loss": 51.49,
+        "collisions": 9,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 4,
+        "inserted": 4696,
+        "arrived": 4582,
+        "wait": 34.12,
+        "loss": 54.27,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 5,
+        "inserted": 4764,
+        "arrived": 4639,
+        "wait": 32.38,
+        "loss": 51.48,
+        "collisions": 7,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 6,
+        "inserted": 4834,
+        "arrived": 4698,
+        "wait": 33.59,
+        "loss": 53.45,
+        "collisions": 9,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 7,
+        "inserted": 4691,
+        "arrived": 4579,
+        "wait": 34.27,
+        "loss": 53.42,
+        "collisions": 7,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 8,
+        "inserted": 4604,
+        "arrived": 4501,
+        "wait": 33.22,
+        "loss": 52.49,
+        "collisions": 7,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 9,
+        "inserted": 4663,
+        "arrived": 4550,
+        "wait": 30.82,
+        "loss": 49.63,
+        "collisions": 8,
+        "teleports": 0
+      },
+      {
+        "plan": "current",
+        "seed": 10,
+        "inserted": 4605,
+        "arrived": 4492,
+        "wait": 33.64,
+        "loss": 52.69,
+        "collisions": 7,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 1,
+        "inserted": 4746,
+        "arrived": 4581,
+        "wait": 37.8,
+        "loss": 56.21,
+        "collisions": 5,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 2,
+        "inserted": 4618,
+        "arrived": 4448,
+        "wait": 36.66,
+        "loss": 55.39,
+        "collisions": 16,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 3,
+        "inserted": 4766,
+        "arrived": 4587,
+        "wait": 35.52,
+        "loss": 53.21,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 4,
+        "inserted": 4696,
+        "arrived": 4548,
+        "wait": 36.67,
+        "loss": 55.7,
+        "collisions": 4,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 5,
+        "inserted": 4764,
+        "arrived": 4610,
+        "wait": 39.18,
+        "loss": 58.44,
+        "collisions": 12,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 6,
+        "inserted": 4834,
+        "arrived": 4668,
+        "wait": 34.6,
+        "loss": 52.37,
+        "collisions": 5,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 7,
+        "inserted": 4691,
+        "arrived": 4542,
+        "wait": 33.05,
+        "loss": 50.59,
+        "collisions": 13,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 8,
+        "inserted": 4604,
+        "arrived": 4472,
+        "wait": 28.67,
+        "loss": 45.09,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 9,
+        "inserted": 4663,
+        "arrived": 4533,
+        "wait": 32.99,
+        "loss": 50.85,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped_original",
+        "seed": 10,
+        "inserted": 4605,
+        "arrived": 4443,
+        "wait": 37.86,
+        "loss": 56.01,
+        "collisions": 18,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 1,
+        "inserted": 4746,
+        "arrived": 4588,
+        "wait": 36.71,
+        "loss": 55.02,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 2,
+        "inserted": 4618,
+        "arrived": 4439,
+        "wait": 36.39,
+        "loss": 54.27,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 3,
+        "inserted": 4767,
+        "arrived": 4589,
+        "wait": 36.03,
+        "loss": 53.79,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 4,
+        "inserted": 4696,
+        "arrived": 4548,
+        "wait": 36.97,
+        "loss": 55.81,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 5,
+        "inserted": 4764,
+        "arrived": 4611,
+        "wait": 39.59,
+        "loss": 58.28,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 6,
+        "inserted": 4834,
+        "arrived": 4669,
+        "wait": 34.44,
+        "loss": 51.91,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 7,
+        "inserted": 4691,
+        "arrived": 4535,
+        "wait": 35.38,
+        "loss": 53.59,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 8,
+        "inserted": 4604,
+        "arrived": 4471,
+        "wait": 28.75,
+        "loss": 45.22,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 9,
+        "inserted": 4664,
+        "arrived": 4520,
+        "wait": 33.76,
+        "loss": 51.4,
+        "collisions": 0,
+        "teleports": 0
+      },
+      {
+        "plan": "grouped",
+        "seed": 10,
+        "inserted": 4605,
+        "arrived": 4438,
+        "wait": 37.61,
+        "loss": 55.55,
+        "collisions": 0,
+        "teleports": 0
+      }
+    ]
+  },
+  "policy_baselines": {
+    "sequential_125s": {
+      "episodes": 7050,
+      "statuses": {
+        "arrival": 6939,
+        "wrong_lane": 69,
+        "collision": 32,
+        "red_light": 10
+      },
+      "success_rate": 0.9842553191489362,
+      "collision_rate": 0.0045390070921985815,
+      "wrong_lane_rate": 0.00978723404255319,
+      "timeout_rate": 0.0,
+      "red_light_violation_rate": 0.0014184397163120568
+    },
+    "reordered_original_green_115s": {
+      "episodes": 7050,
+      "statuses": {
+        "arrival": 6569,
+        "wrong_lane": 152,
+        "timeout": 263,
+        "collision": 51,
+        "red_light": 15
+      },
+      "success_rate": 0.9317730496453901,
+      "collision_rate": 0.00723404255319149,
+      "wrong_lane_rate": 0.02156028368794326,
+      "timeout_rate": 0.03730496453900709,
+      "red_light_violation_rate": 0.002127659574468085
+    },
+    "through15_left20_a320_120s": {
+      "episodes": 7050,
+      "statuses": {
+        "arrival": 6849,
+        "wrong_lane": 102,
+        "collision": 40,
+        "red_light": 14,
+        "timeout": 45
+      },
+      "success_rate": 0.9714893617021276,
+      "collision_rate": 0.005673758865248227,
+      "wrong_lane_rate": 0.01446808510638298,
+      "timeout_rate": 0.006382978723404255,
+      "red_light_violation_rate": 0.0019858156028368795
+    }
+  },
+  "collision_diagnosis": {
+    "before": {
+      "count": 17,
+      "types": {
+        "side": 10,
+        "collision": 5,
+        "junction": 2
+      },
+      "a1_routes": 3,
+      "side_with_lane_change": 10,
+      "central_junction_collisions": 1
+    },
+    "after": {
+      "count": 40,
+      "types": {
+        "side": 24,
+        "collision": 14,
+        "junction": 2
+      },
+      "a1_routes": 29,
+      "side_with_lane_change": 24,
+      "central_junction_collisions": 0
+    }
+  },
+  "limitations": {
+    "team_original_order_ppo_evaluated": false,
+    "selected_17s_model_collision_cases_individually_replayed": false,
+    "selected_17s_background_collision": {
+      "seed": 9,
+      "time_seconds": 748.5,
+      "lane": ":nM_A2_7_2",
+      "flows": [
+        "f_A1_A2",
+        "f_A2_A2"
+      ]
+    },
+    "no_retraining_or_demand_or_geometry_changes": true
+  }
+}

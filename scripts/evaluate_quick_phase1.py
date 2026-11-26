@@ -1,4 +1,4 @@
-"""Evaluate 23 unique routes at 50 fixed signal offsets across independent SUMO workers."""
+"""Evaluate 23 unique routes at fixed offsets across the actual signal cycle."""
 
 import argparse
 from collections import Counter
@@ -9,6 +9,7 @@ import json
 from multiprocessing import get_context
 from pathlib import Path
 import sys
+import xml.etree.ElementTree as ET
 from tempfile import TemporaryDirectory
 from time import perf_counter
 
@@ -24,15 +25,21 @@ from matplotlib.lines import Line2D
 from algorithms.ppo import PPO
 from env import road_builder
 from env.ego_routes import read_ego_route_groups
-from env.parallel_sumo import ParallelSumo
+from env.parallel_sumo import ParallelSumo, _signal_schedule
 from env.parallel_traffic import TrafficCurriculum
 from test import load_saved_configs
 from utils.evaluator import evaluate_parallel_routes
 
 
-# 1.0, 3.5, ..., 123.5 s: samples green, yellow and all-red for every approach.
-TICKS = tuple(range(2, 250, 5))
 STEP = 0.5
+
+
+def signal_offsets(config):
+    """Sample every 2.5 s within the generated network's actual signal cycle."""
+    config = Path(config)
+    network = ET.parse(config).find("input/net-file").get("value")
+    _, ends = _signal_schedule(ET.parse(config.parent / network).getroot(), STEP, True)
+    return int(ends[-1]), tuple(range(2, int(ends[-1]), 5))
 
 
 def _evaluate_worker(model, config, work, saved, vph, cases, depart_lane=None, snapshot_path=None):
@@ -51,8 +58,9 @@ def _evaluate_worker(model, config, work, saved, vph, cases, depart_lane=None, s
                        traffic_curriculum=curriculum,
                        fixed_traffic_vph=vph if curriculum else None,
                        traffic_snapshot_path=snapshot_path)
-    if env.prototype.step_length != STEP or env.signal_end_ticks[-1] != 250:
-        raise ValueError("Quick evaluation requires a 125 s signal cycle and 0.5 s simulation steps")
+    if env.prototype.step_length != STEP:
+        env.close()
+        raise ValueError("Quick evaluation requires 0.5 s simulation steps")
     agent = PPO(obs_dim=env.prototype.obs_dim, act_dim=env.prototype.act_dim,
                 **(train["HPARAMS"] | {"device": "cpu"}))
     agent.policy.load_state_dict(torch.load(model, map_location="cpu", weights_only=True))
@@ -145,6 +153,8 @@ def _plot_clearances(table, distribution, routes, summary, reference):
 
 
 def _plot_final_panels(fig, spec, routes, rows, summary):
+    offsets_s = sorted({row["signal_offset_s"] for row in rows})
+    count = len(offsets_s)
     final = spec.subgridspec(1, 6, width_ratios=(1.0, 1.75, 1.75, 1.35, 1.75, 1.35))
     rates = fig.add_subplot(final[0, 0])
     offsets = fig.add_subplot(final[0, 1], sharey=rates)
@@ -165,29 +175,29 @@ def _plot_final_panels(fig, spec, routes, rows, summary):
         rates.barh(y, values, left=left, height=.72, color=color)
         left += values
     for i, route in enumerate(routes):
-        rates.text(len(TICKS) + 1, i, f"{counts[route]['arrival']}/{len(TICKS)}",
+        rates.text(count + 1, i, f"{counts[route]['arrival']}/{count}",
                    ha="left", va="center", fontsize=8)
-    rates.set(xlim=(0, len(TICKS) + 10), title="Final outcomes by route",
+    rates.set(xlim=(0, count + 10), title="Final outcomes by route",
               xlabel="Episodes (one per signal offset)")
-    rates.set_xticks(range(0, len(TICKS) + 1, 10))
+    rates.set_xticks(range(0, count + 1, 10))
     rates.set_yticks(np.arange(len(routes) + 1), [*labels, "All routes"], fontsize=8)
     rates.grid(axis="x", alpha=.2)
     rates.set_axisbelow(True)
 
     codes = {key: i for i, key in enumerate(OUTCOMES)}
     index = {(row["route"], row["signal_offset_s"]): codes[row["status"]] for row in rows}
-    matrix = [[index[route, tick * STEP] for tick in TICKS] for route in routes]
+    matrix = [[index[route, offset] for offset in offsets_s] for route in routes]
     colors = [item[2] for item in OUTCOMES.values()]
-    spacing = (TICKS[1] - TICKS[0]) * STEP
+    spacing = offsets_s[1] - offsets_s[0] if count > 1 else STEP
     offsets.imshow(matrix, cmap=ListedColormap(colors),
                    norm=BoundaryNorm(np.arange(len(colors) + 1) - .5, len(colors)),
                    interpolation="nearest", aspect="auto",
-                   extent=(TICKS[0] * STEP - spacing / 2, TICKS[-1] * STEP + spacing / 2,
+                   extent=(offsets_s[0] - spacing / 2, offsets_s[-1] + spacing / 2,
                            len(routes) - .5, -.5))
-    offsets.set(xlim=(0, 125), ylim=(len(routes) + .5, -.5),
+    offsets.set(xlim=(0, offsets_s[-1] + spacing / 2), ylim=(len(routes) + .5, -.5),
                 title="Final outcome by route and signal start",
                 xlabel="Signal offset at episode start (s)")
-    offsets.set_xticks(np.arange(0, 126, 12.5))
+    offsets.set_xticks(np.linspace(0, offsets_s[-1] + spacing / 2, 11))
     offsets.tick_params(axis="y", left=False, labelleft=False)
     for boundary in np.arange(.5, len(routes) - .5, 1):
         offsets.axhline(boundary, color="white", linewidth=.35, alpha=.7)
@@ -217,7 +227,7 @@ def main():
     parser.add_argument("run", type=Path, help="학습 결과 폴더 또는 model.pt")
     parser.add_argument("--num-workers", type=int, default=4)
     parser.add_argument("--a2-ring-lane-sweep", action="store_true",
-                        help="A2→A4 Ring 출발 차선별로 신호 시작 시점 50개를 추가 평가")
+                        help="A2→A4 Ring 출발 차선별로 한 주기의 신호 시작 시점을 추가 평가")
     args = parser.parse_args()
     run = args.run.resolve()
     if run.is_file() and run.name == "model.pt":
@@ -225,8 +235,8 @@ def main():
     model = run / "model.pt"
     if not model.is_file():
         parser.error(f"모델을 찾을 수 없습니다: {model}")
-    if not 1 <= args.num_workers <= len(TICKS):
-        parser.error(f"--num-workers는 1~{len(TICKS)} 사이여야 합니다.")
+    if args.num_workers < 1:
+        parser.error("--num-workers는 양수여야 합니다.")
     road, _, _ = load_saved_configs(str(model))
     if road["NOHYEONG"]["all_signals_green"]:
         parser.error("빠른 신호 평가에는 신호가 작동하는 모델 설정이 필요합니다.")
@@ -240,11 +250,12 @@ def main():
     with TemporaryDirectory(prefix="sumo-quick-eval-") as directory:
         root = Path(directory)
         config = road_builder.build(road["ROAD"], road["EGO"], road["TRAFFIC"], str(root / "base"))
+        cycle_ticks, ticks = signal_offsets(config)
         non_ring_routes, ring_routes = read_ego_route_groups(root / "base/highway.ego.rou.xml")
         if (len(non_ring_routes), len(ring_routes)) != (18, 5):
             parser.error("평가에는 Ring 미경유 18개와 Ring 경유 5개의 고유 경로가 필요합니다.")
         routes = non_ring_routes + ring_routes
-        chunks = np.array_split(TICKS, args.num_workers)
+        chunks = np.array_split(ticks, min(len(ticks), args.num_workers))
         with ProcessPoolExecutor(max_workers=args.num_workers, mp_context=get_context("spawn")) as pool:
             jobs = [pool.submit(_evaluate_worker, model, config, root / f"worker_{i}", saved, vph,
                                 [(j, route, int(tick)) for j, route in enumerate(routes) for tick in chunk])
@@ -252,7 +263,7 @@ def main():
             rows = [row for job in jobs for row in job.result()]
             if args.a2_ring_lane_sweep:
                 route = "ego_r_RING_A2_A4_A2_A4"
-                cases = [(routes.index(route), route, tick) for tick in TICKS]
+                cases = [(routes.index(route), route, tick) for tick in ticks]
                 lane_jobs = [pool.submit(_evaluate_worker, model, config, root / f"lane_{lane}",
                                          saved, vph, cases, lane) for lane in range(4)]
                 lane_rows = [row for job in lane_jobs for row in job.result()]
@@ -276,7 +287,8 @@ def main():
         "traffic_vph": vph,
         "deterministic": True,
         "randomize_departures": saved.get("randomize_departures", False),
-        "signal_offsets_s": [tick * STEP for tick in TICKS],
+        "signal_cycle_s": cycle_ticks * STEP,
+        "signal_offsets_s": [tick * STEP for tick in ticks],
         "red_wait_definition": "Last measurable stop per episode with speed <= 0.5 m/s "
                                "and nearest observed signal red; nearest stop line or stopped leader.",
         "first_signal_stop_definition": "First measurable stop per episode with speed <= 0.5 m/s "

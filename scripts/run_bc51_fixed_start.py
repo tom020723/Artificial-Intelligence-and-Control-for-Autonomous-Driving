@@ -23,7 +23,7 @@ from env.parallel_sumo import ParallelSumo, libsumo
 from env.parallel_traffic import TrafficCurriculum
 from env.traffic_snapshots import TrafficSnapshotBank
 from scripts.evaluate_quick_bc import evaluate, prepare_context
-from scripts.evaluate_quick_phase1 import STEP, TICKS
+from scripts.evaluate_quick_phase1 import STEP, signal_offsets
 from test import load_saved_configs
 
 TRAFFIC_VPH = 6000
@@ -190,7 +190,8 @@ def main():
         episodes_per_route=args.episodes_per_route, seed=args.seed, workers=args.workers,
         replicas_per_worker=args.replicas, traffic_vph=TRAFFIC_VPH, route_sampling="shuffled blocks",
         source_observation_dataset=str(original_data), filter=original_collection.get("filter", {})))
-    bag = np.setdiff1d(np.arange(250), TICKS)
+    cycle_ticks, evaluation_ticks = signal_offsets(cfg)
+    bag = np.setdiff1d(np.arange(cycle_ticks), evaluation_ticks)
     cases = []
     for worker in range(args.workers):
         rng = np.random.default_rng([args.seed, worker])
