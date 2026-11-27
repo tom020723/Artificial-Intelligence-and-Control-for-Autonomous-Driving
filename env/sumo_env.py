@@ -383,6 +383,11 @@ class SumoHighwayEnv(gym.Env):
         if self.gui:
             cmd += ["--quit-on-end"]      # 에피소드 종료 시 창 정리
             cmd += ["--delay", str(self.gui_delay)]
+            if os.environ.get("SUMO_GUI_DECOR", "1") != "0":
+                # 화면 전용 장식(잔디·나무·바탕색). 차선과 차량 움직임은 그대로다.
+                # 끄려면 환경 변수 SUMO_GUI_DECOR=0 (docs/road_decoration.md).
+                from scripts.make_road_decor import gui_decor_options
+                cmd += gui_decor_options(self.cfg_path)
             if self.gui_autostart:
                 cmd += ["--start"]        # 자동 재생
             # --start가 없으면: 창이 뜬 뒤 ▶(플레이)를 눌러야 진행된다.
