@@ -23,7 +23,7 @@ GitHub: <https://github.com/tom020723/Artificial-Intelligence-and-Control-for-Au
 
 ### 실행 환경
 
-최종 모델을 만든 환경이다. 가중치로 평가·주행하거나 처음부터 학습하는 데는 Python 환경 하나면 된다. 두 환경(A, B)은 `results/final`과 바이트 단위로 같은 모델을 다시 만들 때만 필요하다(아래 "처음부터 학습 재현하기").
+최종 모델을 만든 환경입니다. 가중치로 평가·주행하거나 처음부터 학습하는 데는 Python 환경 하나면 됩니다. 두 환경(A, B)은 `results/final`과 바이트 단위로 같은 모델을 다시 만들 때만 필요합니다(아래 "처음부터 학습 재현하기" 참고).
 
 | 항목 | 버전 |
 |---|---|
@@ -33,7 +33,7 @@ GitHub: <https://github.com/tom020723/Artificial-Intelligence-and-Control-for-Au
 | Python 환경 B (PPO 학습, PPO 평가) | Python 3.10, torch 2.14.1+cu130, numpy 2.2.6, gymnasium 1.4.0, matplotlib 3.10 |
 | 하드웨어 | AMD Ryzen 9 7900X (12코어), NVIDIA RTX 5070 |
 
-나머지 패키지는 [requirements.txt](./requirements.txt)에 있다. 모든 명령은 저장소 최상위 폴더에서 실행하고, 먼저 경로를 잡는다.
+나머지 패키지는 [requirements.txt](./requirements.txt)에 있습니다. 모든 명령은 저장소 최상위 폴더에서 실행하며, 먼저 다음과 같이 경로를 설정합니다.
 
 ```bash
 export SUMO_HOME=/usr/share/sumo
@@ -42,7 +42,7 @@ export PYTHONPATH=$PWD:$SUMO_HOME/tools
 
 ### 올려 둔 가중치로 실행하기
 
-가중치는 저장소에 들어 있다(따로 받을 것 없음).
+가중치는 저장소에 포함되어 있으므로 따로 내려받을 필요가 없습니다.
 
 | 모델 | 경로 |
 |---|---|
@@ -54,10 +54,10 @@ export PYTHONPATH=$PWD:$SUMO_HOME/tools
 ```bash
 python scripts/evaluate_diverse_start_lanes.py evaluate results/final/suite_diverse_test \
   --model results/final/PPO/eval_runs/iter060/model.pt --output results/my_eval_ppo
-# --smoke 1 을 붙이면 4건만 빠르게 돌려 동작만 확인한다
+# --smoke 1을 붙이면 4건만 실행하여 동작을 빠르게 확인합니다.
 ```
 
-결과는 `results/my_eval_ppo/`에 `evaluation_summary.json`(성공률과 실패 종류), `route_evaluation.csv`(사례별 결과), `summary.png`(결과 그림)로 저장된다. 같은 모델이면 사례별 결과가 `results/final/PPO/eval_runs/iter060/evaluation_diverse_start_lanes/`와 똑같이 나온다. BC를 평가하려면 `--model`만 BC 경로로 바꾼다.
+결과는 `results/my_eval_ppo/`에 `evaluation_summary.json`(성공률과 실패 종류), `route_evaluation.csv`(사례별 결과), `summary.png`(결과 그림)로 저장됩니다. 같은 모델이면 사례별 결과가 `results/final/PPO/eval_runs/iter060/evaluation_diverse_start_lanes/`와 동일하게 나옵니다. BC를 평가하려면 `--model`만 BC 경로로 바꾸시면 됩니다.
 
 **SUMO 화면에서 주행 보기**
 
@@ -66,34 +66,34 @@ python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter060/model.p
   --traffic-vph 4700 --episodes 1 --randomize-departures --gui
 ```
 
-`--gui`를 빼면 화면 없이 돌고, 주행 기록이 `data/`에 저장된다([docs/data_columns_submission.md](./docs/data_columns_submission.md)).
+`--gui`를 빼면 화면 없이 실행되며, 주행 기록은 `data/`에 저장됩니다([docs/data_columns_submission.md](./docs/data_columns_submission.md)).
 
 ### 처음부터 학습 재현하기
 
-평가 세트 생성 → IDM 전문가 데이터 수집 → BC 학습 → BC 평가 → PPO 학습 → 검증으로 checkpoint 선택 → 테스트까지 한 번에 실행한다.
+평가 세트 생성 → IDM 전문가 데이터 수집 → BC 학습 → BC 평가 → PPO 학습 → 검증으로 checkpoint 선택 → 테스트까지 한 번에 실행합니다.
 
-**Python 환경 하나로 학습하기** (가장 간단함)
+**Python 환경 하나로 학습하기** (가장 간단한 방법입니다)
 
 ```bash
 PY=<python> bash scripts/reproduce_pipeline.sh            # 전체 (약 3.5시간)
 SMOKE=1 PY=<python> bash scripts/reproduce_pipeline.sh    # 모든 단계를 최소 규모로 (약 3분)
 ```
 
-`PPO_PY`를 주지 않으면 모든 단계가 `PY` 하나로 돈다. 전 과정이 끝까지 돌고 비슷한 성능의 모델이 나오지만, `results/final`과 똑같은 모델은 아니다. torch/CUDA 빌드가 다르면 GPU 연산의 마지막 자릿수가 달라지고, 그 차이가 학습 중에 커지기 때문이다. 예를 들어 이전 모델을 환경 B 하나로 다시 만들었을 때 수집 데이터는 값이 모두 같았지만, BC와 PPO는 다른 모델이 됐다(학습 seed를 바꾼 것과 같은 정도의 차이).
+`PPO_PY`를 지정하지 않으면 모든 단계가 `PY` 하나로 실행됩니다. 전 과정이 끝까지 실행되고 비슷한 성능의 모델이 나오지만, `results/final`과 동일한 모델은 아닙니다. torch/CUDA 빌드가 다르면 GPU 연산의 마지막 자릿수가 달라지고, 그 차이가 학습 중에 커지기 때문입니다. 예를 들어 이전 모델을 환경 B 하나로 다시 만들었을 때 수집 데이터는 값이 모두 같았지만, BC와 PPO는 다른 모델이 되었습니다(학습 seed를 바꾼 것과 같은 정도의 차이).
 
 **`results/final`과 똑같은 모델을 다시 만들기**
 
-최종 모델을 만들 때처럼 0–3단계(평가 세트, 수집, BC)는 환경 A, 4–5단계(PPO, 평가)는 환경 B로 돌린다.
+최종 모델을 만들 때처럼 0–3단계(평가 세트, 수집, BC)는 환경 A, 4–5단계(PPO, 평가)는 환경 B로 실행합니다.
 
 ```bash
 PY=<환경 A의 python> PPO_PY=<환경 B의 python> bash scripts/reproduce_pipeline.sh
 ```
 
-위 표와 같은 환경이면 데이터셋, BC 모델, PPO checkpoint, 평가 결과가 모두 `results/final`과 바이트 단위로 같게 나온다(2026-11-27 확인). GPU 종류나 드라이버가 달라도 PPO가 다른 모델로 끝날 수 있지만, 성능은 비슷한 범위(테스트 약 96–97%)다.
+위 표와 같은 환경이면 데이터셋, BC 모델, PPO checkpoint, 평가 결과가 모두 `results/final`과 바이트 단위로 동일하게 나옵니다(2026-11-27 확인). GPU 종류나 드라이버가 달라도 PPO가 다른 모델로 끝날 수 있지만, 성능은 비슷한 범위(테스트 약 96–97%)입니다.
 
-- 결과는 `results/reproduce_<시각>/`에 생긴다. 같은 폴더(`OUT=...`)로 다시 실행하면 끝난 단계는 건너뛴다.
-- 여유 디스크 약 40GB가 필요하다(수집 원본 약 30GB, 선별 데이터셋 약 4.4GB).
-- 단계별 명령과 옵션은 [docs/REPRODUCE.md](./docs/REPRODUCE.md)에 있다.
+- 결과는 `results/reproduce_<시각>/`에 생성됩니다. 같은 폴더(`OUT=...`)로 다시 실행하면 완료된 단계는 건너뜁니다.
+- 여유 디스크 공간은 약 40GB가 필요합니다(수집 원본 약 30GB, 선별 데이터셋 약 4.4GB).
+- 단계별 명령과 옵션은 [docs/REPRODUCE.md](./docs/REPRODUCE.md)에 있습니다.
 
 ---
 
