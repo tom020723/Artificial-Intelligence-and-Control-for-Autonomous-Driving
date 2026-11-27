@@ -174,5 +174,7 @@ python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter080/model.p
 PPO 평가용 폴더에서는 상위 PPO 실행의 설정을 읽어 사건 보상과 차선 변경 벌점을 보존한다.
 모델 수집은 ego 규칙 제한을 해제하고, 교차로 내부 충돌 검사도 기본으로 켠다
 (`--no-junction-check`로 끌 수 있다). `--traffic-vph`를 주면 예열 기본값은 250초이며
-`--warmup-seconds`로 바꿀 수 있다. 이 수집은 저장된 평가 스냅샷 대신 새 교통을 실행하므로
+`--warmup-seconds`로 바꿀 수 있다. 노형오거리의 배경차는 고정 평가와 같은
+경로별 가중치로 배분하며, 입력한 총 유입량에 맞춰 비례 조정한다.
+이 수집은 저장된 평가 스냅샷 대신 새 교통을 실행하므로
 최종 평가 성공률을 재현하는 명령은 아니다. 구형 `BCPolicy` 체크포인트는 지원하지 않는다.

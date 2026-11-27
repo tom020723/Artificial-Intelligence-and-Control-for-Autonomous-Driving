@@ -1,12 +1,17 @@
 """Regression coverage for PR #7 integration with the final BC/PPO artifacts."""
+from contextlib import redirect_stdout
+from io import StringIO
 import json
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 import unittest
 from unittest.mock import Mock, patch
+import xml.etree.ElementTree as ET
 
-from collect_pomdp_data import detect_algorithm, ppo_run_directory, write_metadata
+from collect_pomdp_data import detect_algorithm, main, ppo_run_directory, write_metadata
+from env.background_demand import CALIBRATED_VPH, FLOW_SHARES
 from env.sumo_env import SumoHighwayEnv
 
 
@@ -38,6 +43,24 @@ class PolicyMetadataTests(unittest.TestCase):
             meta = json.loads(output.read_text(encoding="utf-8"))
             self.assertEqual(meta["code_snapshot"]["git_diff"], "한글 변경")
             self.assertEqual(git.call_args.kwargs["encoding"], "utf-8")
+
+    def test_traffic_collection_uses_calibrated_route_shares(self):
+        with TemporaryDirectory() as tmp:
+            args = ["collect_pomdp_data.py", "--traffic-vph", str(CALIBRATED_VPH),
+                    "--episodes", "1", "--policy", "keep-lane", "--name", "calibrated",
+                    "--out-dir", tmp]
+            with patch("sys.argv", args), patch.dict(os.environ), redirect_stdout(StringIO()):
+                main()
+            output = Path(tmp)
+            network = ET.parse(output / "calibrated.sumo/highway.rou.xml")
+            rates = {flow.get("id"): 3600 / float(flow.get("period"))
+                     for flow in network.findall("flow")}
+            self.assertEqual(rates.keys(), FLOW_SHARES.keys())
+            self.assertAlmostEqual(sum(rates.values()), CALIBRATED_VPH)
+            for flow_id, weight in FLOW_SHARES.items():
+                self.assertAlmostEqual(rates[flow_id], CALIBRATED_VPH * weight / sum(FLOW_SHARES.values()))
+            metadata = json.loads((output / "calibrated.metadata.json").read_text())
+            self.assertEqual(metadata["effective_config"]["TRAFFIC"]["demand_profile"], "weighted_od")
 
 
 class CollisionColumnsTests(unittest.TestCase):
