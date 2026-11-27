@@ -110,7 +110,7 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 ```
 
 - `export`는 평가 스크립트가 읽는 BC 폴더 형식(BC의 `config.json`, `collection_config.json`, `mdp_config.py`, `normalization.npz`, `road_config.py`, `train.py`)에 PPO 체크포인트를 `model.pt`로 넣는다. PPO는 BC와 신경망 구조와 관측이 같다.
-- `select`는 검증 성공률이 가장 높은 체크포인트를 `PPO/selection.json`에 쓴다. 같으면 뒤의 체크포인트를 고른다. 마지막 체크포인트가 가장 좋다는 보장은 없다(최종 실행에서 반복 100은 테스트 93.38%, 검증으로 고른 반복 80은 96.84%).
+- `select`는 검증 성공률이 가장 높은 체크포인트를 `PPO/selection.json`에 쓴다. 같으면 뒤의 체크포인트를 고른다. 마지막 체크포인트가 가장 좋다는 보장은 없다(최종 실행에서 반복 100은 테스트 95.83%, 검증으로 고른 반복 60은 97.21%).
 
 ## 평가
 
