@@ -13,8 +13,29 @@ conda-env/
 conda-meta/
 .python-version
 
-# Keep requirements.txt, environment.yml and conda-lock files tracked
-*.tex
+# LaTeX sources and PDF deliverables are tracked; build intermediates are local.
+/docs/**/*.aux
+/docs/**/*.log
+/docs/**/*.out
+/docs/**/*.synctex.gz
+/docs/**/*.fls
+/docs/**/*.fdb_latexmk
+/docs/**/*.xdv
+/docs/**/*.toc
+/docs/**/*.lof
+/docs/**/*.lot
+/docs/**/*.bbl
+/docs/**/*.blg
+/docs/**/*.bcf
+/docs/**/*.run.xml
+/docs/**/*.nav
+/docs/**/*.snm
+/docs/**/*.vrb
+
+# Report figure PDF files are the deliverables used by report_ko.tex.
+/docs/report/figures/*.png
+/docs/report/figures/results_table.csv
+/docs/report/figures/results_table.md
 
 # Local experiment outputs; the already tracked Phase 1 baseline remains tracked.
 /results/
