@@ -66,7 +66,7 @@ def rebalance_origin_flows(directory, total_vph):
 
 
 def build_collection_road(directory, total_vph, origin_lane_proportional=False):
-    """Build a private copy, restoring demand disabled by training defaults."""
+    """Build a private road and return its configuration with the measured demand."""
     traffic = deepcopy(TRAFFIC)
     traffic.update(background_enabled=True, vehs_per_hour=_CENTRAL_BACKGROUND_VPH,
                    keep_lane=False)
@@ -104,7 +104,7 @@ def build_collection_road(directory, total_vph, origin_lane_proportional=False):
     measured = sum(3600 / float(f.get('period')) for f in flows)
     if not np.isclose(measured, total_vph):
         raise ValueError('Total traffic demand normalization failed')
-    return cfg, traffic, measured
+    return cfg, traffic, measured, config
 
 
 def lane_change_events(path, step_length):
@@ -450,7 +450,7 @@ def main():
         parser.error('Durations must be multiples of the simulation step length')
     directory = (args.out_dir or Path('data') / datetime.now().strftime('background_bc_%Y%m%d_%H%M%S')).resolve()
     directory.mkdir(parents=True, exist_ok=False)
-    cfg, traffic, measured_vph = build_collection_road(
+    cfg, traffic, measured_vph, _ = build_collection_road(
         directory/'sumo', args.traffic_vph, args.origin_lane_proportional and not args.weighted_od)
     if args.weighted_od:
         traffic['demand_profile'] = 'weighted_od'
