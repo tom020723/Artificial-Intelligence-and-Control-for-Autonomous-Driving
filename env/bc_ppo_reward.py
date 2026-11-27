@@ -31,7 +31,14 @@ def overspeed_penalty(speed_mps, limit_mps, coef, tolerance=OVERSPEED_TOLERANCE)
 
 
 def stop_reward(error_m, amplitude=STOP_AMPLITUDE, sigma_m=STOP_SIGMA_M):
-    return amplitude * exp(-0.5 * (error_m / sigma_m) ** 2)
+    """Bonus for a red-light stop that ends ``error_m`` metres from its target.
+
+    The Laplace shape ``exp(-|e| / sigma)`` is peaked at the target, so the last tens of
+    centimetres still change the bonus (a Gaussian is flat there: 97% at 0.25 m). With the
+    same amplitude it put 68% instead of 50% of stop-line stops within 0.25 m of the target
+    (seed 0, diverse start-lane test).
+    """
+    return amplitude * exp(-abs(error_m) / sigma_m)
 
 
 class StopRewardProbe:

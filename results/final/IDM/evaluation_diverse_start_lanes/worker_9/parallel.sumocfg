@@ -1,0 +1,1 @@
+<configuration><input><net-file value="parallel.net.xml" /><route-files value="parallel.rou.xml" /></input></configuration>

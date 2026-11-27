@@ -30,7 +30,7 @@ sumo-gui 화면을 지도처럼 정리한다. 배경은 단색, 도로 옆과 �
 최종 모델이 달리는 모습을 꾸민 화면으로 본다(장식은 자동으로 붙는다).
 
 ```bash
-python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter080/model.pt     --traffic-vph 4700 --episodes 1 --gui
+python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter060/model.pt     --traffic-vph 4700 --episodes 1 --gui
 ```
 
 도로만 따로 열 때는 장식 파일을 먼저 만든다. `<도로 폴더>`는 `highway.sumocfg`가 있는 폴더다(예: 위 명령이 만든 `data/<수집명>.sumo`).

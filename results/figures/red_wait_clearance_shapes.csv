@@ -1,0 +1,9 @@
+method,reference,n,median_m,q1_m,q3_m,mean_m
+IDM,stop_line,1495,1.0,1.0,1.0,1.816
+BC,stop_line,1054,0.809,0.705,0.923,4.794
+BC → PPO (Gaussian bonus),stop_line,1370,0.814,0.637,0.961,3.308
+BC → PPO (|e| bonus),stop_line,1374,0.885,0.76,0.975,3.384
+IDM,queued_vehicle,3213,2.0,2.0,2.002,3.259
+BC,queued_vehicle,3261,1.765,1.64,1.903,2.102
+BC → PPO (Gaussian bonus),queued_vehicle,3298,1.885,1.658,2.128,2.226
+BC → PPO (|e| bonus),queued_vehicle,3298,1.914,1.758,2.142,2.367

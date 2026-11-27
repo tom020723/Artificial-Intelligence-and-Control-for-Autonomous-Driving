@@ -1,6 +1,6 @@
 # 노형오거리 데이터 컬럼
 
-이 문서는 `collect_pomdp_data.py`에 [최종 BC 모델](../results/final/BC/training/model.pt) 또는 [최종 PPO 모델(iter080)](../results/final/PPO/eval_runs/iter080/model.pt)을 `--model`로 지정하고, `--traffic-vph 4700`으로 수집하는 제출 데이터를 기준으로 한다. 두 모델 모두 `observation`과 `next_observation`이 52차원이다. [모델별 수집 명령](REPRODUCE.md#제출용-주행-데이터-수집-pr-7-통합)
+이 문서는 `collect_pomdp_data.py`에 [최종 BC 모델](../results/final/BC/training/model.pt) 또는 [최종 PPO 모델(iter060)](../results/final/PPO/eval_runs/iter060/model.pt)을 `--model`로 지정하고, `--traffic-vph 4700`으로 수집하는 제출 데이터를 기준으로 한다. 두 모델 모두 `observation`과 `next_observation`이 52차원이다. [모델별 수집 명령](REPRODUCE.md#제출용-주행-데이터-수집-pr-7-통합)
 
 ## 1. 기존 컬럼 — 차원 변경
 
