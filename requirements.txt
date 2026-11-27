@@ -5,3 +5,4 @@ traci
 sumolib
 tensorboard
 matplotlib
+libsumo
