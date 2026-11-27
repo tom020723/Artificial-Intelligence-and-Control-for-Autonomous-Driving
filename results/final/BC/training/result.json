@@ -1,0 +1,38 @@
+{
+  "status": "complete",
+  "best_epoch": 100,
+  "best_val_loss": 0.019483535735017415,
+  "epochs_completed": 100,
+  "wall_seconds": 3963.8693108023144,
+  "best_validation": {
+    "loss": 0.019483535735017415,
+    "accel_mse": 0.0021587906258705943,
+    "lane_ce": 0.01732474510914682,
+    "lane_macro_f1": 0.8282672048336939,
+    "left_precision": 0.7014840182648402,
+    "left_recall": 0.8970335227568949,
+    "right_precision": 0.5867768595041323,
+    "right_recall": 0.866564957164652,
+    "confusion": [
+      [
+        17206,
+        1975,
+        0
+      ],
+      [
+        7314,
+        4899350,
+        10400
+      ],
+      [
+        8,
+        2266,
+        14768
+      ]
+    ],
+    "samples": 4953287,
+    "complete_pass": true
+  },
+  "init_model": null,
+  "raw_input_export_verified": true
+}

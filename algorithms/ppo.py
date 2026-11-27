@@ -94,6 +94,7 @@ class PPO:
         device: str = "auto",
         buffer: RolloutBuffer = None,   # 경험 버퍼 (메인에서 주입).
                                         # None이면 내부에서 기본 생성.
+        target_kl: float | None = None,
     ):
         torch.manual_seed(seed)
         np.random.seed(seed)
@@ -136,6 +137,7 @@ class PPO:
         self.lane_entropy_coef = lane_entropy_coef
         self.max_grad_norm = max_grad_norm
         self.normalize_advantage = normalize_advantage
+        self.target_kl = target_kl
 
         # 버퍼 주입(dependency injection):
         # train.py(메인)가 utils.buffer.RolloutBuffer를 만들어 넘겨준다.
@@ -226,8 +228,11 @@ class PPO:
             if truncated and not terminated:
                 stored_reward += self.gamma * self.get_value(next_obs)
 
+            # 시간 초과의 bootstrap은 위에서 이미 보상에 반영했다.
+            # GAE는 리셋 경계에서 끊어 다음 에피소드의 가치/보상이 섞이지 않게 한다.
+            episode_end = terminated or truncated
             self.buffer.add(obs, action, log_prob, stored_reward, value,
-                            terminated)
+                            episode_end)
 
             if terminated or truncated:
                 finished_returns.append(ep_stats[0])
@@ -259,6 +264,8 @@ class PPO:
         stats = {"policy_loss": 0.0, "value_loss": 0.0,
                  "entropy": 0.0, "approx_kl": 0.0, "clip_frac": 0.0}
         n_batches = 0
+        kl_early_stop = False
+        max_update_kl = 0.0
 
         for _ in range(self.n_epochs):
             np.random.shuffle(indices)
@@ -270,7 +277,15 @@ class PPO:
                     obs_t[mb], act_t[mb])
 
                 # 확률비 r(θ) = exp(log π_new - log π_old)
-                ratio = torch.exp(log_prob - old_log_prob_t[mb])
+                log_ratio = log_prob - old_log_prob_t[mb]
+                ratio = torch.exp(log_ratio)
+                with torch.no_grad():
+                    update_kl = (ratio - 1 - log_ratio).mean().item()
+                    max_update_kl = max(max_update_kl, update_kl)
+                if self.target_kl is not None and (
+                        not np.isfinite(update_kl) or update_kl > 1.5 * self.target_kl):
+                    kl_early_stop = True
+                    break
 
                 # ---- PPO 핵심: clipped surrogate objective ----
                 surrogate_1 = ratio * adv_t[mb]
@@ -313,8 +328,12 @@ class PPO:
                 stats["approx_kl"] += approx_kl.item()
                 stats["clip_frac"] += clip_frac.item()
                 n_batches += 1
+            if kl_early_stop:
+                break
 
         out = {k: v / max(n_batches, 1) for k, v in stats.items()}
+        out.update(optimizer_steps=n_batches, kl_early_stop=int(kl_early_stop),
+                   max_update_kl=max_update_kl)
         # hybrid 진단: 업데이트 "후" 정책의 평균 차선변경(좌+우) 확률.
         #   0으로 붕괴 → 차선유지 지역최적 경고 / 적당히 유지되며
         #   eval의 차선변경 횟수가 오르면 제대로 배우는 중.

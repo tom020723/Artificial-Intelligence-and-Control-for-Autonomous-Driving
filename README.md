@@ -4,6 +4,13 @@
 
 수업 프로젝트에 필요한 자료를 순서대로 정리합니다.
 
+## 🚗 팀 최종 모델 (IDM 전문가 BC → Anchored PPO)
+
+- 무작위 출발 차선 테스트 7,050건(교차로 안 충돌 포함): BC 90.79%, **BC → PPO 97.21%**
+- 재현 방법과 최종 결과물 위치: [docs/REPRODUCE.md](./docs/REPRODUCE.md)
+- 알고리즘 전체(관측, 행동, 데이터, 학습, 보상, 평가): [docs/ALGORITHM.md](./docs/ALGORITHM.md)
+- 보고서(LaTeX, XeLaTeX로 컴파일): [docs/report/report_ko.tex](./docs/report/report_ko.tex)
+
 ---
 
 ## 📚 Project Materials

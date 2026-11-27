@@ -1,0 +1,3 @@
+method,cases,success_%,ci95_low_%,ci95_high_%,collision,red_light,wrong_lane,timeout
+BC,7050,90.79,90.10,91.45,120,317,200,12
+BC → PPO,7050,97.21,96.79,97.57,73,30,83,11
