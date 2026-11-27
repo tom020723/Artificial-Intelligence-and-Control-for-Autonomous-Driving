@@ -57,7 +57,7 @@ python scripts/evaluate_diverse_start_lanes.py evaluate results/final/suite_dive
 # --smoke 1을 붙이면 4건만 실행하여 동작을 빠르게 확인합니다.
 ```
 
-결과는 `results/my_eval_ppo/`에 `evaluation_summary.json`(성공률과 실패 종류), `route_evaluation.csv`(사례별 결과), `summary.png`(결과 그림)로 저장됩니다. 같은 모델이면 사례별 결과가 `results/final/PPO/eval_runs/iter060/evaluation_diverse_start_lanes/`와 동일하게 나옵니다. BC를 평가하려면 `--model`만 BC 경로로 바꾸시면 됩니다.
+결과는 `results/my_eval_ppo/`에 `evaluation_summary.json`(성공률과 실패 종류), `route_evaluation.csv`(사례별 결과), `summary.png`(결과 그림)로 저장됩니다. 같은 모델이면 사례별 결과가 매번 동일하게 나오며, BC 90.79%, PPO 97.21%가 나옵니다. 저장된 비교용 결과는 제출 패키지에서 제외했고 `main` 브랜치의 같은 경로에 있습니다. BC를 평가하려면 `--model`만 BC 경로로 바꾸시면 됩니다.
 
 **SUMO 화면에서 주행 보기**
 

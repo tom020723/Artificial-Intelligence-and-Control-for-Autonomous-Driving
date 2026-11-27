@@ -6,11 +6,12 @@
   ],
   "archive_adjustments": [
     "requirements.txt: add libsumo",
-    "add SUBMISSION.md and this manifest"
+    "add SUBMISSION.md and this manifest",
+    "README.md, docs/REPRODUCE.md: point to main for the evaluation results and dataset checksums left out of this package"
   ],
   "sha256": {
     ".gitignore": "3c8ff2a8e451469fd90335af65029991d1959dffabc9e26a70162fc6f1c62d5c",
-    "README.md": "74fc2f72bfc9ed5399c99c894dfe7d9a97ba9a0ca78f4cff1461f8e37f3b6051",
+    "README.md": "a4163106c5efcdf447b735c1f49fd24f66b82cbb8b4161ce8da41039bf061a51",
     "algorithms/__init__.py": "971747a6d3cca942c283c03eaa4bc45363aa7eba7e73a426243adc9afcfd48d9",
     "algorithms/anchored_ppo.py": "bc5cd3e53defad39d96be6d80d91a93e00cc1fda886113da107e4e563732175e",
     "algorithms/parallel_ppo.py": "3546e289011819e4c4798cd703c995b44f8ced6fbd0dbc9877fd0ba6ed789e5a",
@@ -21,7 +22,7 @@
     "benchmark/traffic_curriculum.json": "218ce0cf9912b6cc51e4ba3c0a525834369c04791311be81c4bffc101a33c589",
     "collect_background_data.py": "800407625d9eed247d9183e9af94f790a4d537fe41fa26a41e2b4fcf332b135d",
     "collect_pomdp_data.py": "199c5af63a523a7712503bf000ebaabd9ecfcce150fe0154e9cfaa555886d216",
-    "docs/REPRODUCE.md": "c969e8112d5a1f5cc9fa9064404e7ef6e81351db9dbd6f732b56555b2059076f",
+    "docs/REPRODUCE.md": "27e84416423fbbde0031e1f4d49fd3e2bfb9bf699128acfe291f1afd11dc97a9",
     "docs/data_columns_submission.md": "7260db4a940a6732331ef7eccfd536a53ec0b6241d41406bd1fb30b9be1a0c08",
     "docs/report/figures/fig_failures.pdf": "9c1aabeff40078593047d69e27ebb0362b0b0cda2018c9009f98a0d202aff93d",
     "docs/report/figures/fig_success.pdf": "8bf5585c79883d9b4501a25d2ae258d5e2942acd2cdbbb13b04bcab2182d1f13",

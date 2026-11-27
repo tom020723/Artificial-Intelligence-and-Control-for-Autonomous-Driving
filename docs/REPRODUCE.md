@@ -66,7 +66,7 @@ python scripts/evaluate_fixed_routes.py replot results/check_final_ppo
 `results/final/PPO/selection.json`이 최종 체크포인트 선택 결과다.
 새 학습에서는 검증 평가 뒤 `scripts/ppo_checkpoints.py select`가 기록한 모델을 사용한다.
 `iter060`이 모든 재학습에서 선택되는 것은 아니다.
-학습 데이터 shard는 Git에 포함하지 않으며, 보관된 목록과 체크섬은 `results/final/BC/dataset/`에 있다.
+학습 데이터 shard는 Git에 포함하지 않는다. 보관된 목록과 체크섬은 제출 패키지에서 제외했고 `main` 브랜치의 `results/final/BC/dataset/`에 있다.
 
 ## 제출용 주행 데이터 수집
 
