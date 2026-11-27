@@ -37,8 +37,11 @@ class BackgroundCollectorTests(unittest.TestCase):
     def test_private_road_total_flow_and_readonly_observation_context(self):
         original = road_builder.NOHYEONG
         with tempfile.TemporaryDirectory() as directory:
-            cfg,traffic,vph = build_collection_road(Path(directory)/'sumo',3000)
+            cfg,traffic,vph,config = build_collection_road(Path(directory)/'sumo',3000)
             self.assertIs(road_builder.NOHYEONG,original)
+            self.assertFalse(config['all_signals_green'])
+            network = ET.parse(Path(directory)/'sumo/highway.net.xml')
+            self.assertGreater(len(network.findall("tlLogic[@id='nC']/phase")), 1)
             self.assertAlmostEqual(vph,3000,places=5)
             self.assertTrue(traffic['background_enabled'])
             for vtype in ET.parse(Path(directory)/'sumo/highway.rou.xml').getroot().iter('vType'):
@@ -59,7 +62,7 @@ class BackgroundCollectorTests(unittest.TestCase):
 class ProportionalDemandTests(unittest.TestCase):
     def test_requested_origin_flow_matches_entry_lanes_including_ring(self):
         with tempfile.TemporaryDirectory() as directory:
-            cfg,traffic,total=build_collection_road(Path(directory)/'sumo',3000,True)
+            cfg,traffic,total,_=build_collection_road(Path(directory)/'sumo',3000,True)
             expected={'A1_in2':3000*5/19,'A2_in1':3000*4/19,'A3_in1':3000*4/19,
                       'A4_in2':3000*3/19,'A5_in1':3000*3/19}
             self.assertAlmostEqual(total,3000,places=5)

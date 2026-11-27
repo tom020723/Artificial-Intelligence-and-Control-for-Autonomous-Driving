@@ -57,7 +57,7 @@ import numpy as np
 
 from env.road_config import ROAD, EGO, TRAFFIC
 from env.mdp_config import SIMULATION, OBSERVATION, ACTION
-from env import road_builder
+from env import road_builder, road_config
 from env.sumo_env import SumoHighwayEnv
 from train import HPARAMS, REWARD  # 학습과 같은 보상 조건 + PPO 네트워크 구조
 
@@ -162,18 +162,23 @@ def compact(obj, ndigits: int):
     float32 값을 그대로 json.dumps하면 0.10000000149011612처럼 17자리로 찍히는데,
     반올림하면 0.1이 되어 텍스트 길이가 크게 준다. numpy 스칼라/배열도 함께 변환한다.
     """
+    kind = type(obj)
+    if kind is float:
+        return round(obj, ndigits)
+    if kind is str or kind is int or kind is bool or obj is None:
+        return obj
+    if kind is dict or isinstance(obj, dict):
+        return {k: compact(v, ndigits) for k, v in obj.items()}
+    if kind is list or kind is tuple or isinstance(obj, (list, tuple)):
+        return [compact(v, ndigits) for v in obj]
+    if isinstance(obj, np.ndarray):
+        return compact(obj.tolist(), ndigits)
     if isinstance(obj, (float, np.floating)):
         return round(float(obj), ndigits)
     if isinstance(obj, (bool, np.bool_)):
         return bool(obj)
     if isinstance(obj, (int, np.integer)):
         return int(obj)
-    if isinstance(obj, np.ndarray):
-        return compact(obj.tolist(), ndigits)
-    if isinstance(obj, dict):
-        return {k: compact(v, ndigits) for k, v in obj.items()}
-    if isinstance(obj, (list, tuple)):
-        return [compact(v, ndigits) for v in obj]
     return obj
 
 
@@ -587,14 +592,14 @@ def main():
     # 도로 파일은 부모에서 한 번만 생성한다 (워커들이 동시에 쓰면 파일이 깨진다).
     road_dir = os.path.join(args.out_dir, name + ".sumo")
     traffic = TRAFFIC
+    nohyeong = road_builder.NOHYEONG
     if args.traffic_vph is not None:
         # apply_saved_config 뒤에 import해야 snapshot의 도로·교통 설정을 쓴다.
-        from pathlib import Path
         from collect_background_data import build_collection_road
         from env.collision_detection import configure_collision_gaps
         if os.path.exists(road_dir):
             parser.error(f"이미 있는 도로 폴더입니다: {road_dir}")
-        sumocfg, traffic, _ = build_collection_road(Path(road_dir), args.traffic_vph)
+        sumocfg, traffic, _, nohyeong = build_collection_road(Path(road_dir), args.traffic_vph)
         configure_collision_gaps(sumocfg, ego_gap_m=EGO.get("collision_gap_m"),
                                  background_gap_m=traffic.get("collision_gap_m"))
         sumocfg = str(sumocfg)
@@ -604,9 +609,8 @@ def main():
             parser.error(f"이미 있는 도로 폴더입니다: {road_dir}")
         sumocfg = road_builder.build(ROAD, EGO, TRAFFIC, road_dir)
     args.traffic_config = traffic  # 워커에 전달 (spawn 워커는 snapshot TRAFFIC을 다시 읽는다)
-    from env import road_config
     write_metadata(args, {
-        "ROAD": ROAD, "EGO": EGO, "TRAFFIC": traffic, "NOHYEONG": road_config.NOHYEONG,
+        "ROAD": ROAD, "EGO": EGO, "TRAFFIC": traffic, "NOHYEONG": nohyeong,
         "ROUTE_ONLY_EXPERIMENT": road_config.ROUTE_ONLY_EXPERIMENT,
         "SIGNAL_EXPERIMENT": road_config.SIGNAL_EXPERIMENT,
         "SIMULATION": SIMULATION, "OBSERVATION": OBSERVATION, "ACTION": ACTION, "REWARD": REWARD,
