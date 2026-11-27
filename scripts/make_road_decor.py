@@ -1,8 +1,8 @@
 """Write map-style decoration (solid background, grass, roadside trees) for sumo-gui.
 
 The output is a separate SUMO additional file (``highway.decor.xml``) made only of
-polygons. It is loaded by the GUI playback tools and never by training or headless
-evaluation, so it cannot change simulation results.
+polygons. It is loaded only when the environment opens sumo-gui (off with SUMO_GUI_DECOR=0),
+never by training or headless evaluation, so it cannot change simulation results.
 
     python scripts/make_road_decor.py env/sumo/highway.net.xml
     sumo-gui -c env/sumo/highway.sumocfg -a env/sumo/highway.scenery.xml,env/sumo/highway.decor.xml
@@ -320,8 +320,10 @@ def write_decor(net_path, out_path=None):
 def gui_decor_options(sumocfg):
     """sumo-gui options that add the decoration to the additional files of sumocfg.
 
-    The decoration is regenerated from the configuration's own network, so it fits
+    The decoration is generated from the configuration's own network, so it fits
     whichever road (current road, evaluation suite copy, preview) is being shown.
+    An existing file is reused while it is newer than the network and this script,
+    because the GUI environment restarts SUMO for every episode.
     """
     sumocfg = Path(sumocfg).resolve()
     root = ET.parse(sumocfg).getroot()
@@ -330,7 +332,10 @@ def gui_decor_options(sumocfg):
     net = sumocfg.parent / net_node.get("value")
     additional = [] if add_node is None else [
         str(sumocfg.parent / name.strip()) for name in add_node.get("value").split(",") if name.strip()]
-    decor = write_decor(net, sumocfg.with_name("highway.decor.xml"))
+    decor = sumocfg.with_name("highway.decor.xml")
+    sources = (net, Path(__file__))
+    if not decor.is_file() or decor.stat().st_mtime < max(path.stat().st_mtime for path in sources):
+        write_decor(net, decor)
     return ["--additional-files", ",".join(additional + [str(decor)])]
 
 
