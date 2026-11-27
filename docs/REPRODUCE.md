@@ -136,7 +136,7 @@ PPO_PY scripts/evaluate_diverse_start_lanes.py evaluate OUT/suite_diverse_test \
 | 고정 경로 평가 세트 | `results/final/suite_fixed_routes` | | |
 | 무작위 출발 차선 테스트·검증 세트 | `results/final/suite_diverse_test`, `results/final/suite_diverse_validation` | | |
 | 최종 BC | `results/final/BC/training/model.pt` (epoch 100) | 90.79% (고정 경로 92.94%) | 91.33% (고정 경로 94.61%) |
-| 최종 PPO | `results/final/PPO/eval_runs/iter080/model.pt` (검증 96.49%로 선택) | **96.84%** | 97.52% |
+| 최종 PPO | `results/final/PPO/eval_runs/iter060/model.pt` (검증 96.81%로 선택) | **97.21%** | 97.77% |
 
 모델 폴더에는 수집 설정의 사본(`collection_config.json`)이 있어 데이터셋 없이도 평가할 수 있다. 보고서는 `docs/report/report_ko.tex`이고, 그림은 `docs/report/figures/`(`scripts/plot_report_figures.py`로 생성)에 있다.
 
@@ -165,7 +165,7 @@ BC를 학습한 데이터셋(shard 2,268개와 `manifest.json`, `config.json`, �
 
 ```bash
 python collect_pomdp_data.py --model results/final/BC/training/model.pt --traffic-vph 4700 --episodes 10 --workers 2 --randomize-departures --name final_bc
-python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter080/model.pt --traffic-vph 4700 --episodes 10 --workers 2 --randomize-departures --name final_ppo
+python collect_pomdp_data.py --model results/final/PPO/eval_runs/iter060/model.pt --traffic-vph 4700 --episodes 10 --workers 2 --randomize-departures --name final_ppo
 ```
 
 출력은 `data/<이름>.jsonl.gz`, `.npz`, `.metadata.json`, `.sumo/`다.

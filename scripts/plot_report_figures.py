@@ -2,7 +2,7 @@
 
     python scripts/plot_report_figures.py --out docs/report/figures \
         --method bc=results/final/BC/evaluation_diverse_start_lanes \
-        --method bc_ppo=results/final/PPO/eval_runs/iter080/evaluation_diverse_start_lanes \
+        --method bc_ppo=results/final/PPO/eval_runs/iter060/evaluation_diverse_start_lanes \
         --training bc_ppo=results/final/PPO --validation bc_ppo=results/final/PPO
 
 Methods are keyed bc, bc_ppo, ppo; each keeps its color whether or not the others are given.
