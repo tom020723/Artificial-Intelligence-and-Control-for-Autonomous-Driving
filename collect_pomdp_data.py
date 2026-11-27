@@ -546,7 +546,7 @@ def main():
                         help="출발 차선을 SUMO departLane=random으로 정함")
     parser.add_argument("--traffic-vph", type=float, default=None,
                         help="배경 교통과 신호 주기를 켜고 총 유입량(veh/h)을 지정 (최종 환경: 4700). "
-                             "BC 학습 데이터 수집(collect_background_data.py)과 같은 도로를 만든다. "
+                             "노형오거리에서는 고정 평가의 경로별 교통량 배분을 적용한다. "
                              "생략하면 모델 snapshot 설정 그대로(Phase 1: 전체 녹색·배경 차량 없음)")
     parser.add_argument("--warmup-seconds", type=float, default=None,
                         help="에피소드마다 자차 투입 전 배경 차량만 돌리는 시간(s). "
@@ -600,6 +600,11 @@ def main():
         if os.path.exists(road_dir):
             parser.error(f"이미 있는 도로 폴더입니다: {road_dir}")
         sumocfg, traffic, _, nohyeong = build_collection_road(Path(road_dir), args.traffic_vph)
+        if ROAD.get("type") == "nohyeong":
+            from env.background_demand import set_weighted_od_flow_rates
+
+            set_weighted_od_flow_rates(Path(road_dir) / "highway.rou.xml", args.traffic_vph)
+            traffic["demand_profile"] = "weighted_od"
         configure_collision_gaps(sumocfg, ego_gap_m=EGO.get("collision_gap_m"),
                                  background_gap_m=traffic.get("collision_gap_m"))
         sumocfg = str(sumocfg)

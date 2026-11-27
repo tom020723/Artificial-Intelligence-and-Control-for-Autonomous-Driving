@@ -154,6 +154,8 @@ SUMO가 붙인 차량 ID를 그대로 쓴다. `state.vehicles[].id`와 같은 �
 
 제출 데이터에는 `--traffic-vph 4700`으로 켠 120초 그룹 신호 주기를 사용한다. 연속된 두 녹색 현시에 모두 포함된 연결은 그 사이 황색·전환 현시에도 녹색을 유지할 수 있다.
 
+노형오거리 수집기는 `--traffic-vph`를 주면 고정 평가와 같은 [경로별 교통량 보정표](../env/background_demand.py)를 적용한다. 배경차 직진·좌회전·유턴은 각 경로의 가중치로 배분하며, 메타데이터의 `effective_config.TRAFFIC.demand_profile`에 `weighted_od`로 기록한다. 회차별 실제 투입 설정은 해당 `.sumo/highway.rou.xml`에서 확인한다.
+
 **`state.vehicles[].route_id`**
 
 | 값 | 의미 |
