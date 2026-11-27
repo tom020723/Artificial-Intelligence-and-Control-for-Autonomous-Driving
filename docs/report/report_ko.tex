@@ -425,12 +425,7 @@ IDM 배경 차량을 전문가로 쓴 BC와 BC policy에 KL anchor를 건 PPO로
 
 \appendix
 \section{재현 방법}
-\begin{verbatim}
-PY=~/anaconda3/envs/isaaclab2/bin/python \
-PPO_PY=~/.holosoma_deps/miniconda3/envs/sumo/bin/python \
-  bash scripts/reproduce_pipeline.sh          # 전체 (약 3.5시간)
-SMOKE=1 bash scripts/reproduce_pipeline.sh    # 모든 단계를 최소 규모로 (약 5분)
-\end{verbatim}
-0--3단계(세트, 수집, BC)는 torch 2.7.0+cu128, 4--5단계(PPO, 평가)는 torch 2.14.1+cu130 환경을 쓴다. SUMO는 1.28.0이다. 최종 모델과 데이터셋 위치는 \texttt{docs/REPRODUCE.md}에 있다.
+학습과 평가의 실행 방법은 \path{docs/REPRODUCE.md}에 있다.
+제출용 데이터의 저장 형식과 필드는 \path{docs/data_columns_submission.md}에 정리했다.
 
 \end{document}

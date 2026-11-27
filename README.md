@@ -7,8 +7,9 @@
 ## 🚗 팀 최종 모델 (IDM 전문가 BC → Anchored PPO)
 
 - 무작위 출발 차선 테스트 7,050건(교차로 안 충돌 포함): BC 90.79%, **BC → PPO 97.21%**
-- 알고리즘 전체(관측, 행동, 데이터, 학습, 보상, 평가): [docs/ALGORITHM.md](./docs/ALGORITHM.md)
-- 단계별 재현 설명과 최종 결과물 위치: [docs/REPRODUCE.md](./docs/REPRODUCE.md)
+- 재현 방법과 최종 결과물 위치: [docs/REPRODUCE.md](./docs/REPRODUCE.md)
+- 모델 설명·관측·학습·보상·평가: [보고서 PDF](./docs/report/report_ko.pdf), [LaTeX 원본](./docs/report/report_ko.tex)
+- 제출용 수집 데이터 규격: [docs/data_columns_submission.md](./docs/data_columns_submission.md)
 
 
 ### 저장소
