@@ -2,8 +2,8 @@
 
 Run as a module: ``python -m scripts.finetune_bc_ppo CHECKPOINT SUITE``.
 
-Compared with ``scripts/train_bc_ppo.py`` this trains without the ego speed
-cap (the cap is a rule outside the policy, and the previous run learned to
+Compared with the first PPO (scripts/train_bc_ppo.py, in git history) this trains without the ego
+speed cap (the cap is a rule outside the policy, and the previous run learned to
 lean on it), and uses ``algorithms.anchored_ppo.AnchoredPPO``: a separate
 critic with warm-up, a KL anchor to the BC policy, a small acceleration
 exploration std and sharper sampled lane choices. The reward is the event
@@ -22,10 +22,11 @@ import numpy as np
 import torch
 
 from algorithms.anchored_ppo import AnchoredPPO
+from env.collision_detection import junction_collisions
 from env.bc_ppo_reward import OVERSPEED_TOLERANCE, STEP_REWARD, STOP_AMPLITUDE, STOP_SIGMA_M, TERMINAL_REWARDS
 from env.parallel_sumo import ParallelSumo, ShardedParallelSumo
 from env.parallel_traffic import TrafficCurriculum
-from test import load_saved_configs
+from utils.saved_configs import load_saved_configs
 from utils.logger import RunLogger
 
 
@@ -38,6 +39,8 @@ def build_env(checkpoint, suite, output, args):
     reward = dict(training["REWARD"], bc_ppo_reward=True, early_lane_change_bonus=0.,
                   early_lane_change_distance_m=120., overspeed_penalty=args.overspeed_penalty,
                   overspeed_tolerance=args.overspeed_tolerance)
+    if args.lane_change_penalty:
+        reward["bc_lane_change_penalty"] = args.lane_change_penalty
     template = ParallelSumo(
         args.envs // args.workers,
         dict(cfg_path=str(suite / "sumo/highway.sumocfg"), road=road["ROAD"], ego=road["EGO"],
@@ -78,7 +81,14 @@ def main():
                         help="Relative excess over the lane limit that is not penalized "
                              "(default 0.1 = 10%%, the IDM expert's speed spread)")
     parser.add_argument("--ego-speed-cap", action="store_true",
-                        help="Clamp the ego speed to the limit as in scripts/train_bc_ppo.py")
+                        help="Clamp the ego speed to the lane limit (a rule outside the policy; off by default)")
+    parser.add_argument("--from-scratch", action="store_true",
+                        help="PPO without BC: random actor, no anchor. The checkpoint folder still supplies "
+                             "the settings and the input normalization (mean/std only)")
+    parser.add_argument("--lane-keep-prob", type=float, default=0.9,
+                        help="With --from-scratch: initial probability of the keep-lane command")
+    parser.add_argument("--lane-change-penalty", type=float, default=0.,
+                        help="Reward subtracted for each executed lane change (default 0, off)")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
@@ -88,6 +98,12 @@ def main():
     if not (np.isfinite(args.overspeed_penalty) and args.overspeed_penalty >= 0
             and np.isfinite(args.overspeed_tolerance) and args.overspeed_tolerance >= 0):
         parser.error("Use a finite nonnegative overspeed penalty and tolerance")
+    if not (np.isfinite(args.lane_change_penalty) and args.lane_change_penalty >= 0):
+        parser.error("Use a finite nonnegative lane-change penalty")
+    if args.from_scratch:
+        if not 0 < args.lane_keep_prob < 1:
+            parser.error("--lane-keep-prob must be in (0, 1)")
+        args.anchor_coef = 0.0                # there is no BC policy to anchor to
 
     torch.set_num_threads(1)
     checkpoint = args.checkpoint.resolve(strict=True)
@@ -114,15 +130,21 @@ def main():
                             normalization=normalization, critic_lr=args.critic_lr,
                             anchor_coef=args.anchor_coef, critic_warmup_iterations=args.critic_warmup,
                             **hparams)
-        agent.init_from_bc(str(checkpoint), args.init_std, args.lane_sharpness)
+        if args.from_scratch:
+            agent.init_from_scratch(normalization, args.init_std, args.lane_keep_prob)
+        else:
+            agent.init_from_bc(str(checkpoint), args.init_std, args.lane_sharpness)
         agent.save(str(output / "model_iter000.pt"))
         metadata = dict(initial_model=str(checkpoint), traffic_suite=str(suite),
                         traffic_vph=spec["traffic_vph"], rollout=rollout, num_envs=args.envs,
                         num_workers=args.workers, device=str(agent.device), step_reward=STEP_REWARD,
                         terminal_rewards=TERMINAL_REWARDS, stop_amplitude=STOP_AMPLITUDE,
                         stop_sigma_m=STOP_SIGMA_M, 
-                        algorithm="AnchoredPPO", **{k: v for k, v in vars(args).items()
+                        algorithm="PPO from scratch" if args.from_scratch else "AnchoredPPO",
+                        **{k: v for k, v in vars(args).items()
                                                     if k not in ("checkpoint", "traffic_suite", "output")})
+        if junction_collisions():
+            metadata["junction_collisions"] = True
         (output / "run.json").write_text(json.dumps(metadata, indent=2, default=str) + "\n")
         print(f"{output} | {agent.device} | {rollout} steps/iteration", flush=True)
         start = perf_counter()

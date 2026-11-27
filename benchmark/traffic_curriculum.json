@@ -1,0 +1,11 @@
+{
+  "initial_vph": 0,
+  "max_vph": 6000,
+  "success_increment": 50,
+  "failure_decrement": 150,
+  "ring_traffic": true,
+  "total_vph": true,
+  "snapshot_warmup_seconds": 250,
+  "max_depart_delay_seconds": null,
+  "ring_reference_vph": 800
+}

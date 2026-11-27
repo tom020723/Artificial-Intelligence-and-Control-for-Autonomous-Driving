@@ -1,0 +1,47 @@
+{
+  "evaluation": "evaluation_validation_junction",
+  "best": {
+    "iteration": 80,
+    "success_rate": 0.9648936170212766,
+    "episodes": 2820,
+    "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter080/model.pt"
+  },
+  "candidates": [
+    {
+      "iteration": 50,
+      "success_rate": 0.9613475177304964,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter050/model.pt"
+    },
+    {
+      "iteration": 60,
+      "success_rate": 0.9574468085106383,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter060/model.pt"
+    },
+    {
+      "iteration": 70,
+      "success_rate": 0.9546099290780142,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter070/model.pt"
+    },
+    {
+      "iteration": 80,
+      "success_rate": 0.9648936170212766,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter080/model.pt"
+    },
+    {
+      "iteration": 90,
+      "success_rate": 0.9588652482269504,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter090/model.pt"
+    },
+    {
+      "iteration": 100,
+      "success_rate": 0.926241134751773,
+      "episodes": 2820,
+      "model": "/home/lair15/Artificial-Intelligence-and-Control-for-Autonomous-Driving-final3/results/ablation_lane_penalty/bc_c0.01/eval_runs/iter100/model.pt"
+    }
+  ]
+}

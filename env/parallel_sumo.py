@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 
+from env.collision_detection import sumo_collision_options
 from env.ego_routes import group_unique_ego_routes
 from env.ring_observation import prefix_geometry
 from env.sumo_env import SumoHighwayEnv
@@ -230,7 +231,8 @@ class ParallelSumo:
         libsumo.start(["sumo-gui" if show_gui else "sumo", "-c", config,
                        "--step-length", str(self.prototype.step_length),
                        "--seed", str(self.seed), "--collision.action", "remove",
-                       "--no-warnings", "true", "--no-step-log", "true", *traffic_options, *gui_options])
+                       "--no-warnings", "true", "--no-step-log", "true", *traffic_options, *gui_options,
+                       *sumo_collision_options()])
         self.started = True
 
     def _find_departures(self):
@@ -260,19 +262,20 @@ class ParallelSumo:
             finally:
                 self._close_simulation()
             return
-        # Query the exact lane SUMO picks for every route under the baseline's
-        # departLane setting. moveTo can then insert there without a global tick.
+        # Probe without background flows, which can occupy the insertion point.
+        # Keep SUMO's departLane choice for later moveTo without a global tick.
         ego = self.prototype
-        self._start(ego.cfg_path)
+        self._start(self.config)
         try:
             for route in self.routes:
-                ego._spawn_ego(route)
+                ego._spawn_ego(_replica_id(0, route))
                 libsumo.simulationStep()
                 lane = libsumo.vehicle.getLaneID(ego.ego_id)
                 if not lane:
                     raise RuntimeError(f"SUMO did not insert the ego for route {route}")
                 position = libsumo.vehicle.getLanePosition(ego.ego_id)
-                self.departures[route] = ((lane, position, libsumo.vehicle.getLaneIndex(ego.ego_id)),)
+                self.departures[route] = ((lane.removeprefix("r0_"), position,
+                                           libsumo.vehicle.getLaneIndex(ego.ego_id)),)
                 libsumo.vehicle.remove(ego.ego_id)
         finally:
             self._close_simulation()

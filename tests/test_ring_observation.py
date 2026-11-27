@@ -2,6 +2,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock
 from env.ring_observation import ring_observation, EMPTY, prefix_geometry
+from tests.road_fixture import road_files
 
 
 class RingObservationTests(unittest.TestCase):
@@ -38,9 +39,8 @@ class RingObservationTests(unittest.TestCase):
 
     def test_current_network_contains_hidden_merge_approach(self):
         import xml.etree.ElementTree as ET
-        from pathlib import Path
         from env.ring_observation import ring_geometry
-        net=ET.parse(Path(__file__).resolve().parents[1]/'env/sumo/highway.net.xml').getroot()
+        net=ET.parse(road_files()[1]).getroot()
         plans=ring_geometry(net)
         self.assertIn('A5_out_0',plans['RING_A3_A5_0']['lanes'])
         self.assertIn(':nM_A5_0_6_0',plans['RING_A3_A5_0']['lanes'])

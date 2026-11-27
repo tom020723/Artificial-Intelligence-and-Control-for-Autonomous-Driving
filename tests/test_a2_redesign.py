@@ -82,10 +82,13 @@ class A2RedesignTests(unittest.TestCase):
     def test_ring_exit_remains_uncontrolled_and_main_lanes_use_A2_signal(self):
         ring=next(c for c in self.connections if c.get("from")=="A2_in" and c.get("to")=="RING_A2_A4")
         self.assertIsNone(ring.get("tl"))
-        phase=self.net.find("tlLogic[@id='nC']/phase[@name='A2_green']").get("state")
+        program=self.net.find("tlLogic[@id='nC']")
         for c in self.connections:
             if c.get("from")=="A2_in" and c is not ring:
                 self.assertEqual(c.get("tl"),"nC")
+                # Lanes 1-3 go straight with A1; lane 4 turns left in the next stage.
+                stage="A1A2_left" if c.get("fromLane")=="4" else "A1A2_through"
+                phase=program.find(f"phase[@name='{stage}_green']").get("state")
                 self.assertEqual(phase[int(c.get("linkIndex"))],"G")
 
     def test_dashed_lanes_allow_passenger_changes_in_network_and_RL_commands(self):

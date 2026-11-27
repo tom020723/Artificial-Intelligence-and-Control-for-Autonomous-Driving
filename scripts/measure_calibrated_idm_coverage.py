@@ -15,17 +15,74 @@ from tempfile import TemporaryDirectory
 import xml.etree.ElementTree as ET
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from collect_background_data import BackgroundObserver, collect_episode, save_json
+from collect_background_data import BackgroundObserver, collect_episode, libsumo, save_json
+from env.collision_detection import junction_collisions, sumo_collision_options
+from env.control_timing import lane_change_timing_allowed
 from env.background_demand import FLOW_SHARES
 from env.parallel_traffic import TrafficCurriculum, TrafficSchedule, parse_traffic_flows
-from test import load_saved_configs
+from utils.saved_configs import load_saved_configs
+
+
+def native_expert_worker(pipe, config, state_file, step_length, traffic_options, spawn_protect=None):
+    """Run IDM queries on a separate SUMO instance."""
+    try:
+        libsumo.start(["sumo", "-c", config, "--step-length", str(step_length),
+                       "--collision.action", "warn", "--no-warnings", "true",
+                       "--no-step-log", "true", *traffic_options, *sumo_collision_options()])
+        while request := pipe.recv():
+            try:
+                libsumo.simulation.loadState(state_file)
+                vehicle = libsumo.vehicle
+                if spawn_protect is not None:
+                    restored = set(vehicle.getIDList())
+                    request = [row for row in request if row[0] in restored]
+                for vid, edge, _, _, _ in request:
+                    if vehicle.getTypeID(vid) != "car_idm":
+                        vehicle.setType(vid, "car_idm")
+                    vehicle.setSpeedMode(vid, 31)
+                    vehicle.setSpeed(vid, -1)
+                    allowed = (not edge.startswith(":") if spawn_protect is None else
+                               lane_change_timing_allowed(edge, vehicle.getLanePosition(vid),
+                                                          vehicle.getRouteIndex(vid), spawn_protect))
+                    vehicle.setLaneChangeMode(vid, 1621 if allowed else 0)
+                libsumo.simulationStep()
+                arrived = set(libsumo.simulation.getArrivedIDList())
+                active = set(vehicle.getIDList())
+                responses = {}
+                for vid, edge, lane, speed, limits in request:
+                    accel_limit, brake_limit = limits
+                    if vid in arrived:
+                        if spawn_protect is None:
+                            responses[vid] = (0., 0)
+                    elif vid in active:
+                        next_speed = vehicle.getSpeed(vid)
+                        delta = (vehicle.getLaneIndex(vid) - lane
+                                 if vehicle.getRoadID(vid) == edge else 0)
+                        acceleration = (next_speed - speed) / step_length
+                        if spawn_protect is not None and (
+                            (vehicle.getRoadID(vid) != edge and not edge.startswith(":"))
+                            or abs(delta) > 1 or not -brake_limit - 1e-5 <= acceleration <= accel_limit + 1e-5
+                        ):
+                            continue
+                        scale = accel_limit if acceleration >= 0 else brake_limit
+                        responses[vid] = (float(np.clip(acceleration / scale, -1, 1)),
+                                          int(np.clip(delta, -1, 1)))
+                    elif spawn_protect is None:
+                        raise RuntimeError(f"Expert branch cannot resolve active ego {vid}")
+                pipe.send((True, responses))
+            except Exception as exc:
+                pipe.send((False, repr(exc)))
+                break
+    finally:
+        libsumo.close()
+        pipe.close()
 
 
 class DaggerTeacher:
     """Run the native IDM query from the pre-action state in a separate SUMO."""
     def __init__(self, cfg, model, hparams, step, folder):
         import torch
-        from scripts.run_bc51_dagger import load_actor, native_expert_worker
+        from utils.bc_policy import load_actor
 
         torch.set_num_threads(1)
         self.actor = load_actor(model, hparams, "cpu").eval()
@@ -142,6 +199,8 @@ def select_dataset(source, destination, ids, assignments, quotas, metadata):
         np.savez_compressed(destination / name, **data)
     save_json(destination / "manifest.json", dict(shards=shards, samples=count, obs_dim=obs_dim,
                                                    validation_indices=validation))
+    if junction_collisions():
+        metadata = dict(metadata, junction_collisions=True)
     save_json(destination / "config.json", metadata)
     save_json(destination / "selection.json", dict(assignments=assignments, quotas=quotas,
                                                     by_route_and_time=histogram, pairs=count))

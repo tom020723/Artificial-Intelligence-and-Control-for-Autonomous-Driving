@@ -1,0 +1,149 @@
+{
+  "observation": {
+    "neighbor_distance_mode": "bumper",
+    "layout": "bc49",
+    "signal_distance_scale": 200.0,
+    "guidance_distance_scale": 650.0,
+    "connectivity_half_width": 2,
+    "lookahead_connectivity_enabled": false,
+    "destination_enabled": false,
+    "destination_arms": [
+      "A1",
+      "A2",
+      "A3",
+      "A4",
+      "A5"
+    ],
+    "signal_enabled": true,
+    "signal_visibility": 100.0,
+    "signal_count": 1,
+    "visibility": 50.0,
+    "density_veh_length": 7.5,
+    "ring_visibility": 50.0,
+    "ring_distance_scale": 50.0,
+    "guidance_lateral_scale": 50.0,
+    "ring_merge_scope": "direct",
+    "junction_neighbor_observation": true,
+    "connected_lane_bumper_gaps": true,
+    "leader_gap_geometry": false,
+    "signed_adjacent_gaps": true,
+    "spawn_progress_scale": 20.0
+  },
+  "simulation": {
+    "step_length": 0.5,
+    "max_steps": 1000,
+    "warmup_steps": 4,
+    "gui_zoom": 4000.0,
+    "gui_delay": 100.0,
+    "gui_view_width": 200.0,
+    "gui_track_ego": true
+  },
+  "traffic": {
+    "collision_gap_m": 0.2,
+    "right_turn_only_lane": true,
+    "startup_spread_seconds": 60,
+    "lc_speed_gain": 1.0,
+    "lc_keep_right": 0.0,
+    "max_speed": 16.0,
+    "vehs_per_hour": 800,
+    "depart_lane": "random",
+    "keep_lane": false,
+    "depart_speed": 8.0,
+    "controllers": {
+      "krauss": {
+        "probability": 0.35,
+        "carFollowModel": "Krauss",
+        "accel": 2.0,
+        "decel": 4.5,
+        "tau": 1.0,
+        "min_gap": 2.5,
+        "sigma": 0.3,
+        "max_speed": 14.0,
+        "speed_dev": 0.15,
+        "color": "1,1,0",
+        "keep_lane": false
+      },
+      "idm": {
+        "probability": 0.3,
+        "carFollowModel": "IDM",
+        "accel": 1.8,
+        "decel": 3.5,
+        "tau": 1.2,
+        "min_gap": 2.0,
+        "max_speed": 16.0,
+        "speed_dev": 0.1,
+        "color": "0,1,1",
+        "keep_lane": false
+      },
+      "eidm": {
+        "probability": 0.2,
+        "carFollowModel": "EIDM",
+        "accel": 2.0,
+        "decel": 4.0,
+        "tau": 1.1,
+        "min_gap": 2.0,
+        "max_speed": 16.5,
+        "speed_dev": 0.1,
+        "color": "1,0.6,0",
+        "keep_lane": false
+      },
+      "acc": {
+        "probability": 0.15,
+        "carFollowModel": "ACC",
+        "accel": 2.0,
+        "decel": 4.0,
+        "tau": 1.5,
+        "min_gap": 2.0,
+        "max_speed": 19.0,
+        "speed_dev": 0.05,
+        "color": "1,0,1",
+        "keep_lane": false
+      }
+    },
+    "prefill": {
+      "enabled": false,
+      "start_offset": 80,
+      "end_margin": 50,
+      "spacing": null,
+      "spacing_jitter": 0.45,
+      "lane_spacing_factor": [
+        0.85,
+        1.0,
+        1.35
+      ]
+    },
+    "background_enabled": true,
+    "demand_profile": "weighted_od"
+  },
+  "collision_detection": {
+    "ego_type": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.5,
+      "collision_min_gap_factor": 0.08
+    },
+    "car_krauss": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.5,
+      "collision_min_gap_factor": 0.08
+    },
+    "car_idm": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.0,
+      "collision_min_gap_factor": 0.1
+    },
+    "car_eidm": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.0,
+      "collision_min_gap_factor": 0.1
+    },
+    "car_acc": {
+      "collision_gap_m": 0.2,
+      "min_gap_m": 2.0,
+      "collision_min_gap_factor": 0.1
+    }
+  },
+  "idm_spawn_protect_m": 20.0,
+  "dagger_base": null,
+  "rollout_controller": "IDM",
+  "label_controller": "IDM"
+}

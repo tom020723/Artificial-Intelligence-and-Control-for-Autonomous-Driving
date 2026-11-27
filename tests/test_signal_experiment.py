@@ -27,6 +27,7 @@ class SignalExperimentTests(unittest.TestCase):
         # Retain regression coverage for saved experiments with upstream U-turns.
         legacy = copy.deepcopy(NOHYEONG)
         legacy["all_signals_green"] = False
+        legacy["signal_plan"]["type"] = "sequential"   # those experiments ran one approach at a time
         legacy["inbound_end_offsets"] = {}
         legacy["stop_offsets"] = {"A1": 8.0, "A3": 8.0, "A4": 8.0}
         legacy["upstream_uturns"] = {"A3": {"radius": 48.0, "from_lane": 4,

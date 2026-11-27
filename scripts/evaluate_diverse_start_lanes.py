@@ -15,11 +15,12 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from env.collision_detection import junction_collisions, sumo_collision_options
 from env.parallel_sumo import _signal_schedule, libsumo
 from scripts.evaluate_fixed_routes import (
-    FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, read_json, run, write_json,
+    DEMAND, FixedTrafficSchedule, MAX_REPLICAS_PER_WORKER, STEP, default_workers, prepare_road, read_json, run,
+    write_json,
 )
-from scripts.evaluate_mixed_traffic import prepare_road
 
 DEFAULT_SEEDS = tuple(range(52101, 52126))
 CAPTURE_WINDOWS = ((120, 600), (900, 1800), (2400, 3500))
@@ -42,7 +43,8 @@ def capture_traffic(cfg, flows, lanes, controllers, vph, seed):
     schedule = FixedTrafficSchedule(flows, controllers, lanes)
     captures = []
     libsumo.start(["sumo", "-c", str(cfg), "--seed", str(seed), "--step-length", str(STEP),
-                   "--collision.action", "remove", "--no-warnings", "true", "--no-step-log", "true"])
+                   "--collision.action", "remove", "--no-warnings", "true", "--no-step-log", "true",
+                   *sumo_collision_options()])
     try:
         for signal in signals:
             libsumo.trafficlight.setPhase(signal, phase)
@@ -93,8 +95,8 @@ def departure_combinations(source, routes):
 
 def prepare(source, suite, seeds):
     spec = read_json(source / "suite.json")
-    if spec.get("adaptive_traffic") or spec["traffic_vph"] != 4740:
-        raise ValueError("Use the calibrated 4,740 veh/h fixed-demand suite as the road template")
+    if spec.get("adaptive_traffic") or spec["traffic_vph"] != DEMAND:
+        raise ValueError(f"Use the calibrated {DEMAND:,} veh/h fixed-demand suite as the road template")
     combinations = departure_combinations(source, spec["routes"])
     center_lanes = {row["route"]: row["start_lane"] for row in read_json(source / "cases.json")}
     suite.mkdir(parents=True)
@@ -133,6 +135,8 @@ def prepare(source, suite, seeds):
                 route_lane_combinations=len(combinations), snapshot_source=str(source), spawn_protect_m=0)
     for obsolete in ("snapshot_times_seconds", "warmup_seconds"):
         spec.pop(obsolete, None)
+    if junction_collisions():
+        spec["junction_collisions"] = True
     write_json(suite / "suite.json", spec)
     write_json(suite / "cases.json", cases)
     write_json(suite / "snapshots.json", metadata)
@@ -154,6 +158,8 @@ def main():
                           help="Processes; each case runs in its own fresh SUMO (default: up to 24)")
     evaluate.add_argument("--sumo-seed", type=int, default=0,
                           help="Base SUMO seed; each case derives its own from it")
+    evaluate.add_argument("--no-junction-check", action="store_true",
+                          help="Do not count collisions inside junctions (SUMO default; on by default here)")
     evaluate.add_argument("--shared-sumo", action="store_true",
                           help="Previous mode: 4 workers run --replicas cases at once in one SUMO. "
                                "Outcomes then depend on case order and batching.")
@@ -178,7 +184,8 @@ def main():
         model = args.model.resolve(strict=True)
         output = args.output.resolve() if args.output else None
         run(suite, "diverse_start_lanes", None, model, args.replicas, args.smoke, output=output,
-            isolated=not args.shared_sumo, workers=args.workers, sumo_seed=args.sumo_seed)
+            isolated=not args.shared_sumo, workers=args.workers, sumo_seed=args.sumo_seed,
+            junction_check=not args.no_junction_check)
 
 
 if __name__ == "__main__":

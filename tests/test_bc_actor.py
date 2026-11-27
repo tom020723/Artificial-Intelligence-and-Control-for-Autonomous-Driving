@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 import torch
-from train_bc_actor import lane_class, export_policy, initialize_from_raw_policy
+from scripts.train_bc_shards import lane_class, export_policy, initialize_from_raw_policy
 from utils.networks import HybridActorCritic
 
 

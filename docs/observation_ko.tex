@@ -1,0 +1,135 @@
+% 최종 모델의 52차원 observation 정리 (한국어판).
+% XeLaTeX로 컴파일한다(Overleaf: Menu -> Compiler -> XeLaTeX). 한글 글꼴 오류가 나면 pdfLaTeX로도 된다.
+% 근거 코드: env/sumo_env.py (_get_obs), env/connected_lane_gaps.py, env/route_guidance.py,
+%           env/ring_observation.py, scripts/measure_calibrated_idm_coverage.py
+\documentclass[10pt]{article}
+\usepackage[margin=0.9in]{geometry}
+\usepackage{kotex}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs,tabularx,array}
+\usepackage{enumitem}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcommand{\vmax}{v_{\max}}
+\newcommand{\clip}{\operatorname{clip}}
+\renewcommand{\tablename}{표}
+\setlist{itemsep=2pt, topsep=3pt}
+
+\title{Observation 정의 (52차원)}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{개요}
+
+ego policy가 매 step(0.5\,s) 받는 observation $o_t \in \mathbb{R}^{52}$은 다음 여섯 부분을 이 순서로 이어 붙인 것이다.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+부분 & index & 차원 \\
+\midrule
+기본(속도, 이웃 차량, lane 연결, 밀도) & 0--30 & 31 \\
+신호 & 31--34 & 4 \\
+길안내(navigation) & 35--42 & 8 \\
+순환도로 합류(ring merge) & 43--48 & 6 \\
+길안내 lateral & 49--50 & 2 \\
+출발 위치(spawn progress) & 51 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\paragraph{상수.} 제한속도 $\vmax = 13.89$\,m/s, 시야 $W = 50$\,m, 신호 시야 100\,m.
+Lane offset은 $k \in (+2, +1, 0, -1, -2)$ 순서이며, SUMO lane index가 왼쪽으로 갈수록 커지므로 $+1$이 왼쪽이다.
+
+\paragraph{정규화.} 기본 31개(index 0--30)만 $[-1, 1]$로 clip한다. Policy에 들어가기 전 입력 정규화(학습 데이터의 평균·표준편차)는 첫 layer에 접어 넣었으므로, policy는 위 값을 그대로 받는다. Ego가 없으면 0 벡터다.
+
+\paragraph{경로 정보 제한.} 과제 조건에 따라, 경로를 완주하려면 어느 lane에 있어야 하는지는 observation에 넣지 않는다. 목적지 observation과 lookahead connectivity는 꺼져 있고, 이 layout에서는 해당 코드에 도달하기 전에 observation이 반환된다. 자세한 내용은 \S\ref{sec:route}.
+
+\section{항목별 정의}
+
+\begin{table}[h]
+\centering
+\caption{Observation index별 정의. $v$는 ego 속도, $\clip$은 $[-1,1]$ clip.}
+\label{tab:obs}
+\small
+\begin{tabularx}{\linewidth}{@{}l>{\raggedright\arraybackslash}p{3.3cm}Lp{2.6cm}@{}}
+\toprule
+index & 항목 & 계산 & 없을 때 \\
+\midrule
+0 & ego 속도 & $\clip(v/\vmax)$ & -- \\
+1--20 & 이웃 차량 (lane 5개 $\times$ 4) & lane $k$마다 $\big(g^{\mathrm{lead}}_k/W,\ \clip\frac{v^{\mathrm{lead}}_k-v}{\vmax},\ -g^{\mathrm{fol}}_k/W,\ \clip\frac{v^{\mathrm{fol}}_k-v}{\vmax}\big)$ & leader $(1,1)$, follower $(-1,-1)$ \\
+21--25 & lane 연결 (5개) & 시야 안에서 lane이 끝나는지: $c_k$ (\S\ref{sec:conn}) & lane 없음 $-1$, 교차로 안 $1$ \\
+26--30 & 앞쪽 밀도 (5개) & $\rho_k = \clip_{[0,1]}\!\big(n_k \,/\, (L_k / 7.5\,\mathrm{m})\big)$ & lane 없음 $1$, 교차로 안 $0$ \\
+31--33 & 신호 색 one-hot & 가장 가까운 정지선 신호의 (빨강, 노랑, 초록) & 신호 없음 또는 100\,m 밖이면 0 \\
+34 & 정지선까지 거리 & $d_{\mathrm{stop}} / 200\,\mathrm{m}$ & 0 \\
+35--38 & 첫째 갈림길 & $\big(1,\ d_1/650\,\mathrm{m},\ \sin\Delta\psi_1,\ \cos\Delta\psi_1\big)$ & 0 \\
+39--42 & 둘째 갈림길 & $\big(1,\ d_2/650\,\mathrm{m},\ \sin\Delta\psi_2,\ \cos\Delta\psi_2\big)$ & 0 \\
+43 & ring 위 여부 & ego가 ring lane에 있으면 1 & 0 \\
+44 & 합류 도로까지 거리 & $d_{\mathrm{merge}} / 50\,\mathrm{m}$ & $-1$ \\
+45--48 & 합류 본선 차량 2대 & 차량마다 $\big(v_j/\vmax,\ d_j/50\,\mathrm{m}\big)$, 합류 지점에 가까운 순 & $(0, -1)$ \\
+49 & 첫째 갈림길 lateral & $e_1 / 50\,\mathrm{m}$ (\S\ref{sec:nav}) & 0 \\
+50 & 둘째 갈림길 lateral & $e_2 / 50\,\mathrm{m}$ & 0 \\
+51 & 출발 위치 & 첫 도로에서 $\min(1,\ s/20\,\mathrm{m})$, 이후 1 & 1 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{이웃 차량 (index 1--20)}
+
+각 lane offset $k$마다 leader와 follower를 하나씩 찾는다.
+\begin{itemize}
+  \item \textbf{탐색 범위:} lane 연결을 따라 앞으로 $W + 5$\,m, 뒤로 $W + {}$ego 길이까지 찾는다. 연결된 모든 lane을 보며, 경로로 걸러 내지 않는다.
+  \item \textbf{간격:} bumper 기준으로 $g^{\mathrm{lead}}_k = \Delta s - \ell_{\mathrm{lead}}$, $g^{\mathrm{fol}}_k = -\Delta s - \ell_{\mathrm{ego}}$이다($\Delta s$는 ego 앞 범퍼 기준 상대 위치, $\ell$은 차 길이). $W$ 이하만 쓴다.
+  \item \textbf{부호:} 옆 lane($k \ne 0$)은 부호를 유지해서, 겹치면 음수가 된다. 현재 lane($k=0$)은 0 이상으로 자른다.
+  \item \textbf{교차로 안:} 나가는 lane이 하나뿐일 때 그 lane을 기준으로 옆 lane을 찾는다.
+\end{itemize}
+
+\subsection{Lane 연결 (index 21--25)}\label{sec:conn}
+현재 위치에서 lane $k$의 남은 길이를 $r_k$라 할 때,
+\[
+c_k = \begin{cases}
+-1 & \text{lane } k \text{가 없음} \\
+1 & r_k > W \ \text{또는 lane } k \text{에서 나가는 link가 하나라도 있음} \\
+r_k / W & \text{그 밖(시야 안에서 막다른 lane)}
+\end{cases}
+\]
+``어디로든 이어지는가''만 보고, ``경로로 이어지는가''는 보지 않는다(\S\ref{sec:route}).
+
+\subsection{앞쪽 밀도 (index 26--30)}
+가용 길이 $L_k$는 lane이 이어지면 $W$, 막다른 lane이면 $\min(W, r_k)$이다. $n_k$는 그 구간의 차량 수이며, lane이 시야 안에서 끝나면 첫 번째 연결 lane(\texttt{links[0]}, 경로와 무관)의 차량도 센다. 7.5\,m는 차 한 대가 차지하는 길이로 본 값이다.
+
+\subsection{신호 (index 31--34)}
+SUMO \texttt{getNextTLS}로 ego가 지날 연결의 신호를 읽는다. 정지선 거리는 신호까지 거리에서 정지선 offset을 뺀 값이다. 100\,m 밖이면 모두 0이다.
+
+\subsection{길안내 (index 35--42, 49--50)}\label{sec:nav}
+\begin{itemize}
+  \item \textbf{갈림길:} 나가는 도로가 둘 이상인 도로 선택 지점만 센다(이 도로망에 29개). 경로상 다음 두 지점을 쓴다.
+  \item \textbf{거리와 회전:} $d_i$는 갈림길까지의 주행 거리, $\Delta\psi_i$는 들어오는 도로 끝과 나가는 도로 시작의 heading 차이다($\sin\Delta\psi>0$이면 좌회전).
+  \item \textbf{lateral:} $e_i$는 나가는 도로의 모든 lane 시작점의 중심과 ego 사이의 좌우 거리다(양수면 ego가 그 중심보다 왼쪽). 특정 lane이 아니라 도로 전체의 중심을 쓴다.
+\end{itemize}
+
+\subsection{순환도로 합류 (index 43--48)}
+Ego가 ring lane에 있을 때만 값이 생긴다. 각 ring lane은 합류하는 도로가 하나뿐이다. $d_{\mathrm{merge}}$는 합류 지점까지의 주행 거리다. 본선 차량은 신호가 없는 직진 접근 lane에서 합류 지점 50\,m 안에 있는 차량 중 가까운 2대다.
+
+\subsection{출발 위치 (index 51)}
+첫 도로(route index 0, 교차로 밖)에서 lane 위치 $s$로 $\min(1, s/20\,\mathrm{m})$이고, 그 뒤로는 1이다. IDM 전문가는 수집 때 첫 도로의 20\,m 안에서 lane 변경이 막혀 있었다. 이 항목은 그 구간을 policy가 볼 수 있게 한다. Ego 자체에는 그런 제한이 없다.
+
+\section{경로 정보를 다루는 방식}\label{sec:route}
+
+\begin{itemize}
+  \item \textbf{넣지 않는 것:} 경로를 따르려면 어느 lane에 있어야 하는지. Lane 연결(21--25)은 lane이 어디로든 이어지는지만 보고, 경로와 맞는지 확인하는 함수는 이 layout에서 호출되지 않는다(\texttt{tests/test\_bc\_observation.py}가 검사).
+  \item \textbf{도로 단위로만 넣는 것:} 길안내(35--42, 49--50)는 다음 갈림길에서 어느 도로로 갈지를 거리, 회전 방향, lateral 거리로 알려 준다. 어느 lane인지는 알려 주지 않는다. 다만 회전 방향과 lateral 거리는 어느 쪽으로 가야 하는지를 간접적으로 알려 준다.
+  \item \textbf{경로를 따라 읽는 것:} 신호(31--34)는 ego가 지날 연결의 신호이고, 합류 거리(44)는 경로를 따라 잰다.
+  \item \textbf{종료 판정에만 쓰는 것:} 경로상 lane인지 판정하는 함수는 wrong lane 종료 판정과 보상에만 쓰고 observation에는 쓰지 않는다.
+\end{itemize}
+
+\section{알아 둘 점}
+\begin{itemize}
+  \item 속도(0)는 $\vmax$에서 1로 포화되어 그보다 빠른 속도는 구분하지 못한다.
+  \item 이웃 칸에서 없는 lane과 빈 lane은 같은 값 $(1, 1, -1, -1)$이다. 둘은 lane 연결($-1$)과 밀도($1$)로만 구분된다.
+  \item 교차로 안에서 경로가 겹치는 차량(서로 다른 연결의 상충 차량)은 observation에 없다. 교차로 충돌 검사를 켰을 때 늘어나는 충돌의 주원인으로 확인됐다.
+\end{itemize}
+
+\end{document}

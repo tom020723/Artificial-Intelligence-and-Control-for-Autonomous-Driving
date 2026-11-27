@@ -1,7 +1,7 @@
 """Isolated (fresh SUMO per case) evaluation gives order- and batch-independent outcomes.
 
 Run: python -m unittest tests/test_isolated_evaluation.py
-The end-to-end tests need the local diverse start-lane suite (results/ is not tracked).
+The end-to-end tests use the tracked final outputs in results/final.
 """
 import csv
 import json
@@ -10,12 +10,13 @@ import shutil
 from tempfile import TemporaryDirectory
 import unittest
 
+from env import mdp_config, road_builder, road_config
 from scripts.evaluate_fixed_routes import case_sumo_seed, evaluate_worker, read_json, run
-from scripts.run_bc51_fixed_start import fixed_start_context
+from utils.bc_policy import evaluation_context
 
 ROOT = Path(__file__).resolve().parents[1]
-SUITE = ROOT / "results/eval_diverse_start_lanes_4740_20261123_172237"
-MODEL = ROOT / "results/PPO_overspeed_20261124_c00/eval_runs/iter100/model.pt"
+SUITE = ROOT / "results/final/suite_diverse_test"
+MODEL = ROOT / "results/final/PPO/eval_runs/iter080/model.pt"
 # Cases whose outcome changed with case order in the previous shared-SUMO mode.
 CASES = (632, 3253, 6925, 681)
 
@@ -33,10 +34,14 @@ class CaseSeedTests(unittest.TestCase):
 class IsolatedEvaluationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        # In-process evaluation loads the model's saved settings into these modules
+        # (utils/saved_configs.py); restore them so later tests see the defaults.
+        cls.settings = {module: {k: v for k, v in vars(module).items() if k.isupper()}
+                        for module in (road_config, mdp_config, road_builder)}
         cls.tmp = TemporaryDirectory(prefix="isolated-eval-test-")
         cls.root = Path(cls.tmp.name)
         cls.context = cls.root / "context"
-        fixed_start_context(MODEL.parent, cls.context, max_vph=read_json(SUITE / "suite.json")["traffic_vph"])
+        evaluation_context(MODEL.parent, cls.context, max_vph=read_json(SUITE / "suite.json")["traffic_vph"])
         shutil.copy2(MODEL, cls.context / "model.pt")
         by_id = {c["case_id"]: c for c in read_json(SUITE / "cases.json")}
         cls.cases = [by_id[i] for i in CASES]
@@ -44,6 +49,11 @@ class IsolatedEvaluationTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.tmp.cleanup()
+        for module, saved in cls.settings.items():
+            for name in [k for k in vars(module) if k.isupper() and k not in saved]:
+                delattr(module, name)
+            for name, value in saved.items():
+                setattr(module, name, value)
 
     def evaluate(self, name, cases, **kw):
         rows = evaluate_worker(SUITE, self.context, self.root / name, cases, None, 1, [], 0.0,

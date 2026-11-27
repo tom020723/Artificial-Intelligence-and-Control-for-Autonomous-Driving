@@ -16,6 +16,9 @@ import sys
 from time import perf_counter
 import xml.etree.ElementTree as ET
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -24,27 +27,39 @@ from env import road_builder
 from env.adaptive_traffic_schedule import AdaptiveTrafficSchedule, adaptive_schedule_factory
 from env.background_demand import CALIBRATED_VPH, set_weighted_od_flow_rates
 from env.bc_ppo_reward import STOP_AMPLITUDE, STOP_SIGMA_M, STEP_REWARD, TERMINAL_REWARDS, StopRewardProbe
-from env.collision_detection import configure_collision_gaps
+from env.collision_detection import JUNCTION_COLLISIONS_VARIABLE, configure_collision_gaps, junction_collisions
 from env.control_timing import lane_change_timing_allowed
 from env.ego_routes import read_ego_route_groups
 from env.parallel_sumo import ParallelSumo, libsumo
-from env.parallel_traffic import TrafficCurriculum, TrafficSchedule
+from env.parallel_traffic import TrafficCurriculum, TrafficSchedule, parse_traffic_flows
 from env.traffic_snapshots import TrafficSnapshotBank
 from env.uniform_idm import separate_idm_type
-from scripts.evaluate import OUTCOMES, plt
-from scripts.evaluate_quick_bc import plot_bc_training
-from scripts.evaluate_quick_phase1 import STEP, summarize
-from scripts.run_bc51_fixed_start import fixed_start_context
-from test import load_saved_configs
+from utils.saved_configs import load_saved_configs
+from utils.bc_policy import evaluation_context
+from utils.evaluation_summary import OUTCOMES, read_csv, summarize
 from utils.evaluator import _DrivingStats, parallel_route_rows
 
 DEMAND = CALIBRATED_VPH
+STEP = 0.5  # simulation step (s)
 TRAFFIC_SEED = 21701
 MAX_REPLICAS_PER_WORKER = 64
 SNAPSHOT_TIMES = tuple(range(802, 951, 2))
 EXPERTS = ("car_idm", "car_krauss", "car_eidm", "car_acc")
 STATUSES = ("arrival", "collision", "red_light", "wrong_lane", "timeout")
 MAX_ISOLATED_WORKERS = 24
+# Background lcSpeedGain of the final suite: only IDM vehicles change lanes for speed.
+IDM_ONLY_SPEED_GAIN = {"car_idm": 1.0, "car_krauss": 0.0, "car_eidm": 0.0, "car_acc": 0.0}
+
+
+def set_background_speed_gain(path, values):
+    """Overwrite lcSpeedGain of every background vehicle type in a route file."""
+    tree = ET.parse(path)
+    types = tree.findall("./vTypeDistribution/vType")
+    if {node.get("id") for node in types} != set(values):
+        raise ValueError(f"Expected background types {sorted(values)}")
+    for node in types:
+        node.set("lcSpeedGain", str(values[node.get("id")]))
+    tree.write(path, encoding="utf-8", xml_declaration=True)
 
 
 def default_workers():
@@ -83,15 +98,53 @@ def use_current_road(context):
         current.rstrip() + "\n\n" + marker + saved.split(marker, 1)[1], encoding="utf-8")
 
 
+def write_benchmark_context(context):
+    """Write a suite's settings from the repository code and benchmark/ (benchmark/README.md)."""
+    repo = Path(__file__).resolve().parents[1]
+    context.mkdir(parents=True)
+    for name, extra in (("road_config.py", "road_context.py"), ("mdp_config.py", "mdp_context.py")):
+        base = (repo / "env" / name).read_text(encoding="utf-8")
+        (context / name).write_text(
+            base.rstrip() + "\n\n" + (repo / "benchmark" / extra).read_text(encoding="utf-8"), encoding="utf-8")
+    shutil.copyfile(repo / "train.py", context / "train.py")
+    return TrafficCurriculum(**read_json(repo / "benchmark/traffic_curriculum.json"))
+
+
+def prepare_road(suite, out, spec):
+    """Copy a suite's SUMO inputs to `out` with flows parsed out; returns (cfg, flows, origin lane counts)."""
+    shutil.copytree(suite / "sumo", out / "sumo")
+    cfg = out / "sumo/highway.sumocfg"
+    route_file = cfg.with_name("highway.rou.xml")
+    tree = ET.parse(route_file)
+    root = tree.getroot()
+    routes = {node.get("id"): node.get("edges").split() for node in root.findall("route")}
+    existing = set(routes)
+    net_path = cfg.with_name("highway.net.xml")
+    curriculum = replace(TrafficCurriculum(**spec["settings"]), total_vph=True)
+    flows = parse_traffic_flows(root.findall("flow"), routes, net_path, 800, curriculum)
+    for node in root.findall("flow"):
+        root.remove(node)
+    for route in sorted(routes.keys() - existing):
+        ET.SubElement(root, "route", id=route, edges=" ".join(routes[route]))
+    tree.write(route_file, encoding="utf-8", xml_declaration=True)
+    net = ET.parse(net_path).getroot()
+    lane_counts = {edge.get("id"): len(edge.findall("lane")) for edge in net.findall("edge")}
+    return cfg, flows, {flow.route: lane_counts[routes[flow.route][0]] for flow in flows}
+
+
 def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
-            traffic_seed=0, current_road=False, background_idm_only=False):
+            traffic_seed=0, current_road=False, background_idm_only=False, background_lc_speed_gain=None):
+    """Build a fixed-route suite; reference=None takes the settings from benchmark/."""
     context = suite / "reference"
-    if (reference / "evaluation_config.json").is_file():
+    if reference is None:
+        curriculum = write_benchmark_context(context)
+        current_road = True
+    elif (reference / "evaluation_config.json").is_file():
         shutil.copytree(reference, context)
         curriculum = TrafficCurriculum(**read_json(context / "evaluation_config.json")["traffic_curriculum"])
     else:
-        _, curriculum, _ = fixed_start_context(reference, context, max_vph=traffic_vph)
-    if current_road:
+        _, curriculum, _ = evaluation_context(reference, context, max_vph=traffic_vph)
+    if current_road and reference is not None:
         use_current_road(context)
     if background_idm_only:
         with (context / "road_config.py").open("a", encoding="utf-8") as file:
@@ -105,6 +158,9 @@ def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
     background_routes = suite / "sumo/highway.rou.xml"
     ego_routes = suite / "sumo/highway.ego.rou.xml"
     set_weighted_od_flow_rates(background_routes, traffic_vph)
+    if background_lc_speed_gain is not None:
+        # Before the snapshot bank is built, so the saved traffic states use it too.
+        set_background_speed_gain(background_routes, background_lc_speed_gain)
     if uniform_idm_vph:
         tree = ET.parse(background_routes)
         separate_idm_type(tree)
@@ -147,14 +203,19 @@ def prepare(suite, reference, traffic_vph, adaptive=False, uniform_idm_vph=0, *,
     if len({(c["snapshot_tick"], c["route"]) for c in cases}) != len(SNAPSHOT_TIMES) * len(routes):
         raise ValueError("Fixed case list must contain exactly one case per saved state and route")
     write_json(suite / "cases.json", cases)
-    write_json(suite / "suite.json", dict(traffic_vph=traffic_vph, adaptive_traffic=adaptive,
+    spec = dict(traffic_vph=traffic_vph, adaptive_traffic=adaptive,
         uniform_idm_vph=uniform_idm_vph, traffic_seed=traffic_seed, current_road=current_road,
         warmup_seconds=800, routes=routes,
         settings=asdict(curriculum), vehicle_types=road["TRAFFIC"]["controllers"],
         collision_detection=gaps, simulation_step_seconds=STEP, max_seconds=500,
         max_replicas_per_worker=MAX_REPLICAS_PER_WORKER, workers=4, seeds_per_snapshot=1,
         snapshot_times_seconds=SNAPSHOT_TIMES,
-        spawn_protect_m=0))
+        spawn_protect_m=0)
+    if background_lc_speed_gain is not None:
+        spec["background_lc_speed_gain"] = dict(background_lc_speed_gain)
+    if junction_collisions():
+        spec["junction_collisions"] = True
+    write_json(suite / "suite.json", spec)
     print(f"Prepared {len(cases):,} cases in {suite}", flush=True)
 
 
@@ -453,12 +514,154 @@ def evaluate_worker(suite, context, scratch, cases, expert_type, replicas, trace
         env.close()
 
 
+def plot_bc_training(fig, grid, run, evaluated_epoch=None):
+    """BC training curves of `run` by epoch, marking the evaluated checkpoint."""
+    rows = read_csv(run / "training_log.csv")
+    panels = (
+        ("Supervised BC loss", ("train_loss", "val_loss"), ("Train", "Validation")),
+        ("Validation acceleration MSE", ("val_accel_mse",), ("Acceleration",)),
+        ("Validation weighted lane cross entropy", ("val_lane_ce",), ("Lane CE",)),
+        ("Validation lane macro F1", ("val_lane_macro_f1",), ("Macro F1",)),
+        ("Validation lane-change precision", ("val_left_precision", "val_right_precision"), ("Left", "Right")),
+        ("Validation lane-change recall", ("val_left_recall", "val_right_recall"), ("Left", "Right")),
+    )
+    best_path = run / "result.json"
+    best_epoch = evaluated_epoch if evaluated_epoch is not None else (
+        json.loads(best_path.read_text()).get("best_epoch") if best_path.exists() else None)
+    for i, (title, keys, labels) in enumerate(panels):
+        ax = fig.add_subplot(grid[i // 2, i % 2])
+        plotted = False
+        for key, label in zip(keys, labels, strict=True):
+            points = [(float(row["epoch"]), float(row[key])) for row in rows
+                      if row.get("epoch") and row.get(key) not in (None, "")]
+            if points:
+                x, y = zip(*points)
+                ax.plot(x, y, label=label)
+                plotted = True
+        if best_epoch is not None and plotted:
+            ax.axvline(best_epoch, color="#64748b", linestyle=":", linewidth=1, label="Evaluated checkpoint")
+        if plotted:
+            ax.legend(fontsize=7)
+        else:
+            ax.text(.5, .5, "No BC metric logged", ha="center", va="center", transform=ax.transAxes)
+        ax.set(title=title, xlabel="Epoch")
+        if i >= 3:
+            ax.set_ylim(0, 1.03)
+        ax.grid(alpha=.25)
+
+
+def _ppo_run(model_run):
+    """(PPO run folder, iteration) when `model_run` is a PPO checkpoint folder eval_runs/iterNNN."""
+    if not model_run:
+        return None
+    model_run = Path(model_run)
+    run = model_run.parent.parent
+    rows = read_csv(run / "training_log.csv") if (run / "training_log.csv").exists() else []
+    if model_run.parent.name != "eval_runs" or not model_run.name.startswith("iter") or not rows \
+            or "arrival_rate" not in rows[0]:
+        return None
+    return run, int(model_run.name.removeprefix("iter"))
+
+
+def _smoothed(ax, x, y, label, color, window=5):
+    """Raw per-iteration values (faint) and their trailing mean over `window` iterations."""
+    y = np.asarray(y, float)
+    mean = np.array([np.nanmean(y[max(0, i - window + 1):i + 1]) for i in range(len(y))])
+    ax.plot(x, y, color=color, alpha=.25, linewidth=1)
+    ax.plot(x, mean, color=color, linewidth=2, label=label)
+
+
+def plot_ppo_training(fig, grid, run, evaluated_iteration):
+    """PPO training curves of `run` by iteration and validation success of its checkpoints."""
+    rows = read_csv(run / "training_log.csv")
+    it = [int(r["iteration"]) for r in rows]
+    def col(key):
+        return [float(r[key]) if r.get(key) not in (None, "") else np.nan for r in rows]
+    mark = dict(color="#64748b", linestyle=":", linewidth=1, label="Evaluated checkpoint")
+    axes = [fig.add_subplot(grid[i // 2, i % 2]) for i in range(6)]
+
+    ax = axes[0]
+    for key, label, status in (("arrival_rate", "Arrival", "arrival"),
+                               ("collision_or_red_light_rate", "Collision or red light", "collision"),
+                               ("wrong_lane_or_timeout_rate", "Wrong lane or timeout", "wrong_lane")):
+        _smoothed(ax, it, 100 * np.array(col(key)), label, OUTCOMES[status][2])
+    ax.set(title="Training rollout outcomes (episodes ended per iteration; line = 5-iteration mean)",
+           ylabel="Share (%)", ylim=(0, 100))
+
+    ax = axes[1]
+    selected = None
+    if (run / "selection.json").exists():
+        selected = Path(json.loads((run / "selection.json").read_text())["best"]["model"]).parent.name
+    for folder, label, style in (("evaluation_validation", "Validation", "-o"),
+                                 ("evaluation_validation_no_junction_check", "Validation, no junction check", "--s")):
+        points = []
+        for summary_path in sorted((run / "eval_runs").glob(f"iter*/{folder}/evaluation_summary.json")):
+            summary = json.loads(summary_path.read_text())
+            points.append((int(summary_path.parent.parent.name.removeprefix("iter")),
+                           100 * summary["overall"]["success_rate"],
+                           summary.get("junction_collisions", False)))
+        if points:
+            x, y, checked = zip(*points)
+            if folder == "evaluation_validation":
+                label += " (junction check on)" if all(checked) else " (junction check off)"
+            ax.plot(x, y, style, label=label, markersize=5, linewidth=1.5,
+                    color="#1d4ed8" if style == "-o" else "#94a3b8")
+            if selected and folder == "evaluation_validation":
+                for xi, yi in zip(x, y):
+                    if f"iter{xi:03d}" == selected:
+                        ax.annotate(f"selected {yi:.2f}%", (xi, yi), textcoords="offset points",
+                                    xytext=(0, -16), ha="center", fontsize=9, color="#1d4ed8")
+    if not ax.lines:
+        ax.text(.5, .5, "No checkpoint validation found", ha="center", va="center", transform=ax.transAxes)
+    ax.margins(y=.25)
+    ax.set(title="Checkpoint success on the validation suite", ylabel="Success (%)")
+
+    _smoothed(axes[2], it, col("ep_rew_mean"), "Episode return", "#0f766e")
+    axes[2].set(title="Mean episode return (training rollouts)")
+    axes[3].plot(it, col("anchor_accel_kl"), label="Acceleration", color="#1d4ed8")
+    axes[3].plot(it, col("anchor_lane_kl"), label="Lane", color="#ea580c")
+    axes[3].set(title="KL divergence to the BC policy (anchor)")
+    axes[4].plot(it, col("std"), label="Acceleration std", color="#7c3aed")
+    axes[4].set(title="Policy acceleration standard deviation", ylim=(0, None))
+    axes[5].plot(it, 100 * np.array(col("p_lane_change")), label="Lane change", color="#be185d")
+    axes[5].set(title="Mean lane-change probability per step", ylabel="%", ylim=(0, None))
+    for ax in axes:
+        ax.axvline(evaluated_iteration, **mark)
+        ax.set(xlabel="PPO iteration")
+        ax.legend(fontsize=7)
+        ax.grid(alpha=.25)
+
+
+def _has_bc_log(run):
+    """Whether `run` holds a BC training log (a PPO checkpoint folder does not)."""
+    rows = read_csv(Path(run) / "training_log.csv") if run else []
+    return bool(rows) and "val_loss" in rows[0]
+
+
+def _plot_overall(ax, counts, total):
+    """Every outcome over all runs, with count and share."""
+    names = [OUTCOMES[s][0] for s in STATUSES]
+    shares = [100 * counts.get(s, 0) / total for s in STATUSES]
+    ax.barh(names, shares, color=[OUTCOMES[s][2] for s in STATUSES], height=.65)
+    for i, s in enumerate(STATUSES):
+        ax.text(shares[i] + .6, i, f"{counts.get(s, 0):,}  ({shares[i]:.2f}%)", va="center", fontsize=11)
+    ax.invert_yaxis()
+    ax.set(xlim=(0, 112), xlabel="Share of all runs (%)", title=f"All runs (n = {total:,})")
+    ax.tick_params(axis="y", labelsize=11)
+    ax.grid(axis="x", alpha=.25)
+
+
 def plot_summary(out, label, rows, summary, routes, model_run):
-    fig = plt.figure(figsize=(24, 14 if model_run else 11), layout="constrained")
-    outer = fig.add_gridspec(3 if model_run else 2, 1,
-                             height_ratios=(1.6, 4.4, 1) if model_run else (4.4, 1))
-    if model_run:
+    ppo = _ppo_run(model_run)
+    training = ppo is not None or _has_bc_log(model_run)
+    heights = ((3.6,) if training else ()) + (1.3, 4.4, 1)
+    fig = plt.figure(figsize=(24, sum(heights) * 1.75 + 1), layout="constrained")
+    outer = fig.add_gridspec(len(heights), 1, height_ratios=heights)
+    if ppo is not None:
+        plot_ppo_training(fig, outer[0].subgridspec(3, 2), *ppo)
+    elif training:
         plot_bc_training(fig, outer[0].subgridspec(3, 2), model_run, evaluated_epoch=summary["evaluated_epoch"])
+    _plot_overall(fig.add_subplot(outer[-3]), summary["overall"]["statuses"], len(rows))
     charts = outer[-2].subgridspec(1, 2, width_ratios=(1, 2))
     bars, heat = (fig.add_subplot(charts[i]) for i in range(2))
     routes = sorted(routes, key=lambda route: (summary["by_route"][route]["success_rate"], route))
@@ -497,9 +700,9 @@ def plot_summary(out, label, rows, summary, routes, model_run):
         if stat["n"]:
             med, low, high = (stat[k] for k in ("median_m", "q1_m", "q3_m"))
             ax.errorbar(med, 0, xerr=[[med-low], [high-med]], marker="o", capsize=5)
-            ax.set_title(f"{title} · median {med:.2f} m · n={stat['n']}")
+            ax.set_title(f"Red-light stops behind the {title.lower()} · median {med:.2f} m · n={stat['n']}")
         else:
-            ax.set_title(f"{title} · no qualifying stops")
+            ax.set_title(f"Red-light stops behind the {title.lower()} · none")
         ax.set(xlabel="Clearance (m), median and 25th–75th percentiles", yticks=[])
         ax.set_xlim(left=0)
     counts = summary["overall"]["statuses"]
@@ -531,8 +734,40 @@ def _plot_snapshot_arrivals(fig, heat, rows, summary, routes, labels):
     fig.colorbar(raster, ax=heat, ticks=range(max_arrivals + 1), label=f"Arrivals / {max_arrivals}")
 
 
-def run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, *, output=None,
-        spawn_protect_m=0., probe_ppo_reward=False, isolated=False, workers=4, sumo_seed=0):
+def replot_summary(evaluation, model_run=None):
+    """Redraw summary.png from evaluation_summary.json and route_evaluation.csv."""
+    summary = read_json(evaluation / "evaluation_summary.json")
+    rows = read_csv(evaluation / "route_evaluation.csv")
+    for row in rows:
+        time = float(row["snapshot_time_s"])
+        row["snapshot_time_s"] = int(time) if time.is_integer() else time
+    if model_run is None and (evaluation.parent / "model.pt").exists():
+        model_run = evaluation.parent          # the model folder the evaluation sits in
+    elif model_run is None and summary.get("checkpoint"):
+        model_run = Path(summary["checkpoint"]).parent
+    plot_summary(evaluation, summary["label"], rows, summary, list(summary["by_route"]), model_run)
+
+
+def run(*args, junction_check=True, **kwargs):
+    """Evaluate with SUMO junction collision checks on (the default) or off.
+
+    Training and expert collection keep the SUMO default (off); evaluation counts
+    collisions inside junctions too. The setting reaches every worker through the
+    environment and is restored afterwards.
+    """
+    previous = os.environ.get(JUNCTION_COLLISIONS_VARIABLE)
+    os.environ[JUNCTION_COLLISIONS_VARIABLE] = "1" if junction_check else "0"
+    try:
+        return _run(*args, **kwargs)
+    finally:
+        if previous is None:
+            os.environ.pop(JUNCTION_COLLISIONS_VARIABLE, None)
+        else:
+            os.environ[JUNCTION_COLLISIONS_VARIABLE] = previous
+
+
+def _run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, *, output=None,
+         spawn_protect_m=0., probe_ppo_reward=False, isolated=False, workers=4, sumo_seed=0):
     started = perf_counter()
     reference = suite / "reference"
     spec = read_json(suite / "suite.json")
@@ -550,7 +785,7 @@ def run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, 
     out.mkdir()
     context = out / "context"
     if model is not None:
-        fixed_start_context(model.parent, context, max_vph=spec["traffic_vph"])
+        evaluation_context(model.parent, context, max_vph=spec["traffic_vph"])
         shutil.copy2(model, context / "model.pt")
     else:
         shutil.copytree(reference, context)
@@ -625,6 +860,8 @@ def run(suite, label, expert, model, replicas, smoke, trace_failures_from=None, 
                       for row in rows if previous[row['case_id']]['status'] != row['status']]
         summary['audit_replay'] = dict(source=str(trace_failures_from), traced_cases=len(trace_ids),
                                       status_mismatches=mismatches)
+    if junction_collisions():
+        summary["junction_collisions"] = True
     write_json(out / "evaluation_summary.json", summary)
     with (out / "route_evaluation.csv").open("w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=list(rows[0]), lineterminator="\n")
@@ -639,16 +876,25 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     init = sub.add_parser("prepare")
     init.add_argument("suite", type=Path)
-    init.add_argument("--reference", type=Path, required=True, help="Saved suite reference directory or BC results directory")
+    init.add_argument("--reference", type=Path,
+                      help="Copy the settings from a saved suite reference or BC results directory "
+                           "(default: build them from the repository code and benchmark/)")
     init.add_argument("--traffic-vph", type=int, default=DEMAND)
     init.add_argument("--adaptive-traffic", action="store_true")
     init.add_argument("--uniform-idm-vph", type=int, default=0)
     init.add_argument("--traffic-seed", type=int, default=0,
                       help="Vary the warm-up traffic states and spawn streams (0 = original benchmark)")
     init.add_argument("--current-road", action="store_true",
-                      help="Build the road from env/road_config.py instead of the reference's saved snapshot")
+                      help="With --reference: build the road from env/road_config.py instead of its saved snapshot")
     init.add_argument("--background-idm-only", action="store_true",
                       help="Use only IDM background vehicles, with lcSpeedGain=1.0")
+    init.add_argument("--idm-only-speed-gain", action="store_true",
+                      help="Keep the mixed background but let only IDM vehicles change lanes for speed "
+                           "(lcSpeedGain 1.0 for IDM, 0.0 otherwise); used by the final suite")
+    replot = sub.add_parser("replot", help="Redraw summary.png from a finished evaluation without rerunning it")
+    replot.add_argument("evaluation", type=Path, help="Folder with evaluation_summary.json and route_evaluation.csv")
+    replot.add_argument("--model-run", type=Path,
+                        help="BC training folder for the training panels (default: the recorded checkpoint's folder)")
     evaluate = sub.add_parser("evaluate")
     evaluate.add_argument("suite", type=Path)
     evaluate.add_argument("label", nargs="?",
@@ -664,6 +910,8 @@ def main():
     evaluate.add_argument("--replicas", type=int, default=MAX_REPLICAS_PER_WORKER,
                           help=f"Replicas per worker (default and maximum: {MAX_REPLICAS_PER_WORKER})")
     evaluate.add_argument("--smoke", type=int, default=0, help="Use only the first N cases per worker")
+    evaluate.add_argument("--no-junction-check", action="store_true",
+                          help="Do not count collisions inside junctions (SUMO default; on by default here)")
     evaluate.add_argument("--isolated", action="store_true",
                           help="Run every case in a fresh SUMO (order- and batch-independent outcomes)")
     evaluate.add_argument("--workers", type=int, default=default_workers(),
@@ -673,6 +921,9 @@ def main():
     evaluate.add_argument('--trace-failures-from', type=Path,
                           help='Replay every case in its original order, logging failed case steps from this result directory')
     args = parser.parse_args()
+    if args.command == "replot":
+        replot_summary(args.evaluation.resolve(strict=True), args.model_run)
+        return
     suite = args.suite.resolve()
     if args.command == "prepare":
         if args.traffic_vph < 1:
@@ -681,9 +932,15 @@ def main():
             parser.error("--uniform-idm-vph requires adaptive traffic and must be below --traffic-vph")
         if args.background_idm_only and (args.adaptive_traffic or args.uniform_idm_vph):
             parser.error("--background-idm-only requires fixed traffic")
-        prepare(suite, args.reference.resolve(strict=True), args.traffic_vph, args.adaptive_traffic,
+        if args.idm_only_speed_gain and (args.background_idm_only or args.uniform_idm_vph):
+            parser.error("--idm-only-speed-gain requires the mixed background types")
+        if args.current_road and args.reference is None:
+            parser.error("--current-road applies only with --reference (the default already uses env/road_config.py)")
+        reference = args.reference.resolve(strict=True) if args.reference else None
+        prepare(suite, reference, args.traffic_vph, args.adaptive_traffic,
                 args.uniform_idm_vph, traffic_seed=args.traffic_seed, current_road=args.current_road,
-                background_idm_only=args.background_idm_only)
+                background_idm_only=args.background_idm_only,
+                background_lc_speed_gain=IDM_ONLY_SPEED_GAIN if args.idm_only_speed_gain else None)
     else:
         if args.expert and args.label is None:
             parser.error("expert evaluation requires a label")
@@ -698,7 +955,7 @@ def main():
             args.trace_failures_from.resolve(strict=True) if args.trace_failures_from else None,
             output=args.output.resolve() if args.output else None, spawn_protect_m=args.spawn_protect_m,
             probe_ppo_reward=args.probe_ppo_reward, isolated=args.isolated, workers=args.workers,
-            sumo_seed=args.sumo_seed)
+            sumo_seed=args.sumo_seed, junction_check=not args.no_junction_check)
 
 
 if __name__ == "__main__":
